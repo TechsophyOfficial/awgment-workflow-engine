@@ -1,0 +1,35 @@
+{
+  "id": "326005af-f566-4eed-9d8d-c2cb2bc67983",
+  "name": "service_100_file",
+  "request": {
+    "url": "/service/1.0.0/file?form=blah2.txt",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "body": "blah\n",
+    "headers": {
+      "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate",
+      "Content-Disposition": "attachment; filename=\"blah2.txt\"",
+      "Content-Type": "text/plain",
+      "Date": "Wed, 03 Feb 2021 19:12:58 GMT",
+      "Expires": "0",
+      "Pragma": "no-cache",
+      "Server": "nginx/1.17.10",
+      "Set-Cookie": "JSESSIONID=2678F149FD9419ABE042D22D0B409AA4; Path=/; Secure; HttpOnly",
+      "Strict-Transport-Security": "max-age=31536000 ; includeSubDomains",
+      "Vary": [
+        "Accept-Encoding",
+        "Origin",
+        "Access-Control-Request-Method",
+        "Access-Control-Request-Headers"
+      ],
+      "X-Content-Type-Options": "nosniff",
+      "X-Frame-Options": "DENY",
+      "X-XSS-Protection": "1; mode=block"
+    }
+  },
+  "uuid": "326005af-f566-4eed-9d8d-c2cb2bc67983",
+  "persistent": true,
+  "insertionIndex": 2
+}

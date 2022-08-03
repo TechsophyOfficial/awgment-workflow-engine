@@ -1,0 +1,11 @@
+{
+  "processDefinitionKey":"gsfttestprocess",
+  "businessKey": "gsfttestprocess",
+  "formKey": "",
+  "variables" :
+  {
+    "firstName": "alex",
+    "lastname": "carey",
+    "age": 25
+  }
+}

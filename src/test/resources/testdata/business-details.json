@@ -1,0 +1,181 @@
+{
+  "name": "businessDetails",
+  "id": "businessDetails",
+  "components": {
+    "display": "form",
+    "components": [
+      {
+        "label": "My Business need loan of ",
+        "placeholder": "Loan Requirement",
+        "description": "",
+        "disabled": false,
+        "validateOn": "change",
+        "validate": {
+          "required": true,
+          "pattern": "",
+          "customMessage": ""
+        },
+        "key": "myBusinessNeedLoanOf",
+        "type": "textfield",
+        "input": true,
+        "defaultValue": "",
+        "inputType": "text",
+        "disableOnInvalid": false
+      },
+      {
+        "label": "Enter Your Name",
+        "placeholder": "",
+        "description": "",
+        "disabled": false,
+        "validateOn": "change",
+        "validate": {
+          "required": false,
+          "pattern": "",
+          "customMessage": ""
+        },
+        "key": "enterYourName",
+        "type": "textfield",
+        "input": true,
+        "defaultValue": "",
+        "inputType": "text",
+        "disableOnInvalid": false
+      },
+      {
+        "label": "Number",
+        "placeholder": "",
+        "description": "",
+        "disabled": false,
+        "validateOn": "change",
+        "validate": {
+          "required": false,
+          "customMessage": "",
+          "min": 10,
+          "max": 10
+        },
+        "key": "number",
+        "type": "number",
+        "input": true,
+        "disableOnInvalid": false
+      },
+      {
+        "label": "Email",
+        "placeholder": "",
+        "description": "",
+        "disabled": false,
+        "validateOn": "change",
+        "validate": {
+          "required": false,
+          "pattern": "",
+          "customMessage": ""
+        },
+        "key": "email",
+        "type": "email",
+        "input": true,
+        "inputType": "email",
+        "disableOnInvalid": false
+      },
+      {
+        "label": "Date Of Birth (As per PAN)",
+        "placeholder": "",
+        "description": "",
+        "disabled": false,
+        "validateOn": "change",
+        "validate": {
+          "required": true,
+          "customMessage": ""
+        },
+        "key": "dateOfBirthAsPerPan",
+        "type": "datetime",
+        "input": true,
+        "defaultValue": "",
+        "disableOnInvalid": false
+      },
+      {
+        "label": "PAN",
+        "placeholder": "",
+        "description": "",
+        "disabled": false,
+        "validateOn": "change",
+        "validate": {
+          "required": true,
+          "pattern": "[A-Z]{5}[0-9]{4}[A-Z]{1}",
+          "customMessage": "",
+          "minLength": 10,
+          "maxLength": 10
+        },
+        "key": "pan",
+        "type": "textfield",
+        "input": true,
+        "defaultValue": "",
+        "inputType": "text",
+        "disableOnInvalid": false
+      },
+      {
+        "label": "Pincode",
+        "placeholder": "",
+        "description": "",
+        "disabled": false,
+        "validateOn": "change",
+        "validate": {
+          "required": true,
+          "pattern": "[0-9]{6}|[0-9]{3}\\s[0-9]{3}",
+          "customMessage": "",
+          "minLength": 6,
+          "maxLength": 6
+        },
+        "key": "pincode",
+        "type": "textfield",
+        "input": true,
+        "defaultValue": "",
+        "inputType": "text",
+        "disableOnInvalid": false
+      },
+      {
+        "label": "Receive Loan related update on WhatsApp",
+        "placeholder": "",
+        "description": "",
+        "disabled": false,
+        "validateOn": "change",
+        "validate": {
+          "required": false,
+          "customMessage": ""
+        },
+        "key": "receiveLoanRelatedUpdateOnWhatsApp",
+        "type": "checkbox",
+        "input": true,
+        "defaultValue": "false",
+        "inputType": "checkbox",
+        "disableOnInvalid": false
+      },
+      {
+        "label": "HTML",
+        "placeholder": "",
+        "description": "",
+        "disabled": false,
+        "validateOn": "change",
+        "validate": {
+          "required": false
+        },
+        "key": "html",
+        "type": "htmlelement",
+        "input": false,
+        "disableOnInvalid": false
+      },
+      {
+        "label": "Submit",
+        "placeholder": "",
+        "description": "",
+        "disabled": false,
+        "validateOn": "change",
+        "validate": {
+          "required": false
+        },
+        "key": "submit",
+        "type": "button",
+        "input": true,
+        "disableOnInvalid": true
+      }
+    ]
+  },
+  "version": 1
+}

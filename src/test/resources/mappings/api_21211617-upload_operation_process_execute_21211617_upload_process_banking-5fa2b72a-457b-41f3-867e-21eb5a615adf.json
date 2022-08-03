@@ -1,0 +1,40 @@
+{
+  "id": "5fa2b72a-457b-41f3-867e-21eb5a615adf",
+  "name": "api_21211617-upload_operation_process_execute_21211617_upload_process_banking",
+  "request": {
+    "url": "/api/21211617-upload/operation/process/execute/21211617/upload/process/BANKING",
+    "method": "POST",
+    "bodyPatterns": [
+      {
+        "anything": "anything"
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"fileType\":\"TYPE1\",\"processType\":\"BANKING\",\"purpose\":\"\\\"test\\\"\",\"uploadedFiles\":[{\"name\":\"blah1.txt\",\"content\":\"blah\\n\"},{\"name\":\"blah2.txt\",\"content\":\"blah\\n\"}]}",
+    "headers": {
+      "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate",
+      "Content-Type": "application/json",
+      "Date": "Wed, 03 Feb 2021 19:12:58 GMT",
+      "Expires": "0",
+      "Pragma": "no-cache",
+      "Server": "nginx/1.17.10",
+      "Set-Cookie": "JSESSIONID=7555CDA33D1CF7A81D18B91251BBA09A; Path=/; Secure; HttpOnly",
+      "Strict-Transport-Security": "max-age=31536000 ; includeSubDomains",
+      "Vary": [
+        "Accept-Encoding",
+        "Origin",
+        "Access-Control-Request-Method",
+        "Access-Control-Request-Headers"
+      ],
+      "X-B3-TraceId": "d1b323a8d7bd7aa6",
+      "X-Content-Type-Options": "nosniff",
+      "X-Frame-Options": "DENY",
+      "X-XSS-Protection": "1; mode=block"
+    }
+  },
+  "uuid": "5fa2b72a-457b-41f3-867e-21eb5a615adf",
+  "persistent": true,
+  "insertionIndex": 3
+}

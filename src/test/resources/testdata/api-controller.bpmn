@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0rv042r" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.7.3">
+  <bpmn:process id="gsfttestprocess" name="Sample Process" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_00e13eb</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_00e13eb" sourceRef="StartEvent_1" targetRef="contactDetails" />
+    <bpmn:userTask id="contactDetails" name="Contact Details" camunda:formKey="contactDetails">
+      <bpmn:incoming>Flow_00e13eb</bpmn:incoming>
+      <bpmn:outgoing>Flow_0k1y0qu</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_04gby1k">
+      <bpmn:incoming>Flow_04k3bwm</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0k1y0qu" sourceRef="contactDetails" targetRef="businessDetails" />
+    <bpmn:sequenceFlow id="Flow_04k3bwm" sourceRef="businessDetails" targetRef="Event_04gby1k" />
+    <bpmn:userTask id="businessDetails" name="Business Details" camunda:formKey="businessDetails">
+      <bpmn:incoming>Flow_0k1y0qu</bpmn:incoming>
+      <bpmn:outgoing>Flow_04k3bwm</bpmn:outgoing>
+    </bpmn:userTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="sampleprocess">
+      <bpmndi:BPMNEdge id="Flow_0k1y0qu_di" bpmnElement="Flow_0k1y0qu">
+        <di:waypoint x="370" y="117" />
+        <di:waypoint x="440" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00e13eb_di" bpmnElement="Flow_00e13eb">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="270" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04k3bwm_di" bpmnElement="Flow_04k3bwm">
+        <di:waypoint x="540" y="117" />
+        <di:waypoint x="682" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0egq1yf_di" bpmnElement="contactDetails">
+        <dc:Bounds x="270" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_04gby1k_di" bpmnElement="Event_04gby1k">
+        <dc:Bounds x="682" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0puy2br_di" bpmnElement="businessDetails">
+        <dc:Bounds x="440" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

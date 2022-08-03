@@ -1,0 +1,88 @@
+plugins {
+    id 'org.springframework.boot' version '2.4.5'
+    id 'java'
+    id 'maven-publish'
+    id 'jacoco'
+}
+
+group = 'com.techsophy.tsf'
+version = '1.2.0'
+description = 'tp-workflow-engine'
+compileJava {
+    sourceCompatibility = 11
+    targetCompatibility = 11
+}
+
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        url = uri('https://repo.maven.apache.org/maven2/')
+    }
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+dependencies {
+    implementation(group: 'org.camunda.bpm.springboot', name: 'camunda-bpm-spring-boot-starter-rest', version:'7.14.0') {
+        exclude(module: 'camunda-connect-connectors-all')
+    }
+
+    implementation group: 'org.camunda.bpm.springboot', name: 'camunda-bpm-spring-boot-starter-webapp', version:'7.14.0'
+    implementation group: 'org.camunda.bpm', name: 'camunda-engine-plugin-spin', version:'7.14.0'
+    implementation group: 'org.camunda.spin', name: 'camunda-spin-dataformat-all', version:'1.10.0'
+    implementation group: 'org.camunda.bpm', name: 'camunda-engine-plugin-connect', version:'7.14.0'
+    implementation group: 'org.camunda.connect', name: 'camunda-connect-core', version:'1.5.0'
+    implementation group: 'org.camunda.connect', name: 'camunda-connect-http-client', version:'1.5.0'
+    implementation group: 'org.camunda.bpm.extension', name: 'camunda-bpm-mail-core', version:'1.2.0'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version:'2.4.5'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation group: 'org.projectlombok', name: 'lombok', version:'1.18.12'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version:'2.4.5'
+    implementation group: 'com.h2database', name: 'h2', version:'1.4.200'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc', version:'2.4.5'
+    implementation group: 'com.techsophy.workflow.engine.camunda.extension', name: 'tasklist-plugin-formio', version:'1.0.0'
+    implementation group: 'org.camunda.bpm.extension', name: 'camunda-bpm-identity-keycloak', version:'2.0.0'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version:'2.4.5'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-resource-server', version:'2.4.5'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-client', version:'2.4.5'
+    implementation group: 'org.keycloak', name: 'keycloak-authz-client', version:'11.0.3'
+    implementation group: 'io.springfox', name: 'springfox-boot-starter', version:'3.0.0'
+    implementation group: 'org.postgresql', name: 'postgresql', version:'42.2.14'
+    implementation group: 'org.springframework.boot',name: 'spring-boot-starter-actuator'
+    implementation group: 'org.springframework.cloud',name:'spring-cloud-starter-bootstrap',version:'3.0.3'
+    implementation group: 'org.springframework.cloud',name:'spring-cloud-starter-config',version:'3.0.3'
+    implementation group: 'org.springframework.cloud',name:'spring-cloud-dependencies',version:'Hoxton.SR8'
+    implementation 'org.springframework:spring-aspects:5.3.15'
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+    testCompileOnly 'org.projectlombok:lombok:1.18.20'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
+    testImplementation 'com.h2database:h2'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.4.5'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testImplementation 'io.github.origin-energy:java-snapshot-testing-junit5:2.2.1'
+    testImplementation group: 'com.github.tomakehurst', name: 'wiremock-jre8', version: '2.30.1'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.awaitility:awaitility'
+
+
+
+
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+    }
+}

@@ -1,0 +1,231 @@
+com.techsophy.tsf.workflow.engine.camunda.controller.ProcessControllerTest.testCompleteLastTask=[
+  {
+    "message": "No Form Available",
+    "success": true
+  }
+]
+
+
+com.techsophy.tsf.workflow.engine.camunda.controller.ProcessControllerTest.testCompleteTask=[
+FormioFormSchema(display=form, components=[FormComponent(label=My Business need loan of , placeholder=Loan Requirement, description=, disabled=false, validateOn=change, validate=ValidationPropsSchema(required=true, pattern=, customMessage=, minLength=null, maxLength=null, min=null, max=null), key=myBusinessNeedLoanOf, fieldKey=null, type=textfield, input=true, defaultValue=, inputType=text, data=null, values=null, disableOnInvalid=false, action=null, event=null, provider=null, providerOptions=null, rows=null, components=null, storage=null, fileTypes=null, multiple=false, url=null, format=null, documentType=null, hideLabel=false, html=null, title=null, columns=null, prefix=null, suffix=null, mask=false, questions=null), FormComponent(label=Enter Your Name, placeholder=, description=, disabled=false, validateOn=change, validate=ValidationPropsSchema(required=false, pattern=, customMessage=, minLength=null, maxLength=null, min=null, max=null), key=enterYourName, fieldKey=null, type=textfield, input=true, defaultValue=, inputType=text, data=null, values=null, disableOnInvalid=false, action=null, event=null, provider=null, providerOptions=null, rows=null, components=null, storage=null, fileTypes=null, multiple=false, url=null, format=null, documentType=null, hideLabel=false, html=null, title=null, columns=null, prefix=null, suffix=null, mask=false, questions=null), FormComponent(label=Number, placeholder=, description=, disabled=false, validateOn=change, validate=ValidationPropsSchema(required=false, pattern=null, customMessage=, minLength=null, maxLength=null, min=10, max=10), key=number, fieldKey=null, type=number, input=true, defaultValue=null, inputType=null, data=null, values=null, disableOnInvalid=false, action=null, event=null, provider=null, providerOptions=null, rows=null, components=null, storage=null, fileTypes=null, multiple=false, url=null, format=null, documentType=null, hideLabel=false, html=null, title=null, columns=null, prefix=null, suffix=null, mask=false, questions=null), FormComponent(label=Email, placeholder=, description=, disabled=false, validateOn=change, validate=ValidationPropsSchema(required=false, pattern=, customMessage=, minLength=null, maxLength=null, min=null, max=null), key=email, fieldKey=null, type=email, input=true, defaultValue=null, inputType=email, data=null, values=null, disableOnInvalid=false, action=null, event=null, provider=null, providerOptions=null, rows=null, components=null, storage=null, fileTypes=null, multiple=false, url=null, format=null, documentType=null, hideLabel=false, html=null, title=null, columns=null, prefix=null, suffix=null, mask=false, questions=null), FormComponent(label=Date Of Birth (As per PAN), placeholder=, description=, disabled=false, validateOn=change, validate=ValidationPropsSchema(required=true, pattern=null, customMessage=, minLength=null, maxLength=null, min=null, max=null), key=dateOfBirthAsPerPan, fieldKey=null, type=datetime, input=true, defaultValue=, inputType=null, data=null, values=null, disableOnInvalid=false, action=null, event=null, provider=null, providerOptions=null, rows=null, components=null, storage=null, fileTypes=null, multiple=false, url=null, format=null, documentType=null, hideLabel=false, html=null, title=null, columns=null, prefix=null, suffix=null, mask=false, questions=null), FormComponent(label=PAN, placeholder=, description=, disabled=false, validateOn=change, validate=ValidationPropsSchema(required=true, pattern=[A-Z]{5}[0-9]{4}[A-Z]{1}, customMessage=, minLength=10, maxLength=10, min=null, max=null), key=pan, fieldKey=null, type=textfield, input=true, defaultValue=, inputType=text, data=null, values=null, disableOnInvalid=false, action=null, event=null, provider=null, providerOptions=null, rows=null, components=null, storage=null, fileTypes=null, multiple=false, url=null, format=null, documentType=null, hideLabel=false, html=null, title=null, columns=null, prefix=null, suffix=null, mask=false, questions=null), FormComponent(label=Pincode, placeholder=, description=, disabled=false, validateOn=change, validate=ValidationPropsSchema(required=true, pattern=[0-9]{6}|[0-9]{3}\s[0-9]{3}, customMessage=, minLength=6, maxLength=6, min=null, max=null), key=pincode, fieldKey=null, type=textfield, input=true, defaultValue=, inputType=text, data=null, values=null, disableOnInvalid=false, action=null, event=null, provider=null, providerOptions=null, rows=null, components=null, storage=null, fileTypes=null, multiple=false, url=null, format=null, documentType=null, hideLabel=false, html=null, title=null, columns=null, prefix=null, suffix=null, mask=false, questions=null), FormComponent(label=Receive Loan related update on WhatsApp, placeholder=, description=, disabled=false, validateOn=change, validate=ValidationPropsSchema(required=false, pattern=null, customMessage=, minLength=null, maxLength=null, min=null, max=null), key=receiveLoanRelatedUpdateOnWhatsApp, fieldKey=null, type=checkbox, input=true, defaultValue=false, inputType=checkbox, data=null, values=null, disableOnInvalid=false, action=null, event=null, provider=null, providerOptions=null, rows=null, components=null, storage=null, fileTypes=null, multiple=false, url=null, format=null, documentType=null, hideLabel=false, html=null, title=null, columns=null, prefix=null, suffix=null, mask=false, questions=null), FormComponent(label=HTML, placeholder=, description=, disabled=false, validateOn=change, validate=ValidationPropsSchema(required=false, pattern=null, customMessage=null, minLength=null, maxLength=null, min=null, max=null), key=html, fieldKey=null, type=htmlelement, input=false, defaultValue=null, inputType=null, data=null, values=null, disableOnInvalid=false, action=null, event=null, provider=null, providerOptions=null, rows=null, components=null, storage=null, fileTypes=null, multiple=false, url=null, format=null, documentType=null, hideLabel=false, html=null, title=null, columns=null, prefix=null, suffix=null, mask=false, questions=null), FormComponent(label=Submit, placeholder=, description=, disabled=false, validateOn=change, validate=ValidationPropsSchema(required=false, pattern=null, customMessage=null, minLength=null, maxLength=null, min=null, max=null), key=submit, fieldKey=null, type=button, input=true, defaultValue=null, inputType=null, data=null, values=null, disableOnInvalid=true, action=null, event=null, provider=null, providerOptions=null, rows=null, components=null, storage=null, fileTypes=null, multiple=false, url=null, format=null, documentType=null, hideLabel=false, html=null, title=null, columns=null, prefix=null, suffix=null, mask=false, questions=null)])
+{firstName=alex, age=25, lastname=carey}
+Business Details
+businessDetails
+]
+
+
+com.techsophy.tsf.workflow.engine.camunda.controller.ProcessControllerTest.testNextTask=[
+  {
+    "components": [
+      {
+        "defaultValue": "",
+        "description": "",
+        "disableOnInvalid": false,
+        "disabled": false,
+        "hideLabel": false,
+        "input": true,
+        "inputType": "text",
+        "key": "myBusinessNeedLoanOf",
+        "label": "My Business need loan of ",
+        "mask": false,
+        "multiple": false,
+        "placeholder": "Loan Requirement",
+        "type": "textfield",
+        "validate": {
+          "customMessage": "",
+          "pattern": "",
+          "required": true
+        },
+        "validateOn": "change"
+      },
+      {
+        "defaultValue": "",
+        "description": "",
+        "disableOnInvalid": false,
+        "disabled": false,
+        "hideLabel": false,
+        "input": true,
+        "inputType": "text",
+        "key": "enterYourName",
+        "label": "Enter Your Name",
+        "mask": false,
+        "multiple": false,
+        "placeholder": "",
+        "type": "textfield",
+        "validate": {
+          "customMessage": "",
+          "pattern": "",
+          "required": false
+        },
+        "validateOn": "change"
+      },
+      {
+        "description": "",
+        "disableOnInvalid": false,
+        "disabled": false,
+        "hideLabel": false,
+        "input": true,
+        "key": "number",
+        "label": "Number",
+        "mask": false,
+        "multiple": false,
+        "placeholder": "",
+        "type": "number",
+        "validate": {
+          "customMessage": "",
+          "max": 10,
+          "min": 10,
+          "required": false
+        },
+        "validateOn": "change"
+      },
+      {
+        "description": "",
+        "disableOnInvalid": false,
+        "disabled": false,
+        "hideLabel": false,
+        "input": true,
+        "inputType": "email",
+        "key": "email",
+        "label": "Email",
+        "mask": false,
+        "multiple": false,
+        "placeholder": "",
+        "type": "email",
+        "validate": {
+          "customMessage": "",
+          "pattern": "",
+          "required": false
+        },
+        "validateOn": "change"
+      },
+      {
+        "defaultValue": "",
+        "description": "",
+        "disableOnInvalid": false,
+        "disabled": false,
+        "hideLabel": false,
+        "input": true,
+        "key": "dateOfBirthAsPerPan",
+        "label": "Date Of Birth (As per PAN)",
+        "mask": false,
+        "multiple": false,
+        "placeholder": "",
+        "type": "datetime",
+        "validate": {
+          "customMessage": "",
+          "required": true
+        },
+        "validateOn": "change"
+      },
+      {
+        "defaultValue": "",
+        "description": "",
+        "disableOnInvalid": false,
+        "disabled": false,
+        "hideLabel": false,
+        "input": true,
+        "inputType": "text",
+        "key": "pan",
+        "label": "PAN",
+        "mask": false,
+        "multiple": false,
+        "placeholder": "",
+        "type": "textfield",
+        "validate": {
+          "customMessage": "",
+          "maxLength": 10,
+          "minLength": 10,
+          "pattern": "[A-Z]{5}[0-9]{4}[A-Z]{1}",
+          "required": true
+        },
+        "validateOn": "change"
+      },
+      {
+        "defaultValue": "",
+        "description": "",
+        "disableOnInvalid": false,
+        "disabled": false,
+        "hideLabel": false,
+        "input": true,
+        "inputType": "text",
+        "key": "pincode",
+        "label": "Pincode",
+        "mask": false,
+        "multiple": false,
+        "placeholder": "",
+        "type": "textfield",
+        "validate": {
+          "customMessage": "",
+          "maxLength": 6,
+          "minLength": 6,
+          "pattern": "[0-9]{6}|[0-9]{3}\\s[0-9]{3}",
+          "required": true
+        },
+        "validateOn": "change"
+      },
+      {
+        "defaultValue": "false",
+        "description": "",
+        "disableOnInvalid": false,
+        "disabled": false,
+        "hideLabel": false,
+        "input": true,
+        "inputType": "checkbox",
+        "key": "receiveLoanRelatedUpdateOnWhatsApp",
+        "label": "Receive Loan related update on WhatsApp",
+        "mask": false,
+        "multiple": false,
+        "placeholder": "",
+        "type": "checkbox",
+        "validate": {
+          "customMessage": "",
+          "required": false
+        },
+        "validateOn": "change"
+      },
+      {
+        "description": "",
+        "disableOnInvalid": false,
+        "disabled": false,
+        "hideLabel": false,
+        "input": false,
+        "key": "html",
+        "label": "HTML",
+        "mask": false,
+        "multiple": false,
+        "placeholder": "",
+        "type": "htmlelement",
+        "validate": {
+          "required": false
+        },
+        "validateOn": "change"
+      },
+      {
+        "description": "",
+        "disableOnInvalid": true,
+        "disabled": false,
+        "hideLabel": false,
+        "input": true,
+        "key": "submit",
+        "label": "Submit",
+        "mask": false,
+        "multiple": false,
+        "placeholder": "",
+        "type": "button",
+        "validate": {
+          "required": false
+        },
+        "validateOn": "change"
+      }
+    ],
+    "display": "form"
+  },
+  {
+    "age": 25,
+    "firstName": "alex",
+    "lastname": "carey"
+  },
+  "Contact Details",
+  "contactDetails"
+]

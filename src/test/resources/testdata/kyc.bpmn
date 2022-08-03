@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                   xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                   xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                   xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="sample-diagram"
+                   targetNamespace="http://bpmn.io/schema/bpmn"
+                   xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:process id="gautham-kyc-test" name="Gautham KYC Test" isExecutable="true" camunda:versionTag="1">
+    <bpmn2:startEvent id="StartEvent_1">
+      <bpmn2:outgoing>Flow_1bnjpji</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="Flow_1bnjpji" sourceRef="StartEvent_1" targetRef="Event_1uhr6qz"/>
+    <bpmn2:intermediateCatchEvent id="Event_1uhr6qz" name="Wait For KYC Init">
+      <bpmn2:incoming>Flow_1bnjpji</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0toy9w6</bpmn2:outgoing>
+      <bpmn2:messageEventDefinition id="MessageEventDefinition_0mqwy00" messageRef="Message_1nyk7ps"/>
+    </bpmn2:intermediateCatchEvent>
+    <bpmn2:sequenceFlow id="Flow_0toy9w6" sourceRef="Event_1uhr6qz" targetRef="Activity_1uau8xz"/>
+    <bpmn2:serviceTask id="Activity_1uau8xz" name="Initialize KYC" camunda:expression="${&#34;http://blah&#34;}"
+                       camunda:resultVariable="kycUrl">
+      <bpmn2:incoming>Flow_0toy9w6</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0uq8mnq</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:intermediateCatchEvent id="Event_12au2sl" name="Wait For KYC Completion">
+      <bpmn2:incoming>Flow_1wi8p5y</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_17sbkcg</bpmn2:outgoing>
+      <bpmn2:messageEventDefinition id="MessageEventDefinition_0f7gt50" messageRef="Message_1dd0uxt"/>
+    </bpmn2:intermediateCatchEvent>
+    <bpmn2:sequenceFlow id="Flow_17sbkcg" sourceRef="Event_12au2sl" targetRef="Activity_1k2kjs1"/>
+    <bpmn2:serviceTask id="Activity_1k2kjs1" name="Get Process Status" camunda:expression="${&#34;completed&#34;}"
+                       camunda:resultVariable="processStatus">
+      <bpmn2:incoming>Flow_17sbkcg</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0fvvwtf</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:endEvent id="Event_0fzxusd">
+      <bpmn2:incoming>Flow_0fvvwtf</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="Flow_0fvvwtf" sourceRef="Activity_1k2kjs1" targetRef="Event_0fzxusd"/>
+    <bpmn2:sequenceFlow id="Flow_0uq8mnq" sourceRef="Activity_1uau8xz" targetRef="Activity_0c6sier"/>
+    <bpmn2:sequenceFlow id="Flow_0lvwsbi" sourceRef="Activity_0c6sier" targetRef="Activity_0istc67"/>
+    <bpmn2:sequenceFlow id="Flow_1wi8p5y" sourceRef="Activity_0istc67" targetRef="Event_12au2sl"/>
+    <bpmn2:serviceTask id="Activity_0c6sier" name="Sync Task" camunda:asyncAfter="true"
+                       camunda:expression="${&#34;sync-value&#34;}" camunda:resultVariable="sync-key">
+      <bpmn2:incoming>Flow_0uq8mnq</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0lvwsbi</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:serviceTask id="Activity_0istc67" name="Async Task" camunda:expression="${&#34;async-value&#34;}"
+                       camunda:resultVariable="async-key">
+      <bpmn2:incoming>Flow_0lvwsbi</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1wi8p5y</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+  </bpmn2:process>
+  <bpmn2:message id="Message_1nyk7ps" name="kyc-init-wait"/>
+  <bpmn2:message id="Message_1dd0uxt" name="kyc-completion-wait"/>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="gautham-kyc-test">
+      <bpmndi:BPMNEdge id="Flow_0fvvwtf_di" bpmnElement="Flow_0fvvwtf">
+        <di:waypoint x="1200" y="170"/>
+        <di:waypoint x="1272" y="170"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17sbkcg_di" bpmnElement="Flow_17sbkcg">
+        <di:waypoint x="998" y="170"/>
+        <di:waypoint x="1100" y="170"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0toy9w6_di" bpmnElement="Flow_0toy9w6">
+        <di:waypoint x="338" y="170"/>
+        <di:waypoint x="410" y="170"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1bnjpji_di" bpmnElement="Flow_1bnjpji">
+        <di:waypoint x="248" y="170"/>
+        <di:waypoint x="302" y="170"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0uq8mnq_di" bpmnElement="Flow_0uq8mnq">
+        <di:waypoint x="510" y="170"/>
+        <di:waypoint x="590" y="170"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0lvwsbi_di" bpmnElement="Flow_0lvwsbi">
+        <di:waypoint x="690" y="170"/>
+        <di:waypoint x="780" y="170"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wi8p5y_di" bpmnElement="Flow_1wi8p5y">
+        <di:waypoint x="880" y="170"/>
+        <di:waypoint x="962" y="170"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="212" y="152" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0nzfq96_di" bpmnElement="Event_1uhr6qz">
+        <dc:Bounds x="302" y="152" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="278" y="195" width="85" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0nk1bie_di" bpmnElement="Activity_1uau8xz">
+        <dc:Bounds x="410" y="130" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_048kp04_di" bpmnElement="Activity_0c6sier">
+        <dc:Bounds x="590" y="130" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1jmxrjn_di" bpmnElement="Activity_0istc67">
+        <dc:Bounds x="780" y="130" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0yzs5hf_di" bpmnElement="Event_12au2sl">
+        <dc:Bounds x="962" y="152" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="947" y="195" width="67" height="27"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_159585x_di" bpmnElement="Activity_1k2kjs1">
+        <dc:Bounds x="1100" y="130" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0fzxusd_di" bpmnElement="Event_0fzxusd">
+        <dc:Bounds x="1272" y="152" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

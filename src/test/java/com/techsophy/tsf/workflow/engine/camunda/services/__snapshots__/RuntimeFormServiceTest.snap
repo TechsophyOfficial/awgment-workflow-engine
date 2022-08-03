@@ -1,0 +1,122 @@
+com.techsophy.tsf.workflow.engine.camunda.services.RuntimeFormServiceTest.getFormTest=[
+  {
+    "components": {
+      "components": [
+        {
+          "input": true,
+          "key": "textField",
+          "label": "Text Field",
+          "tableView": true,
+          "type": "textfield"
+        },
+        {
+          "autoExpand": false,
+          "input": true,
+          "key": "textArea",
+          "label": "Text Area",
+          "tableView": true,
+          "type": "textarea"
+        },
+        {
+          "input": true,
+          "inputType": "checkbox",
+          "key": "selectBoxes",
+          "label": "Select Boxes",
+          "optionsLabelPosition": "right",
+          "tableView": false,
+          "type": "selectboxes",
+          "values": [
+            {
+              "label": "s",
+              "shortcut": "A",
+              "value": "s"
+            }
+          ]
+        },
+        {
+          "input": true,
+          "key": "email",
+          "label": "Email",
+          "tableView": true,
+          "type": "email"
+        },
+        {
+          "datePicker": {
+            "disableWeekdays": false,
+            "disableWeekends": false
+          },
+          "enableMaxDateInput": false,
+          "enableMinDateInput": false,
+          "input": true,
+          "key": "dateTime",
+          "label": "Date / Time",
+          "tableView": false,
+          "type": "datetime",
+          "widget": {
+            "allowInput": true,
+            "disableWeekdays": false,
+            "disableWeekends": false,
+            "displayInTimezone": "viewer",
+            "enableTime": true,
+            "format": "yyyy-MM-dd hh:mm a",
+            "hourIncrement": 1,
+            "locale": "en",
+            "minuteIncrement": 1,
+            "mode": "single",
+            "noCalendar": false,
+            "time_24hr": false,
+            "type": "calendar",
+            "useLocaleSettings": false
+          }
+        },
+        {
+          "delimiter": false,
+          "input": true,
+          "inputFormat": "plain",
+          "key": "number",
+          "label": "Number",
+          "mask": false,
+          "requireDecimal": false,
+          "spellcheck": true,
+          "tableView": false,
+          "type": "number"
+        },
+        {
+          "input": true,
+          "key": "phoneNumber",
+          "label": "Phone Number",
+          "tableView": true,
+          "type": "phoneNumber"
+        },
+        {
+          "input": true,
+          "key": "checkbox",
+          "label": "Checkbox",
+          "tableView": false,
+          "type": "checkbox"
+        },
+        {
+          "action": "next",
+          "input": true,
+          "key": "next",
+          "label": "next",
+          "showValidations": false,
+          "tableView": false,
+          "type": "button"
+        },
+        {
+          "disableOnInvalid": true,
+          "input": true,
+          "key": "submit",
+          "label": "Submit",
+          "tableView": false,
+          "type": "button"
+        }
+      ],
+      "display": "form"
+    },
+    "id": "FormKeyTest",
+    "name": "FormTest",
+    "version": 1
+  }
+]
