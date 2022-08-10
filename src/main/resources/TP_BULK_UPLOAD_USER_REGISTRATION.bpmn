@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:process id="Process_ygzo9i5" name="TP_BULK_UPLOAD_USER_REGISTRATION" isExecutable="true" camunda:versionTag="50">
+    <bpmn2:startEvent id="StartEvent_1">
+      <bpmn2:outgoing>Flow_1vtpmk5</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="Flow_1vtpmk5" sourceRef="StartEvent_1" targetRef="Activity_0slxwx4" />
+    <bpmn2:callActivity id="Activity_0szwhvv" name="User Registration" calledElement="Process_844844770998710300">
+      <bpmn2:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+        <camunda:in variables="all" />
+        <camunda:out variables="all" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0m4952m</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0dxir46</bpmn2:outgoing>
+    </bpmn2:callActivity>
+    <bpmn2:sequenceFlow id="Flow_0m4952m" sourceRef="Activity_0slxwx4" targetRef="Activity_0szwhvv" />
+    <bpmn2:sequenceFlow id="Flow_0dxir46" sourceRef="Activity_0szwhvv" targetRef="Activity_0f274pt" />
+    <bpmn2:endEvent id="Event_1pdgje7">
+      <bpmn2:incoming>Flow_1lvsrsb</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="Flow_1lvsrsb" sourceRef="Activity_0f274pt" targetRef="Event_1pdgje7" />
+    <bpmn2:serviceTask id="Activity_0f274pt" name="Update Success Status of record to Completed">
+      <bpmn2:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">/accounts/v1/users/bulk-upload/status</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="accept">application/json</camunda:entry>
+                <camunda:entry key="content-Type">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:inputParameter name="payload">{
+"id":${id},
+"status":"Completed"
+}</camunda:inputParameter>
+            <camunda:outputParameter name="completedResponse">${response}</camunda:outputParameter>
+            <camunda:outputParameter name="completedStatusCode">${statusCode}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>rest-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0dxir46</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1lvsrsb</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:serviceTask id="Activity_0slxwx4" name="Update Status of record to InProgress">
+      <bpmn2:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">/accounts/v1/users/bulk-upload/status</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:inputParameter name="payload">{
+"id":${id},
+"status":"InProgress"
+}</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="accept">application/json</camunda:entry>
+                <camunda:entry key="content-Type">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:outputParameter name="InProgressResponse">${response}</camunda:outputParameter>
+            <camunda:outputParameter name="InProgressStatus">${statusCode}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>rest-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_1vtpmk5</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0m4952m</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:boundaryEvent id="Event_0yyh47x" attachedToRef="Activity_0szwhvv">
+      <bpmn2:outgoing>Flow_1070npq</bpmn2:outgoing>
+      <bpmn2:errorEventDefinition id="ErrorEventDefinition_0nsqoyt" />
+    </bpmn2:boundaryEvent>
+    <bpmn2:sequenceFlow id="Flow_1070npq" sourceRef="Event_0yyh47x" targetRef="Activity_0rjpx3j" />
+    <bpmn2:endEvent id="Event_052j0bq">
+      <bpmn2:incoming>Flow_0rqaj5z</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="Flow_1rico8c" sourceRef="Activity_0rjpx3j" targetRef="Activity_19unvht" />
+    <bpmn2:serviceTask id="Activity_0rjpx3j" name="Update Status of record to Failed">
+      <bpmn2:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">/accounts/v1/users/bulk-upload/status</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Accept">application/json</camunda:entry>
+                <camunda:entry key="content-Type">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">{
+"id":${id},
+"status":"Failed"
+
+}</camunda:inputParameter>
+            <camunda:outputParameter name="failedResponse">${response}</camunda:outputParameter>
+            <camunda:outputParameter name="failedStatus">${statusCode}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>rest-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_1070npq</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1rico8c</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:sequenceFlow id="Flow_0rqaj5z" sourceRef="Activity_19unvht" targetRef="Event_052j0bq" />
+    <bpmn2:serviceTask id="Activity_19unvht" name="Email notification">
+      <bpmn2:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">/notification/v1/graphql</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Accept">application/json</camunda:entry>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">{
+    "operationName": "SEND_EMAIL",
+    "variables": {
+        "mailMessage": {
+            "templateId": "613240ec7c89f42e1d01a379",
+            "to": "${userRegistrationFailureEmailTo}",
+            "from": "no-reply@techsophy.com",
+            "subject": "${userRegistrationFailureEmailSubject}",
+            "data": {
+                          "emailFirstName":"admin",
+                         "userName":${userName}
+                        },
+           "attachments": [],
+            "businessKey": ""
+        }
+    },
+    "query": "mutation SEND_EMAIL($mailMessage: MailMessage!) {\n  sendMail(input: $mailMessage)\n}\n"
+}</camunda:inputParameter>
+            <camunda:outputParameter name="FailedResponse">${response}</camunda:outputParameter>
+            <camunda:outputParameter name="registrationStatus">${statusCode}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>rest-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_1rico8c</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0rqaj5z</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+  </bpmn2:process>
+  <bpmn2:error id="Error_0wb7k4j" name="User Creation Failed" errorCode="500" camunda:errorMessage="User Creation Failed" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_ygzo9i5">
+      <bpmndi:BPMNEdge id="Flow_0rqaj5z_di" bpmnElement="Flow_0rqaj5z">
+        <di:waypoint x="900" y="340" />
+        <di:waypoint x="1605" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1rico8c_di" bpmnElement="Flow_1rico8c">
+        <di:waypoint x="620" y="340" />
+        <di:waypoint x="800" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1070npq_di" bpmnElement="Flow_1070npq">
+        <di:waypoint x="370" y="228" />
+        <di:waypoint x="370" y="340" />
+        <di:waypoint x="520" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1lvsrsb_di" bpmnElement="Flow_1lvsrsb">
+        <di:waypoint x="570" y="170" />
+        <di:waypoint x="772" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0dxir46_di" bpmnElement="Flow_0dxir46">
+        <di:waypoint x="370" y="170" />
+        <di:waypoint x="470" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0m4952m_di" bpmnElement="Flow_0m4952m">
+        <di:waypoint x="-30" y="170" />
+        <di:waypoint x="270" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1vtpmk5_di" bpmnElement="Flow_1vtpmk5">
+        <di:waypoint x="-322" y="170" />
+        <di:waypoint x="-130" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="-358" y="152" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1qogxvh_di" bpmnElement="Activity_0szwhvv">
+        <dc:Bounds x="270" y="130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1pdgje7_di" bpmnElement="Event_1pdgje7">
+        <dc:Bounds x="772" y="152" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_06cjmev_di" bpmnElement="Activity_0f274pt">
+        <dc:Bounds x="470" y="130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1rbs621_di" bpmnElement="Activity_0slxwx4">
+        <dc:Bounds x="-130" y="130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_052j0bq_di" bpmnElement="Event_052j0bq">
+        <dc:Bounds x="1602" y="312" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1rog9dr_di" bpmnElement="Activity_0rjpx3j">
+        <dc:Bounds x="520" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ku3pcy_di" bpmnElement="Activity_19unvht">
+        <dc:Bounds x="800" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1oes3ij_di" bpmnElement="Event_0yyh47x">
+        <dc:Bounds x="352" y="192" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>
