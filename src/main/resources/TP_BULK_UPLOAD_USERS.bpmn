@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:process id="Process_i8koxaq1" name="TP_BULK_UPLOAD_USERS" isExecutable="true" camunda:versionTag="1">
+    <bpmn2:startEvent id="StartEvent_1" camunda:asyncBefore="true" camunda:exclusive="false">
+      <bpmn2:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="javascript">execution.setVariable("page",1);</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:outgoing>Flow_1vtpmk5</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="Flow_1vtpmk5" sourceRef="StartEvent_1" targetRef="Activity_1tiivsj" />
+    <bpmn2:endEvent id="Event_0cfmkl1">
+      <bpmn2:incoming>Flow_1y010e7</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="Flow_1p2n9iz" sourceRef="Activity_0us8g7u" targetRef="Gateway_1coy2ac" />
+    <bpmn2:callActivity id="Activity_0us8g7u" name="User Registration" calledElement="Process_ygzo9i5">
+      <bpmn2:extensionElements>
+        <camunda:in variables="all" />
+        <camunda:in source="action" target="action" />
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="javascript">execution.setVariable("action","add");</camunda:script>
+        </camunda:executionListener>
+        <camunda:in sourceExpression="${S(user).prop(&#34;userData&#34;)}" target="userData" />
+        <camunda:in sourceExpression="${S(user).prop(&#34;id&#34;)}" target="id" />
+        <camunda:in source="${S(user).prop(&#34;userData&#34;).prop(&#34;userName&#34;)}" target="userName" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_1vejdfh</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1p2n9iz</bpmn2:outgoing>
+      <bpmn2:multiInstanceLoopCharacteristics camunda:asyncBefore="true" camunda:collection="${S(users).prop(&#34;data&#34;).prop(&#34;content&#34;).elements()}" camunda:elementVariable="user" />
+    </bpmn2:callActivity>
+    <bpmn2:sequenceFlow id="Flow_1vejdfh" sourceRef="Activity_1tiivsj" targetRef="Activity_0us8g7u" />
+    <bpmn2:serviceTask id="Activity_1tiivsj" name="getAllUsersBy DocumentId">
+      <bpmn2:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Accept">application/json</camunda:entry>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="url">
+              <camunda:script scriptFormat="javascript">var deploymentId=execution.getVariable("documentId");
+var url="/accounts/v1/users/bulk-upload?page="+execution.getVariable("page")+"&amp;size=2&amp;filter-column=documentId&amp;filter-value="+documentId;
+execution.setVariable("url",url);
+url;</camunda:script>
+            </camunda:inputParameter>
+            <camunda:outputParameter name="users">${response}</camunda:outputParameter>
+            <camunda:outputParameter name="getStatusCode">${statusCode}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>rest-connector</camunda:connectorId>
+        </camunda:connector>
+        <camunda:properties />
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="javascript">var totalPages=S(execution.getVariable("users")).prop("data").prop("totalPages").value();
+execution.setVariable("totalPages",parseInt(totalPages));
+var page=S(execution.getVariable("users")).prop("data").prop("page").value();
+execution.setVariable("page",parseInt(page)+1);
+</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_1vtpmk5</bpmn2:incoming>
+      <bpmn2:incoming>Flow_0kau8i4</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1vejdfh</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:exclusiveGateway id="Gateway_1coy2ac" name="More Pages?">
+      <bpmn2:incoming>Flow_1p2n9iz</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1y010e7</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_0kau8i4</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="Flow_1y010e7" name="No" sourceRef="Gateway_1coy2ac" targetRef="Event_0cfmkl1">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression">${page&gt;totalPages}</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_0kau8i4" name="Yes" sourceRef="Gateway_1coy2ac" targetRef="Activity_1tiivsj">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression">${page&lt;=totalPages}</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_i8koxaq1">
+      <bpmndi:BPMNEdge id="Flow_0kau8i4_di" bpmnElement="Flow_0kau8i4">
+        <di:waypoint x="1020" y="195" />
+        <di:waypoint x="1020" y="280" />
+        <di:waypoint x="480" y="280" />
+        <di:waypoint x="480" y="210" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="992" y="200" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1y010e7_di" bpmnElement="Flow_1y010e7">
+        <di:waypoint x="1045" y="170" />
+        <di:waypoint x="1332" y="170" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1094" y="152" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1vejdfh_di" bpmnElement="Flow_1vejdfh">
+        <di:waypoint x="530" y="170" />
+        <di:waypoint x="710" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1p2n9iz_di" bpmnElement="Flow_1p2n9iz">
+        <di:waypoint x="810" y="170" />
+        <di:waypoint x="995" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1vtpmk5_di" bpmnElement="Flow_1vtpmk5">
+        <di:waypoint x="218" y="170" />
+        <di:waypoint x="430" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="182" y="152" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0cfmkl1_di" bpmnElement="Event_0cfmkl1">
+        <dc:Bounds x="1332" y="152" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1o94dts_di" bpmnElement="Activity_0us8g7u">
+        <dc:Bounds x="710" y="130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_074r4jn_di" bpmnElement="Activity_1tiivsj">
+        <dc:Bounds x="430" y="130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1coy2ac_di" bpmnElement="Gateway_1coy2ac" isMarkerVisible="true">
+        <dc:Bounds x="995" y="145" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="987" y="115" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>
