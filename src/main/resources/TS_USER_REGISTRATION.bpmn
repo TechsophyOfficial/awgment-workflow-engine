@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
-  <bpmn2:process id="Process_844844770998710300" name="User Registration" isExecutable="true" camunda:versionTag="1">
+  <bpmn2:process id="Process_844844770998710300" name="User Registration" isExecutable="true" camunda:versionTag="300">
     <bpmn2:extensionElements>
       <camunda:executionListener event="start">
         <camunda:script scriptFormat="javascript">execution.setVariable("processSuccess","true");</camunda:script>
@@ -69,7 +69,7 @@ execution.setVariable("userData",JSON.stringify(JSON.parse(S(execution.getVariab
       <bpmn2:outgoing>Flow_09qccn7</bpmn2:outgoing>
     </bpmn2:serviceTask>
     <bpmn2:endEvent id="Event_039p9x6">
-      <bpmn2:incoming>Flow_1v09efv</bpmn2:incoming>
+      <bpmn2:incoming>Flow_0d55l7l</bpmn2:incoming>
     </bpmn2:endEvent>
     <bpmn2:exclusiveGateway id="Gateway_0myh6p2">
       <bpmn2:incoming>Flow_14fcosv</bpmn2:incoming>
@@ -192,77 +192,6 @@ a;</camunda:script>
       <bpmn2:outgoing>Flow_01uzyip</bpmn2:outgoing>
     </bpmn2:serviceTask>
     <bpmn2:sequenceFlow id="Flow_0inu3j3" sourceRef="Activity_0tfnelv" targetRef="Activity_08on98q" />
-    <bpmn2:sequenceFlow id="Flow_1v09efv" sourceRef="Activity_1ucn9l5" targetRef="Event_039p9x6" />
-    <bpmn2:serviceTask id="Activity_1ucn9l5" name="notification template for user Reg">
-      <bpmn2:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">/notification/v1/graphql</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="Accept">application/json</camunda:entry>
-                <camunda:entry key="Content-Type">application/json</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">{
-    "operationName": "SEND_EMAIL",
-    "variables": {
-        "mailMessage": {
-            "templateId": "61cd6a8d9ad2306ff910fad0",
-            "to": "${to}",
-            "from": "${from}",
-            "subject": "${subject}",
-            "data": {       "emailFirstName":"${emailFirstName}",
- "emailUserName":"${emailUserName}",
- "emailPassword":"${emailPassword}",
-  "tenant": "techsophy-platform",
-  "loginLink":"${loginLink}"
-                        },
-                   "attachments": [],
-                    "businessKey": ""
-        }
-    },
-    "query": "mutation SEND_EMAIL($mailMessage: MailMessage!) {\n  sendMail(input: $mailMessage)\n}\n"
-}</camunda:inputParameter>
-            <camunda:outputParameter name="userRegNotificationResponse">${response}</camunda:outputParameter>
-            <camunda:outputParameter name="userRegNotificationStatus">${statusCode}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>rest-connector</camunda:connectorId>
-        </camunda:connector>
-        <camunda:executionListener event="start">
-          <camunda:script scriptFormat="javascript">var emailFirstName=S(execution.getVariable("userData")).prop("firstName").value();
-var to=S(execution.getVariable("userData")).prop("emailId").value();
-var emailUserName=S(execution.getVariable("userData")).prop("userName").value();
-var emailPassword=S(execution.getVariable("keycloakResponse")).prop("data").prop("password").value();
-
-
-
-
-var
-from=S(execution.getVariable("propertiesResponse")).prop("data").elements().get(0).prop("value").value();
-var
-subject=S(execution.getVariable("propertiesResponse")).prop("data").elements().get(1).prop("value").value();
-var
-loginLink=S(execution.getVariable("propertiesResponse")).prop("data").elements().get(2).prop("value").value();
-execution.setVariable("from",from);
-execution.setVariable("subject",subject);
-execution.setVariable("loginLink",loginLink);
-
-
-
-execution.setVariable("to",to);
-execution.setVariable("emailFirstName",emailFirstName);
-execution.setVariable("emailUserName",emailUserName);
-execution.setVariable("emailPassword",emailPassword);
-
-
-</camunda:script>
-        </camunda:executionListener>
-      </bpmn2:extensionElements>
-      <bpmn2:incoming>Flow_0qi3g73</bpmn2:incoming>
-      <bpmn2:outgoing>Flow_1v09efv</bpmn2:outgoing>
-    </bpmn2:serviceTask>
     <bpmn2:sequenceFlow id="Flow_01uzyip" sourceRef="Activity_08on98q" targetRef="Gateway_1wshan2" />
     <bpmn2:exclusiveGateway id="Gateway_1wshan2">
       <bpmn2:incoming>Flow_01uzyip</bpmn2:incoming>
@@ -343,52 +272,12 @@ url;</camunda:script>
     <bpmn2:sequenceFlow id="Flow_1nu5svu" sourceRef="Activity_15i4z09" targetRef="Activity_0k096tf" />
     <bpmn2:boundaryEvent id="Event_1gjx3gz" attachedToRef="Activity_15i4z09">
       <bpmn2:outgoing>Flow_06hteqe</bpmn2:outgoing>
-      <bpmn2:errorEventDefinition id="ErrorEventDefinition_16w6nqy" />
+      <bpmn2:errorEventDefinition id="ErrorEventDefinition_16w6nqy" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
     </bpmn2:boundaryEvent>
-    <bpmn2:sequenceFlow id="Flow_06hteqe" sourceRef="Event_1gjx3gz" targetRef="Activity_1sacwx6" />
-    <bpmn2:serviceTask id="Activity_1sacwx6" name="Email Notifcation To Admin">
-      <bpmn2:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="url">/notification/v1/graphql</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="Accept">application/json</camunda:entry>
-                <camunda:entry key="Content-Type">application/json</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-            <camunda:inputParameter name="payload">{
-    "operationName": "SEND_EMAIL",
-    "variables": {
-        "mailMessage": {
-            "templateId": "613240ec7c89f42e1d01a379",
-            "to": "${userRegistrationFailureEmailTo}",
-            "from": "no-reply@techsophy.com",
-            "subject": "${userRegistrationFailureEmailSubject}",
-            "data": {
-                          "emailFirstName":"admin"
-                        },
-           "attachments": [],
-            "businessKey": ""
-        }
-    },
-    "query": "mutation SEND_EMAIL($mailMessage: MailMessage!) {\n  sendMail(input: $mailMessage)\n}\n"
-}</camunda:inputParameter>
-            <camunda:outputParameter name="FailedResponse">${response}</camunda:outputParameter>
-            <camunda:outputParameter name="FailedStatus">${statusCode}</camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>rest-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn2:extensionElements>
-      <bpmn2:incoming>Flow_06hteqe</bpmn2:incoming>
-      <bpmn2:outgoing>Flow_1iwxuwn</bpmn2:outgoing>
-    </bpmn2:serviceTask>
+    <bpmn2:sequenceFlow id="Flow_06hteqe" sourceRef="Event_1gjx3gz" targetRef="Event_10rgdst" />
     <bpmn2:endEvent id="Event_10rgdst">
-      <bpmn2:incoming>Flow_1iwxuwn</bpmn2:incoming>
+      <bpmn2:incoming>Flow_06hteqe</bpmn2:incoming>
     </bpmn2:endEvent>
-    <bpmn2:sequenceFlow id="Flow_1iwxuwn" sourceRef="Activity_1sacwx6" targetRef="Event_10rgdst" />
-    <bpmn2:sequenceFlow id="Flow_0qi3g73" sourceRef="Activity_17q06qm" targetRef="Activity_1ucn9l5" />
     <bpmn2:serviceTask id="Activity_17q06qm" name="GetAllProperties">
       <bpmn2:extensionElements>
         <camunda:connector>
@@ -408,16 +297,21 @@ url;</camunda:script>
         </camunda:connector>
       </bpmn2:extensionElements>
       <bpmn2:incoming>Flow_0fgayd3</bpmn2:incoming>
-      <bpmn2:outgoing>Flow_0qi3g73</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_0d55l7l</bpmn2:outgoing>
     </bpmn2:serviceTask>
     <bpmn2:sequenceFlow id="Flow_14fcosv" sourceRef="StartEvent_1" targetRef="Gateway_0myh6p2" />
     <bpmn2:sequenceFlow id="Flow_0svitkg" sourceRef="Event_012cmfz" targetRef="Event_0nukxw5" />
+    <bpmn2:sequenceFlow id="Flow_0d55l7l" sourceRef="Activity_17q06qm" targetRef="Event_039p9x6" />
   </bpmn2:process>
   <bpmn2:error id="Error_05xty9z" name="Duplicate Record Exists" errorCode="${errorCode}" camunda:errorMessage="${errorMessage}" />
   <bpmn2:error id="Error_01cwypk" />
   <bpmn2:error id="Error_14zhvl0" name="ERROR" errorCode="${errorCode}" camunda:errorMessage="${errorMessage}" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_844844770998710300">
+      <bpmndi:BPMNEdge id="Flow_0d55l7l_di" bpmnElement="Flow_0d55l7l">
+        <di:waypoint x="390" y="160" />
+        <di:waypoint x="1002" y="160" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0svitkg_di" bpmnElement="Flow_0svitkg">
         <di:waypoint x="-1190" y="102" />
         <di:waypoint x="-1190" y="-110" />
@@ -427,18 +321,10 @@ url;</camunda:script>
         <di:waypoint x="-1712" y="160" />
         <di:waypoint x="-1515" y="160" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0qi3g73_di" bpmnElement="Flow_0qi3g73">
-        <di:waypoint x="510" y="160" />
-        <di:waypoint x="680" y="160" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1iwxuwn_di" bpmnElement="Flow_1iwxuwn">
-        <di:waypoint x="-10" y="420" />
-        <di:waypoint x="92" y="420" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_06hteqe_di" bpmnElement="Flow_06hteqe">
         <di:waypoint x="-310" y="358" />
         <di:waypoint x="-310" y="420" />
-        <di:waypoint x="-110" y="420" />
+        <di:waypoint x="92" y="420" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1nu5svu_di" bpmnElement="Flow_1nu5svu">
         <di:waypoint x="-410" y="300" />
@@ -447,9 +333,9 @@ url;</camunda:script>
         <di:waypoint x="-680" y="370" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1n32xw7_di" bpmnElement="Flow_1n32xw7">
-        <di:waypoint x="-50" y="102" />
-        <di:waypoint x="-50" y="60" />
-        <di:waypoint x="-320" y="60" />
+        <di:waypoint x="-180" y="102" />
+        <di:waypoint x="-180" y="82" />
+        <di:waypoint x="-320" y="82" />
         <di:waypoint x="-320" y="260" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0kfqlpg_di" bpmnElement="Flow_0kfqlpg">
@@ -460,8 +346,8 @@ url;</camunda:script>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0d0ib2i_di" bpmnElement="Flow_0d0ib2i">
         <di:waypoint x="-900" y="102" />
-        <di:waypoint x="-900" y="60" />
-        <di:waypoint x="-700" y="60" />
+        <di:waypoint x="-900" y="82" />
+        <di:waypoint x="-700" y="82" />
         <di:waypoint x="-700" y="310" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_00behau_di" bpmnElement="Flow_00behau">
@@ -474,37 +360,33 @@ url;</camunda:script>
         <di:waypoint x="-980" y="160" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1k5bdjs_di" bpmnElement="Flow_1k5bdjs">
-        <di:waypoint x="190" y="185" />
-        <di:waypoint x="190" y="270" />
-        <di:waypoint x="232" y="270" />
+        <di:waypoint x="10" y="185" />
+        <di:waypoint x="10" y="350" />
+        <di:waypoint x="62" y="350" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0fgayd3_di" bpmnElement="Flow_0fgayd3">
-        <di:waypoint x="215" y="160" />
-        <di:waypoint x="410" y="160" />
+        <di:waypoint x="35" y="160" />
+        <di:waypoint x="290" y="160" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_01uzyip_di" bpmnElement="Flow_01uzyip">
-        <di:waypoint x="-50" y="160" />
-        <di:waypoint x="165" y="160" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1v09efv_di" bpmnElement="Flow_1v09efv">
-        <di:waypoint x="780" y="160" />
-        <di:waypoint x="932" y="160" />
+        <di:waypoint x="-180" y="160" />
+        <di:waypoint x="-15" y="160" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0inu3j3_di" bpmnElement="Flow_0inu3j3">
         <di:waypoint x="-500" y="160" />
-        <di:waypoint x="-150" y="160" />
+        <di:waypoint x="-280" y="160" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_15bgksq_di" bpmnElement="Flow_15bgksq">
         <di:waypoint x="-780" y="340" />
         <di:waypoint x="-912" y="340" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1mr3chn_di" bpmnElement="Flow_1mr3chn">
-        <di:waypoint x="-1440" y="330" />
-        <di:waypoint x="-1208" y="330" />
+        <di:waypoint x="-1430" y="400" />
+        <di:waypoint x="-1178" y="400" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0sovbri_di" bpmnElement="Flow_0sovbri">
         <di:waypoint x="-1490" y="185" />
-        <di:waypoint x="-1490" y="290" />
+        <di:waypoint x="-1490" y="360" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0sonr3y_di" bpmnElement="Flow_0sonr3y">
         <di:waypoint x="-1465" y="160" />
@@ -524,16 +406,16 @@ url;</camunda:script>
         <dc:Bounds x="-1290" y="120" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_039p9x6_di" bpmnElement="Event_039p9x6">
-        <dc:Bounds x="932" y="142" width="36" height="36" />
+        <dc:Bounds x="1002" y="142" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0myh6p2_di" bpmnElement="Gateway_0myh6p2" isMarkerVisible="true">
         <dc:Bounds x="-1515" y="135" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_04od4i4_di" bpmnElement="Activity_1fjrvtx">
-        <dc:Bounds x="-1540" y="290" width="100" height="80" />
+        <dc:Bounds x="-1530" y="360" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_18npb45_di" bpmnElement="Event_18npb45">
-        <dc:Bounds x="-1208" y="312" width="36" height="36" />
+        <dc:Bounds x="-1178" y="382" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0acm0j9_di" bpmnElement="Activity_0k096tf">
         <dc:Bounds x="-780" y="310" width="100" height="80" />
@@ -542,16 +424,13 @@ url;</camunda:script>
         <dc:Bounds x="-600" y="120" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_086zc71_di" bpmnElement="Activity_08on98q">
-        <dc:Bounds x="-150" y="120" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1cwr3ua_di" bpmnElement="Activity_1ucn9l5">
-        <dc:Bounds x="680" y="120" width="100" height="80" />
+        <dc:Bounds x="-280" y="120" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1wshan2_di" bpmnElement="Gateway_1wshan2" isMarkerVisible="true">
-        <dc:Bounds x="165" y="135" width="50" height="50" />
+        <dc:Bounds x="-15" y="135" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_055mehc_di" bpmnElement="Event_055mehc">
-        <dc:Bounds x="232" y="252" width="36" height="36" />
+        <dc:Bounds x="62" y="332" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1wemvsu_di" bpmnElement="Event_0nukxw5">
         <dc:Bounds x="-838" y="-128" width="36" height="36" />
@@ -562,14 +441,11 @@ url;</camunda:script>
       <bpmndi:BPMNShape id="Activity_1039n2u_di" bpmnElement="Activity_15i4z09">
         <dc:Bounds x="-410" y="260" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_06kj53w_di" bpmnElement="Activity_1sacwx6">
-        <dc:Bounds x="-110" y="380" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_10rgdst_di" bpmnElement="Event_10rgdst">
         <dc:Bounds x="92" y="402" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0d7cs4p_di" bpmnElement="Activity_17q06qm">
-        <dc:Bounds x="410" y="120" width="100" height="80" />
+        <dc:Bounds x="290" y="120" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_185xhf1_di" bpmnElement="Event_1gjx3gz">
         <dc:Bounds x="-328" y="322" width="36" height="36" />
@@ -578,7 +454,7 @@ url;</camunda:script>
         <dc:Bounds x="-698" y="292" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1tvi28p_di" bpmnElement="Event_07dk4wp">
-        <dc:Bounds x="-68" y="102" width="36" height="36" />
+        <dc:Bounds x="-198" y="102" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0434opp_di" bpmnElement="Event_17swb87">
         <dc:Bounds x="-518" y="102" width="36" height="36" />
