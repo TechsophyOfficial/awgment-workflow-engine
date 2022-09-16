@@ -39,7 +39,6 @@ public class DMSWrapperServiceImpl implements DMSWrapperService
         WebClient webClient = webClientWrapper.createWebClient(tokenSupplier.getToken());
         String response = webClientWrapper.webclientRequest(webClient, url, HttpMethod.POST, publishRequestModel);
         ApiResponse apiResponse = this.objectMapper.readValue(response, ApiResponse.class);
-        Map<String, Object> data= this.objectMapper.convertValue(apiResponse.getData(), Map.class);
-        return data;
+        return this.objectMapper.convertValue(apiResponse.getData(), Map.class);
     }
 }

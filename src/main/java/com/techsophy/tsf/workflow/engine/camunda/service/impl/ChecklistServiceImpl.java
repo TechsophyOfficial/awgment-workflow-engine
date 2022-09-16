@@ -40,8 +40,7 @@ public class ChecklistServiceImpl implements ChecklistService
                 BUSINESS_KEY, businessKey,
                 DATA, data));
         ApiResponse apiResponse = this.objectMapper.readValue(response, ApiResponse.class);
-        InvokeChecklistInstanceResponseModel checklistInstanceResponseModel = this.objectMapper.convertValue(apiResponse.getData(), InvokeChecklistInstanceResponseModel.class);
-        return checklistInstanceResponseModel;
+        return this.objectMapper.convertValue(apiResponse.getData(), InvokeChecklistInstanceResponseModel.class);
     }
 
     @Override
@@ -54,8 +53,7 @@ public class ChecklistServiceImpl implements ChecklistService
         WebClient webClient = webClientWrapper.createWebClient(tokenSupplier.getToken());
         String response = webClientWrapper.webclientRequest(webClient, url, HttpMethod.GET, null);
         ApiResponse apiResponse = this.objectMapper.readValue(response, ApiResponse.class);
-        List<ChecklistItemInstanceResponseModel> itemInstances = this.objectMapper.convertValue(apiResponse.getData(), new TypeReference<>() {});
-        return itemInstances;
+        return this.objectMapper.convertValue(apiResponse.getData(), new TypeReference<>() {});
     }
 
     @Override

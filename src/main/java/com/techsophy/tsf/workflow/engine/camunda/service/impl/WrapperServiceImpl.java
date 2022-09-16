@@ -15,7 +15,6 @@ import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.history.HistoricTaskInstance;
 import org.camunda.bpm.engine.history.HistoricVariableInstance;
-import org.camunda.bpm.engine.history.HistoricVariableInstanceQuery;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.model.bpmn.BpmnModelInstance;
@@ -83,45 +82,12 @@ public class WrapperServiceImpl implements WrapperService {
         ResponseEntity<byte[]> response;
         if (DMS.equals(appName)) {
             String fileName = params.getFirst(FORM);
-            String businessKey;
             LinkedMultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
             if (HttpMethod.POST.equals(request.getMethod())) {
-
-                if (params.containsKey(DOCUMENT_PATH)) {
-                    body.add(DOCUMENT_PATH, params.getFirst(DOCUMENT_PATH));
-                } else if (params.containsKey(PROCESS_INSTANCE_ID)) {
-                    ProcessInstance processInstance =
-                            runtimeService.createProcessInstanceQuery().processInstanceId(params.getFirst(PROCESS_INSTANCE_ID)).active().singleResult();
-                    log.info("process instance {}", processInstance);
-                    if (processInstance != null) {
-                        businessKey = processInstance.getBusinessKey();
-                        body.add(DOCUMENT_PATH, businessKey);
-                    }
-                }
-                restParams.add(DOCUMENT_TYPE_ID, params.getFirst(DOCUMENT_TYPE_ID));
-                body.addAll((MultiValueMap<String, Object>) request.getBody());
-                if (params.containsKey(NAME)) {
-                    body.add(DOCUMENT_NAME, removeGUIDFromFilename(String.valueOf(params.getFirst(NAME))));
-                }
-
-
-                log.info("Body from the wrapper api {}", body);
-            } else if (HttpMethod.GET.equals(request.getMethod())) {
-
-                if (!StringUtils.isBlank(fileName) && !StringUtils.isEmpty(fileName)) {
-                    if (params.containsKey(DOCUMENT_PATH)) {
-                        restParams.add(DOCUMENT_PATH, params.getFirst(DOCUMENT_PATH));
-                    } else if (params.containsKey(PROCESS_INSTANCE_ID)) {
-                        ProcessInstance processInstance =
-                                runtimeService.createProcessInstanceQuery().processInstanceId(params.getFirst(PROCESS_INSTANCE_ID)).active().singleResult();
-                        log.info("process instance {}", processInstance);
-                        if (processInstance != null) {
-                            businessKey = processInstance.getBusinessKey();
-                            restParams.add(DOCUMENT_PATH, businessKey);
-                        }
-                    }
-                    restParams.set(FORM, removeGUIDFromFilename(fileName));
-                }
+                body.addAll(addBody(params, restParams, request));
+            } else if (HttpMethod.GET.equals(request.getMethod()) && !StringUtils.isBlank(fileName) && !StringUtils.isEmpty(fileName)) {
+                addRestParams(params);
+                restParams.set(FORM, removeGUIDFromFilename(fileName));
             }
 
             log.info("Request params from the wrapper api {}", restParams);
@@ -408,11 +374,11 @@ public class WrapperServiceImpl implements WrapperService {
         String taskId = historicTaskInstance.getId();
         HistoricVariableInstance historicVariableInstance = historyService.createHistoricVariableInstanceQuery().taskIdIn(taskId).variableName(CHECKLIST_INSTANCE_ID).singleResult();
         String checklistInstanceId =  (historicVariableInstance==null) ? null : historicVariableInstance.getValue().toString();
-        System.out.println("InstanceId :"+checklistInstanceId);
+        log.info("InstanceId :"+checklistInstanceId);
 
         HistoricVariableInstance historicVariableInstanceForDocument = historyService.createHistoricVariableInstanceQuery().taskIdIn(taskId).variableName(DOCUMENT_ID).singleResult();
         String documentId =  (historicVariableInstanceForDocument==null) ? null : historicVariableInstanceForDocument.getValue().toString();
-        System.out.println("documentId :"+documentId);
+        log.info("documentId :"+documentId);
 
         camundaProperties.stream().forEach(prop -> extensions.put(prop.getCamundaName(), prop.getCamundaValue()));
         if (formKey!= null && extensions.containsKey(TYPE) && extensions.get(TYPE).equals(COMPONENT)
@@ -471,5 +437,41 @@ public class WrapperServiceImpl implements WrapperService {
             }
         }
         return historicInstanceDTO;
+    }
+
+    private LinkedMultiValueMap<String, Object> addBody(MultiValueMap<String, String> params, LinkedMultiValueMap<String, String> restParams, RequestEntity<?> request){
+        LinkedMultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        if (params.containsKey(DOCUMENT_PATH)) {
+            body.add(DOCUMENT_PATH, params.getFirst(DOCUMENT_PATH));
+        } else if (params.containsKey(PROCESS_INSTANCE_ID)) {
+            ProcessInstance processInstance =
+                    runtimeService.createProcessInstanceQuery().processInstanceId(params.getFirst(PROCESS_INSTANCE_ID)).active().singleResult();
+            log.info("process instance {}", processInstance);
+            if (processInstance != null) {
+                body.add(DOCUMENT_PATH, processInstance.getBusinessKey());
+            }
+        }
+        restParams.add(DOCUMENT_TYPE_ID, params.getFirst(DOCUMENT_TYPE_ID));
+        body.addAll((MultiValueMap<String, Object>) request.getBody());
+        if (params.containsKey(NAME)) {
+            body.add(DOCUMENT_NAME, removeGUIDFromFilename(String.valueOf(params.getFirst(NAME))));
+        }
+        log.info("Body from the wrapper api {}", body);
+        return body;
+    }
+
+    private LinkedMultiValueMap<String, String> addRestParams(MultiValueMap<String, String> params){
+        LinkedMultiValueMap<String, String> restParams = new LinkedMultiValueMap<>();
+        if (params.containsKey(DOCUMENT_PATH)) {
+            restParams.add(DOCUMENT_PATH, params.getFirst(DOCUMENT_PATH));
+        } else if (params.containsKey(PROCESS_INSTANCE_ID)) {
+            ProcessInstance processInstance =
+                    runtimeService.createProcessInstanceQuery().processInstanceId(params.getFirst(PROCESS_INSTANCE_ID)).active().singleResult();
+            log.info("process instance {}", processInstance);
+            if (processInstance != null) {
+                restParams.add(DOCUMENT_PATH, processInstance.getBusinessKey());
+            }
+        }
+        return restParams;
     }
 }

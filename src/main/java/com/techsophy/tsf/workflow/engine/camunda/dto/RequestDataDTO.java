@@ -1,7 +1,6 @@
 package com.techsophy.tsf.workflow.engine.camunda.dto;
 
 import lombok.Value;
-import org.springframework.util.MultiValueMap;
 
 import javax.validation.constraints.NotBlank;
 

@@ -5,8 +5,8 @@ package com.techsophy.tsf.workflow.engine.camunda.exception;
  */
 public class TaskNotFoundException extends RuntimeException
 {
-    String errorcode;
-    String message;
+    final String errorcode;
+    final String message;
     public TaskNotFoundException(String errorcode,String message)
     {
         super(message);

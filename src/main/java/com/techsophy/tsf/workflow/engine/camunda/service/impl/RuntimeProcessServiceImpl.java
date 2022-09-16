@@ -254,13 +254,15 @@ public class RuntimeProcessServiceImpl implements RuntimeProcessService {
             }
 
         } else if (reqDto.getBusinessKey() != null) {
-            List<ProcessInstance> instanceObj =
-                    runtimeService.createProcessInstanceQuery().processInstanceBusinessKey(reqDto.getBusinessKey()).active().unlimitedList();
+            List<ProcessInstance> instanceObj;
+
+            instanceObj = runtimeService.createProcessInstanceQuery().processInstanceBusinessKey(reqDto.getBusinessKey()).active().unlimitedList();
             if (instanceObj.size() > 1) {
 
                 throw new ProcessException(MORE_THAN_ONE_PROCESS_FOUND_FOR_BUSINESSKEY, globalMessageSource.get(MORE_THAN_ONE_PROCESS_FOUND_FOR_BUSINESSKEY));
             }
-            if (instanceObj != null) {
+            if (instanceObj != null)
+            {
                 runtimeService.createMessageCorrelation(reqDto.getMessage())
                         .processInstanceBusinessKey(reqDto.getBusinessKey()).setVariables(reqDto.getVariables())
                         .correlate();
