@@ -108,7 +108,7 @@ public class RuntimeProcessServiceImpl implements RuntimeProcessService {
             if (subTasks == null || subTasks.isEmpty()) {
                     taskComplete(taskDTO);
                 } else {
-                    throw new RuntimeException(globalMessageSource.get(SUB_TASKS_COMPLETE_EXCEPTION));
+                    throw new IllegalArgumentException(globalMessageSource.get(SUB_TASKS_COMPLETE_EXCEPTION));
                 }
         }
     }
@@ -147,7 +147,7 @@ public class RuntimeProcessServiceImpl implements RuntimeProcessService {
         Map<String, Object> variables = historyService.createHistoricVariableInstanceQuery().processInstanceId(processInstance.getId()).list().stream().collect(Collectors.toMap(HistoricVariableInstance::getName, HistoricVariableInstance::getValue));
         if (variables.containsKey(ERROR_CODE) || variables.containsKey(ERROR_MESSAGE))
         {
-            throw new RuntimeException(variables.get(ERROR_MESSAGE).toString());
+            throw new IllegalArgumentException(variables.get(ERROR_MESSAGE).toString());
         }
         return new ProcessInstanceResponseDTO(processInstance.getProcessInstanceId(), processInstance.getBusinessKey(), variables, false);
     }
@@ -327,7 +327,7 @@ public class RuntimeProcessServiceImpl implements RuntimeProcessService {
         } else if (taskDTO.getBusinessKey() != null) {
             task = Optional.ofNullable(this.taskService.createTaskQuery().processInstanceBusinessKey(taskDTO.getBusinessKey()).active().initializeFormKeys().singleResult()).orElseThrow(() -> new TaskNotFoundException(TASK_NOT_FOUND, globalMessageSource.get(TASK_NOT_FOUND + taskDTO.getBusinessKey())));
         } else {
-            throw new RuntimeException(globalMessageSource.get(PROVIDE_TASK_ID_OR_BUSINESS_KEY));
+            throw new IllegalArgumentException(globalMessageSource.get(PROVIDE_TASK_ID_OR_BUSINESS_KEY));
         }
         this.taskService.complete(task.getId(), taskDTO.getVariables());
     }
@@ -343,7 +343,7 @@ public class RuntimeProcessServiceImpl implements RuntimeProcessService {
         String serialized = objectMapper.writeValueAsString(subTasks);
         List<Task> subTasksSerialized = objectMapper.readValue(serialized, List.class);
         if (subTasks.isEmpty()) {
-            throw new RuntimeException(NO_SUB_TASK_EXCEPTION);
+            throw new IllegalArgumentException(NO_SUB_TASK_EXCEPTION);
         } else {
             return subTasksSerialized;
         }
@@ -366,7 +366,7 @@ public class RuntimeProcessServiceImpl implements RuntimeProcessService {
         List<HistoricInstanceDTO> historicInstanceDTOS = new ArrayList<>();
         historicTaskInstances.stream().forEach(historicTaskInstance ->
         {
-            System.out.println("Inside Loop:"+historicTaskInstance);
+            log.info("Inside Loop:"+historicTaskInstance);
             HistoricInstanceDTO historicInstanceDTO = this.getHistoricTaskInstance(historicTaskInstance);
             try
             {

@@ -5,8 +5,8 @@ package com.techsophy.tsf.workflow.engine.camunda.exception;
  */
 public class FormNotFoundException extends RuntimeException
 {
-    String errorcode;
-    String message;
+    final String errorcode;
+    final String message;
     public FormNotFoundException(String errorcode,String message)
     {
         super(message);

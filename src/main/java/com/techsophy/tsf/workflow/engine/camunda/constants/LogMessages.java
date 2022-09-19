@@ -16,4 +16,7 @@ public class LogMessages
     public static final String CHECKLIST_INVOCATION_END = "Checklist invocation completed with checklist instance id: %s";
     public static final String DOCUMENT_GENERATION_START = "Document generation started using template id :%s";
     public static final String DOCUMENTATION_GENERATION_END = "Document generation completed with document id :%s";
+
+    private LogMessages(){}
+
 }

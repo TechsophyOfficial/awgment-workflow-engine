@@ -56,7 +56,7 @@ public class CustomEventListener
                 } catch (Exception e) {
                     String msg = globalMessageSource.get(UNABLE_TO_PARSE_CHECKLIST_ITEM_INSTANCE_ID_LIST_VARIABLE, delegateTask.getExecution().getBusinessKey());
                     log.error(msg);
-                    throw new RuntimeException(msg);
+                    throw new IllegalArgumentException(msg);
                 }
 
                 this.checklistService.completeChecklistItemsByIds(Map.of(ID_LIST, checklistItemInstanceIdList));
@@ -64,7 +64,7 @@ public class CustomEventListener
             ChecklistInstanceResponseModel checklistInstanceResponseModel = this.checklistService.getChecklistInstanceById(delegateTask.getVariable(CHECKLIST_INSTANCE_ID).toString());
             if(!checklistInstanceResponseModel.getStatus().equals(COMPLETE) && !checklistInstanceResponseModel.getStatus().equals(COMPLETE_WITH_OVERRIDE))
             {
-                throw new RuntimeException(CHECKLIST_ITEMS_INCOMPLETE_EXCEPTION);
+                throw new IllegalArgumentException(CHECKLIST_ITEMS_INCOMPLETE_EXCEPTION);
             }
         }
         log.info(String.format(COMPLETE_TASK_EVENT_END, delegateTask.getName()));
@@ -117,7 +117,7 @@ public class CustomEventListener
             }
             else
             {
-                throw new RuntimeException(globalMessageSource.get(NOT_VALID_CHECKLIST_ASSIGNEE, checklistIdOptional.get().getCamundaValue()));
+                throw new IllegalArgumentException(globalMessageSource.get(NOT_VALID_CHECKLIST_ASSIGNEE, checklistIdOptional.get().getCamundaValue()));
             }
             // Invoke the checklist
             String businessKey = delegateTask.getExecution().getBusinessKey();
@@ -127,7 +127,8 @@ public class CustomEventListener
         }
         if(isValidCamundaValue(documentTypeIdOptional))
         {
-            log.info(String.format(DOCUMENT_GENERATION_START, documentTypeIdOptional.get().getCamundaValue()));
+            if(documentTypeIdOptional.isPresent())
+                log.info(String.format(DOCUMENT_GENERATION_START, documentTypeIdOptional.get().getCamundaValue()));
             List<PropertiesModel> properties = this.appUtilService.getProperties(DOCUMENT_TYPE_AND_TEMPLATE_MAPPING);
             String templateId = getProperty(properties, documentTypeIdOptional.get().getCamundaValue(), TEMPLATE_ID_PROP);
             String documentName = getProperty(properties, documentTypeIdOptional.get().getCamundaValue(), DOCUMENT_NAME_PROP);
@@ -184,26 +185,28 @@ public class CustomEventListener
     private void executionRule(DelegateTask delegateTask, Optional<CamundaProperty> executionRuleOptional, Map<String, Object> variables)
     {
         log.info(EXECUTION_RULE_START);
-        List<Map<String, Object>> output = this.dmnService.executeDMN(executionRuleOptional.get().getCamundaValue(), variables);
-        Optional<Map<String, Object>> resultOptional = output.stream().filter(temp -> temp.containsKey(RESULT)).findFirst();
-        if(resultOptional.isPresent() && resultOptional.get().get(RESULT) != null)
-        {
-            boolean result;
-            try
+        if(!executionRuleOptional.isEmpty()){
+            List<Map<String, Object>> output = this.dmnService.executeDMN(executionRuleOptional.get().getCamundaValue(), variables);
+            Optional<Map<String, Object>> resultOptional = output.stream().filter(temp -> temp.containsKey(RESULT)).findFirst();
+            if(resultOptional.isPresent() && resultOptional.get().get(RESULT) != null)
             {
-                result = (boolean) resultOptional.get().get(RESULT);
-            }
-            catch (Exception e)
-            {
-                String msg = globalMessageSource.get(UNABLE_TO_PARSE_EXECUTION_RESULT, executionRuleOptional.get().getCamundaValue());
-                log.error(msg);
-                throw new RuntimeException(msg);
-            }
+                boolean result;
+                try
+                {
+                    result = (boolean) resultOptional.get().get(RESULT);
+                }
+                catch (Exception e)
+                {
+                    String msg = globalMessageSource.get(UNABLE_TO_PARSE_EXECUTION_RESULT, executionRuleOptional.get().getCamundaValue());
+                    log.error(msg);
+                    throw new IllegalArgumentException(msg);
+                }
 
-            if(!result)
-            {
-                delegateTask.complete();
-                return;
+                if(!result)
+                {
+                    delegateTask.complete();
+                    return;
+                }
             }
         }
         log.info(EXECUTION_RULE_END);
@@ -217,7 +220,7 @@ public class CustomEventListener
         {
             if(!(assigneeOptional.get().getCamundaValue().startsWith("${") && assigneeOptional.get().getCamundaValue().endsWith("}")))
             {
-                throw new RuntimeException(globalMessageSource.get(INVALID_VARIABLE_IN_ASSIGNEE_FIELD, delegateTask.getName()));
+                throw new IllegalArgumentException(globalMessageSource.get(INVALID_VARIABLE_IN_ASSIGNEE_FIELD, delegateTask.getName()));
             }
             String dmnOutputVariable = assigneeOptional.get().getCamundaValue().replace("${","").replace("}","");
             List<Map<String, Object>> output = this.dmnService.executeDMN(assignmentRuleOptional.get().getCamundaValue(), variables);

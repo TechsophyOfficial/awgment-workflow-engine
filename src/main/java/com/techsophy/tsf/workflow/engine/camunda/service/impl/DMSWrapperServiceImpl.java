@@ -38,7 +38,7 @@ public class DMSWrapperServiceImpl implements DMSWrapperService
                 .toUriString();
         WebClient webClient = webClientWrapper.createWebClient(tokenSupplier.getToken());
         String response = webClientWrapper.webclientRequest(webClient, url, HttpMethod.POST, publishRequestModel);
-        ApiResponse apiResponse = this.objectMapper.readValue(response, ApiResponse.class);
+        ApiResponse<?> apiResponse = this.objectMapper.readValue(response, ApiResponse.class);
         return this.objectMapper.convertValue(apiResponse.getData(), Map.class);
     }
 }

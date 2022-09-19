@@ -39,7 +39,7 @@ public class ChecklistServiceImpl implements ChecklistService
         String response = webClientWrapper.webclientRequest(webClient, url, HttpMethod.POST, Map.of(CHECKLIST_ID, checklistId,
                 BUSINESS_KEY, businessKey,
                 DATA, data));
-        ApiResponse apiResponse = this.objectMapper.readValue(response, ApiResponse.class);
+        ApiResponse<?> apiResponse = this.objectMapper.readValue(response, ApiResponse.class);
         return this.objectMapper.convertValue(apiResponse.getData(), InvokeChecklistInstanceResponseModel.class);
     }
 
@@ -52,7 +52,7 @@ public class ChecklistServiceImpl implements ChecklistService
                 .toUriString();
         WebClient webClient = webClientWrapper.createWebClient(tokenSupplier.getToken());
         String response = webClientWrapper.webclientRequest(webClient, url, HttpMethod.GET, null);
-        ApiResponse apiResponse = this.objectMapper.readValue(response, ApiResponse.class);
+        ApiResponse<?> apiResponse = this.objectMapper.readValue(response, ApiResponse.class);
         return this.objectMapper.convertValue(apiResponse.getData(), new TypeReference<>() {});
     }
 
@@ -64,7 +64,7 @@ public class ChecklistServiceImpl implements ChecklistService
                 .toUriString();
         WebClient webClient = webClientWrapper.createWebClient(tokenSupplier.getToken());
         String response = webClientWrapper.webclientRequest(webClient, url, HttpMethod.GET, null);
-        ApiResponse apiResponse = this.objectMapper.readValue(response, ApiResponse.class);
+        ApiResponse<?> apiResponse = this.objectMapper.readValue(response, ApiResponse.class);
         return this.objectMapper.convertValue(apiResponse.getData(), new TypeReference<>() {});
     }
 
@@ -76,7 +76,7 @@ public class ChecklistServiceImpl implements ChecklistService
                 .toUriString();
         WebClient webClient = webClientWrapper.createWebClient(tokenSupplier.getToken());
         String response = webClientWrapper.webclientRequest(webClient, url, HttpMethod.GET, null);
-        ApiResponse apiResponse = this.objectMapper.readValue(response, ApiResponse.class);
+        ApiResponse<?> apiResponse = this.objectMapper.readValue(response, ApiResponse.class);
         return this.objectMapper.convertValue(apiResponse.getData(), new TypeReference<>() {});
     }
 
@@ -85,6 +85,6 @@ public class ChecklistServiceImpl implements ChecklistService
     {
         String url = UriComponentsBuilder.fromHttpUrl(gatewayURI + COMPLETE_CHECKLIST_ITEMS).toUriString();
         WebClient webClient = webClientWrapper.createWebClient(tokenSupplier.getToken());
-        String response = webClientWrapper.webclientRequest(webClient, url, HttpMethod.PUT, idList);
+        webClientWrapper.webclientRequest(webClient, url, HttpMethod.PUT, idList);
     }
 }

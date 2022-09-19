@@ -30,10 +30,10 @@ public class RetryCycle implements JavaDelegate {
         doExecute(ctx);
     }
 
-    private void doExecute(DelegateExecution ctx) {
+    private static void doExecute(DelegateExecution ctx) {
         if (fail) {
             countFailed++;
-            throw new RuntimeException("ServiceA fails as expected");
+            throw new UnsupportedOperationException("ServiceA fails as expected");
         }
         countSuccess++;
     }

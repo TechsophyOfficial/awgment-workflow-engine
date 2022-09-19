@@ -38,7 +38,7 @@ public class AppUtilServiceImpl implements AppUtilService
                 .toUriString();
         WebClient webClient = webClientWrapper.createWebClient(tokenSupplier.getToken());
         String response = webClientWrapper.webclientRequest(webClient, url, HttpMethod.GET, null);
-        ApiResponse apiResponse = this.objectMapper.readValue(response, ApiResponse.class);
+        ApiResponse<?> apiResponse = this.objectMapper.readValue(response, ApiResponse.class);
         return this.objectMapper.convertValue(apiResponse.getData(), new TypeReference<List<PropertiesModel>>() {});
     }
 }
