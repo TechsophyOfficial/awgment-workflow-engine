@@ -67,11 +67,13 @@ public class WrapperServiceImpl implements WrapperService {
     private final RuntimeFormServiceImpl runtimeFormService;
 
     private final HistoryService historyService;
+    private static final String TASK_MSG =  "usertaskID: {},taskdefkey: {}";
 
     @Override
     @SneakyThrows
     public ResponseEntity<Resource> handleRequest(MultiValueMap<String, String> params, RequestEntity<?> request,
                                                   String appName) {
+        final String REST_CALL_MSG = "Rest call with uri {}";
         log.info("START: Wrapper Service layer");
 
         HttpHeaders httpHeaders = HttpHeaders.writableHttpHeaders(request.getHeaders());
@@ -94,7 +96,7 @@ public class WrapperServiceImpl implements WrapperService {
             URI finalUri =
                     UriComponentsBuilder.fromUri(new URI(this.getAppUrl(appName) + DMS_UPLOAD_FILE))
                             .queryParams(restParams).build().toUri();
-            log.info("Rest call with uri {}", finalUri);
+            log.info(REST_CALL_MSG, finalUri);
 
             response = restTemplate.exchange(new RequestEntity<>(body, httpHeaders, request.getMethod(),
                     finalUri, request.getType()), byte[].class);
@@ -116,7 +118,7 @@ public class WrapperServiceImpl implements WrapperService {
             URI finalUri =
                     UriComponentsBuilder.fromUri(new URI(this.getAppUrl(appName) + "/form-runtime/v1/form-data"))
                             .build().toUri();
-            log.info("Rest call with uri {}", finalUri);
+            log.info(REST_CALL_MSG, finalUri);
 
             response = restTemplate.exchange(new RequestEntity<>(body, httpHeaders, request.getMethod(),
                     finalUri, request.getType()), byte[].class);
@@ -142,7 +144,7 @@ public class WrapperServiceImpl implements WrapperService {
                     UriComponentsBuilder.fromUri(new URI(this.gatewayUrl + requestDataDTO.getUrl()))
                             .queryParams(restParams)
                             .build().toUri();
-            log.info("Rest call with uri {}", finalUri);
+            log.info(REST_CALL_MSG, finalUri);
             response = restTemplate.exchange(new RequestEntity<>(requestDataDTO.getPayload(), httpHeaders, method,
                     finalUri, request.getType()), byte[].class);
             HttpHeaders responseHeaders = HttpHeaders.writableHttpHeaders(response.getHeaders());
@@ -206,44 +208,19 @@ public class WrapperServiceImpl implements WrapperService {
             CmmnModelInstance cmmnModelInstance = repositoryService.getCmmnModelInstance(task.getCaseDefinitionId());
             var humanTasks = cmmnModelInstance.getModelElementsByType(PlanItem.class);
             for (PlanItem userTaskDef : humanTasks) {
-                log.info("usertaskID: {},taskdefkey: {}", userTaskDef, task.getTaskDefinitionKey());
-                if (userTaskDef.getId().equals(task.getTaskDefinitionKey())) {
-                    if (userTaskDef.getExtensionElements() == null) {
-                        return LATEST;
-                    }
-                    CamundaProperties extensionsProperty = userTaskDef.getExtensionElements()//
-                            .getElementsQuery()//
-                            .filterByType(CamundaProperties.class)//
-                            .singleResult();
-                    var camundaProperties = extensionsProperty.getCamundaProperties();
-                    for (CamundaProperty property : camundaProperties) {
-                        if (property.getCamundaName().equals(key)) {
-                            return property.getCamundaValue();
-                        }
-                    }
-                }
+                String camundaValue = getCamundaValueByPlanItem(key, userTaskDef, task);
+                if (camundaValue != null)
+                    return camundaValue;
+
             }
         } else {
             BpmnModelInstance bpmnModelInstance =
                     repositoryService.getBpmnModelInstance(task.getProcessDefinitionId());
             userTaskDefs = bpmnModelInstance.getModelElementsByType(UserTask.class);
             for (UserTask userTaskDef : userTaskDefs) {
-                log.info("usertaskID: {},taskdefkey: {}", userTaskDef, task.getTaskDefinitionKey());
-                if (userTaskDef.getId().equals(task.getTaskDefinitionKey())) {
-                    if (userTaskDef.getExtensionElements() == null) {
-                        return LATEST;
-                    }
-                    CamundaProperties extensionsProperty = userTaskDef.getExtensionElements()//
-                            .getElementsQuery()//
-                            .filterByType(CamundaProperties.class)//
-                            .singleResult();
-                    var camundaProperties = extensionsProperty.getCamundaProperties();
-                    for (CamundaProperty property : camundaProperties) {
-                        if (property.getCamundaName().equals(key)) {
-                            return property.getCamundaValue();
-                        }
-                    }
-                }
+                String camundaValue = getCamundaValueByUserTask(key, userTaskDef, task);
+                if (camundaValue != null)
+                    return camundaValue;
             }
         }
 
@@ -261,7 +238,7 @@ public class WrapperServiceImpl implements WrapperService {
         {
             return taskInstanceDTO;
         }
-            log.info("usertaskID: {},taskdefkey: {}", userTaskOptional, task.getTaskDefinitionKey());
+            log.info(TASK_MSG, userTaskOptional, task.getTaskDefinitionKey());
             ExtensionElements extensionElements = userTaskOptional.get().getExtensionElements();
             if(extensionElements == null)
             {
@@ -295,44 +272,7 @@ public class WrapperServiceImpl implements WrapperService {
                     taskInstanceDTO.setChecklistInstanceId(checklistInstanceId.toString());
                 }
                 if (components.containsKey(ACTIONS) && components.get(ACTIONS) != null && components.get(ACTIONS) instanceof List) {
-                    List<ActionsDTO> actions = this.objectMapper.convertValue(components.get(ACTIONS), new TypeReference<>() {});
-                    actions.stream().filter(action -> extensions.containsKey(action.getAction())).forEach(action ->
-                    {
-                        if(extensions.get(action.getAction()) != null)
-                        {
-                            action.setLabel(extensions.get(action.getAction()).toString());
-                        }
-                        if(action.getUrl().contains(CHECKLIST_INSTANCE_ID_VAR))
-                        {
-                            if(checklistInstanceId != null)
-                            {
-                                action.setUrl(action.getUrl().replace(CHECKLIST_INSTANCE_ID_VAR, checklistInstanceId.toString()));
-                            }
-                        }
-                        else if(action.getUrl().contains(DOCUMENT_ID_VAR))
-                        {
-                            Object documentId = taskService.getVariableLocal(task.getId(), DOCUMENT_ID);
-                            if(documentId != null)
-                            {
-                                action.setUrl(action.getUrl().replace(DOCUMENT_ID_VAR, documentId.toString()));
-                            }
-                        }
-                        else if(action.getUrl().contains(SCREEN_TYPE_ID_VAR) && extensions.containsKey(SCREEN_TYPE_ID))
-                        {
-                            action.setUrl(action.getUrl().replace(SCREEN_TYPE_ID_VAR, extensions.get(SCREEN_TYPE_ID).toString()));
-                        }
-                    });
-                    taskInstanceDTO.setActions(actions);
-                    taskInstanceDTO.setComponentId(task.getFormKey());
-                    if(extensions.containsKey(FORM_NAME) && extensions.get(FORM_NAME) != null)
-                    {
-                        taskInstanceDTO.setComponentType(extensions.get(FORM_NAME).toString());
-                    }
-                    if(extensions.containsKey(QUESTION) && extensions.get(QUESTION) != null)
-                    {
-                        taskInstanceDTO.setQuestion(extensions.get(QUESTION).toString());
-                    }
-                    return taskInstanceDTO;
+                    return setTaskInstanceDTO(taskInstanceDTO, extensions, checklistInstanceId, components, task);
                 }
             }
             return taskInstanceDTO;
@@ -341,7 +281,6 @@ public class WrapperServiceImpl implements WrapperService {
     @Override
     public HistoricInstanceDTO setExtensionElementsToHistoricTask(HistoricInstanceDTO historicInstanceDTO, HistoricTaskInstance historicTaskInstance)
     {
-//        log.info("setExtensionElementsToHistoricTask started");
         BpmnModelInstance bpmnModelInstance =
                 repositoryService.getBpmnModelInstance(historicTaskInstance.getProcessDefinitionId());
         Collection<UserTask> userTaskDefs = bpmnModelInstance.getModelElementsByType(UserTask.class);
@@ -350,7 +289,7 @@ public class WrapperServiceImpl implements WrapperService {
         {
             return historicInstanceDTO;
         }
-        log.info("usertaskID: {},taskdefkey: {}", userTaskOptional, historicTaskInstance.getTaskDefinitionKey());
+        log.info(TASK_MSG, userTaskOptional, historicTaskInstance.getTaskDefinitionKey());
         ExtensionElements extensionElements = userTaskOptional.get().getExtensionElements();
         if(extensionElements == null)
         {
@@ -396,44 +335,7 @@ public class WrapperServiceImpl implements WrapperService {
                 historicInstanceDTO.setChecklistInstanceId(checklistInstanceId);
             }
             if (components.containsKey(ACTIONS) && components.get(ACTIONS) != null && components.get(ACTIONS) instanceof List) {
-                List<ActionsDTO> actions = this.objectMapper.convertValue(components.get(ACTIONS), new TypeReference<>() {});
-                actions.stream().filter(action -> extensions.containsKey(action.getAction())).forEach(action ->
-                {
-                    if(extensions.get(action.getAction()) != null)
-                    {
-                        action.setLabel(extensions.get(action.getAction()).toString());
-                    }
-                    if(action.getUrl().contains(CHECKLIST_INSTANCE_ID_VAR))
-                    {
-                        if(checklistInstanceId != null)
-                        {
-                            action.setUrl(action.getUrl().replace(CHECKLIST_INSTANCE_ID_VAR, checklistInstanceId));
-                        }
-                    }
-                    else if(action.getUrl().contains(DOCUMENT_ID_VAR))
-                    {
-                        if(documentId != null)
-                        {
-                            action.setUrl(action.getUrl().replace(DOCUMENT_ID_VAR, documentId));
-                        }
-                    }
-                    else if(action.getUrl().contains(SCREEN_TYPE_ID_VAR) && extensions.containsKey(SCREEN_TYPE_ID))
-                    {
-                        action.setUrl(action.getUrl().replace(SCREEN_TYPE_ID_VAR, extensions.get(SCREEN_TYPE_ID).toString()));
-                    }
-                });
-                historicInstanceDTO.setActions(actions);
-                historicInstanceDTO.setComponentId(formKey);
-                if(extensions.containsKey(FORM_NAME) && extensions.get(FORM_NAME) != null)
-                {
-                    historicInstanceDTO.setComponentType(extensions.get(FORM_NAME).toString());
-                }
-                if(extensions.containsKey(QUESTION) && extensions.get(QUESTION) != null)
-                {
-                    historicInstanceDTO.setQuestion(extensions.get(QUESTION).toString());
-                }
-//                log.info("setExtensionElementsToHistoricTask is done");
-                return historicInstanceDTO;
+                return setHistoricnstanceDTO(historicInstanceDTO, components, extensions, checklistInstanceId, documentId, formKey);
             }
         }
         return historicInstanceDTO;
@@ -474,4 +376,107 @@ public class WrapperServiceImpl implements WrapperService {
         }
         return restParams;
     }
+
+    private String getCamundaValueByPlanItem(String key, PlanItem userTaskDef, Task task){
+        log.info(TASK_MSG, userTaskDef, task.getTaskDefinitionKey());
+        if (userTaskDef.getId().equals(task.getTaskDefinitionKey())) {
+            if (userTaskDef.getExtensionElements() == null) {
+                return LATEST;
+            }
+            CamundaProperties extensionsProperty = userTaskDef.getExtensionElements()//
+                    .getElementsQuery()//
+                    .filterByType(CamundaProperties.class)//
+                    .singleResult();
+            var camundaProperties = extensionsProperty.getCamundaProperties();
+            for (CamundaProperty property : camundaProperties) {
+                if (property.getCamundaName().equals(key)) {
+                    return property.getCamundaValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    private String getCamundaValueByUserTask(String key, UserTask userTaskDef, Task task){
+        log.info(TASK_MSG, userTaskDef, task.getTaskDefinitionKey());
+        if (userTaskDef.getId().equals(task.getTaskDefinitionKey())) {
+            if (userTaskDef.getExtensionElements() == null) {
+                return LATEST;
+            }
+            CamundaProperties extensionsProperty = userTaskDef.getExtensionElements()//
+                    .getElementsQuery()//
+                    .filterByType(CamundaProperties.class)//
+                    .singleResult();
+            var camundaProperties = extensionsProperty.getCamundaProperties();
+            for (CamundaProperty property : camundaProperties) {
+                if (property.getCamundaName().equals(key)) {
+                    return property.getCamundaValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    private void setAction(List<ActionsDTO> actions, Map<String, Object> extensions, Object checklistInstanceId, Object documentId){
+        actions.stream().filter(action -> extensions.containsKey(action.getAction())).forEach(action ->
+        {
+            if(extensions.get(action.getAction()) != null)
+            {
+                action.setLabel(extensions.get(action.getAction()).toString());
+            }
+            if(action.getUrl().contains(CHECKLIST_INSTANCE_ID_VAR))
+            {
+                if(checklistInstanceId != null)
+                {
+                    action.setUrl(action.getUrl().replace(CHECKLIST_INSTANCE_ID_VAR, checklistInstanceId.toString()));
+                }
+            }
+            else if(action.getUrl().contains(DOCUMENT_ID_VAR))
+            {
+                if(documentId != null)
+                {
+                    action.setUrl(action.getUrl().replace(DOCUMENT_ID_VAR, documentId.toString()));
+                }
+            }
+            else if(action.getUrl().contains(SCREEN_TYPE_ID_VAR) && extensions.containsKey(SCREEN_TYPE_ID))
+            {
+                action.setUrl(action.getUrl().replace(SCREEN_TYPE_ID_VAR, extensions.get(SCREEN_TYPE_ID).toString()));
+            }
+        });
+    }
+
+    private TaskInstanceDTO setTaskInstanceDTO(TaskInstanceDTO taskInstanceDTO, Map<String, Object> extensions, Object checklistInstanceId, Map<String, Object> components, Task task){
+        List<ActionsDTO> actions = this.objectMapper.convertValue(components.get(ACTIONS), new TypeReference<>() {});
+        Object documentId = taskService.getVariableLocal(task.getId(), DOCUMENT_ID);
+        setAction(actions, extensions, checklistInstanceId, documentId);
+        taskInstanceDTO.setActions(actions);
+        taskInstanceDTO.setComponentId(task.getFormKey());
+        if(extensions.containsKey(FORM_NAME) && extensions.get(FORM_NAME) != null)
+        {
+            taskInstanceDTO.setComponentType(extensions.get(FORM_NAME).toString());
+        }
+        if(extensions.containsKey(QUESTION) && extensions.get(QUESTION) != null)
+        {
+            taskInstanceDTO.setQuestion(extensions.get(QUESTION).toString());
+        }
+        return taskInstanceDTO;
+    }
+
+    private HistoricInstanceDTO setHistoricnstanceDTO(HistoricInstanceDTO historicInstanceDTO, Map<String, Object> components,
+                                                      Map<String, Object> extensions, String checklistInstanceId, String documentId, String formKey){
+        List<ActionsDTO> actions = this.objectMapper.convertValue(components.get(ACTIONS), new TypeReference<>() {});
+        setAction(actions, extensions, checklistInstanceId, documentId);
+        historicInstanceDTO.setActions(actions);
+        historicInstanceDTO.setComponentId(formKey);
+        if(extensions.containsKey(FORM_NAME) && extensions.get(FORM_NAME) != null)
+        {
+            historicInstanceDTO.setComponentType(extensions.get(FORM_NAME).toString());
+        }
+        if(extensions.containsKey(QUESTION) && extensions.get(QUESTION) != null)
+        {
+            historicInstanceDTO.setQuestion(extensions.get(QUESTION).toString());
+        }
+        return historicInstanceDTO;
+    }
+
 }

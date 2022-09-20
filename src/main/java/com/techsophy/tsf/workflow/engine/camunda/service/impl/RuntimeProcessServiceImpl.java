@@ -380,9 +380,6 @@ public class RuntimeProcessServiceImpl implements RuntimeProcessService {
                 throw new ProcessException(HISTORY_ERROR,e.getMessage());
             }
             log.info("getAllHistoryTask is done");
-//            ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(historicTaskInstance.getProcessInstanceId()).active().singleResult();
-//            String businessKey = processInstance == null ? null:processInstance.getBusinessKey();
-//            historicInstanceDTO.setBusinessKey(businessKey);
         });
         return new PaginationDTO<>(historicInstanceDTOS, page, size, historicInstanceDTOS.size(), historicTaskCount / size, historicTaskCount);
     }

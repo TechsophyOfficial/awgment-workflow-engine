@@ -27,7 +27,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class KeycloakAuthenticationFilterTest
+class KeycloakAuthenticationFilterTest
 {
     private final String userId = "user@test.com";
     private final String groupId = "sampleGroupId";
@@ -54,7 +54,7 @@ public class KeycloakAuthenticationFilterTest
 
     @SneakyThrows
     @Test
-    public void testFilterWithJwtAuthenticationToken()
+    void testFilterWithJwtAuthenticationToken()
     {
         Jwt jwt = OAuth2AndJwtAwareRequestFilterTest.getJwt(Map.of("preferred_username", this.userId));
 
