@@ -16,6 +16,7 @@ public class FormConstants
 
     //FormServiceConstants
     public final static String TEST_TYPE_COMPONENT ="component";
+    public static final String TEST_ACTIVE_PROFILE="test";
     public final static String TEST_TYPE_FORM ="form";
     public static final String TEST_FORMS_DATA = "testdata/form-schema1.json";
     public final static String TEST_ID_OR_NAME_LIKE ="abc";
