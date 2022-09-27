@@ -1,13 +1,22 @@
 package com.techsophy.tsf.workflow.engine.camunda.services;
 
 import com.techsophy.tsf.workflow.engine.camunda.config.TestSecurityConfig;
+import com.techsophy.tsf.workflow.engine.camunda.dto.ActionsDTO;
+import com.techsophy.tsf.workflow.engine.camunda.dto.TaskInstanceDTO;
 import com.techsophy.tsf.workflow.engine.camunda.service.impl.TokenSupplierImpl;
 import com.techsophy.tsf.workflow.engine.camunda.service.impl.WrapperServiceImpl;
+import org.camunda.bpm.engine.RepositoryService;
+import org.camunda.bpm.engine.TaskService;
+import org.camunda.bpm.engine.task.Task;
+import org.camunda.bpm.model.bpmn.BpmnModelInstance;
+import org.camunda.bpm.model.bpmn.instance.UserTask;
+import org.camunda.bpm.model.cmmn.CmmnModelInstance;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
@@ -24,9 +33,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Stream;
 
 import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -53,6 +64,27 @@ public class WrapperServiceImplTest
 
     @Value("${dms.hostUrl}")
     private String dmsUrl;
+
+    @Mock
+    RequestEntity request;
+
+    @Mock
+    Task task;
+
+    @Mock
+    TaskService taskService;
+
+    @Mock
+    RepositoryService repositoryService;
+
+    @Mock
+    CmmnModelInstance cmmnModelInstance;
+
+    @Mock
+    BpmnModelInstance bpmnModelInstance;
+
+    @Mock
+    UserTask userTask1, userTask2;
 
     @BeforeEach
     void init()
@@ -131,5 +163,31 @@ public class WrapperServiceImplTest
         MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
         responseHeaders.add("Set-Cookie", "test-cookie");
         return responseHeaders;
+    }
+
+    @Test
+    void getAppUrlTest(){
+        String response = wrapperService.getAppUrl("dms");
+        response = wrapperService.getAppUrl("");
+        Assertions.assertNotNull(response);
+    }
+
+    @Test
+    void getUserTaskExtensionByNameTest(){
+        String taskId = null;
+        String key = "key";
+        String response = wrapperService.getUserTaskExtensionByName(taskId, key);
+        response = wrapperService.getUserTaskExtensionByName(taskId, key);
+        Assertions.assertNotNull(response);
+    }
+
+    @Test
+    void setExtensionElementsToTaskTest(){
+        ActionsDTO actionsDTO = new ActionsDTO("test","test", "test","test");
+        Date date = new Date();
+        TaskInstanceDTO taskInstanceDTO = new TaskInstanceDTO("test","test", "test", date, date, date, "test","test", "test", "test","test", 5, "test","test", "test", "test","test", "test", true, "test","test", "test", "test","test", "test", "test", List.of(actionsDTO));
+        Mockito.when(repositoryService.getBpmnModelInstance(any())).thenReturn(bpmnModelInstance);
+        TaskInstanceDTO response = wrapperService.setExtensionElementsToTask(taskInstanceDTO, task);
+        Assertions.assertNotNull(response);
     }
 }

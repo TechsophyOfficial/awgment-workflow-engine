@@ -30,4 +30,7 @@ public class FormConstants
     public final static  Instant TEST_UPDATED_ON = Instant.now();
     public final static String TEST_CREATED_BY_NAME ="user1";
     public final static String TEST_UPDATED_BY_NAME ="user1";
+
+    public final static String KEY ="key";
+    public final static String ARGS ="args";
 }
