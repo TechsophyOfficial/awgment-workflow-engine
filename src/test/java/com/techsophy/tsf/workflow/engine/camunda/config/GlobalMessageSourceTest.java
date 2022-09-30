@@ -8,9 +8,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+
+import java.lang.reflect.Array;
 
 import static com.techsophy.tsf.workflow.engine.camunda.constants.FormConstants.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 
 class GlobalMessageSourceTest {
 
@@ -27,15 +30,17 @@ class GlobalMessageSourceTest {
     @Test
     void getTestSingleArgumwent() {
         Mockito.when(mockMessageSource.getMessage(any(),any(),any())).thenReturn(KEY);
-        String responseTest=mockGlobalMessageSource.get(KEY);
-        Assertions.assertNotNull(responseTest);
+        String actualOutput=mockGlobalMessageSource.get(KEY);
+        String expectedOutput = mockMessageSource.getMessage(KEY, null, LocaleContextHolder.getLocale());
+        Assertions.assertSame(expectedOutput, actualOutput);
     }
 
     @Test
     void getTestDoubleArguments()
     {
         Mockito.when(mockMessageSource.getMessage(any(),any(),any())).thenReturn(KEY);
-        String responseTest=mockGlobalMessageSource.get(KEY,ARGS);
-        Assertions.assertNotNull(responseTest);
+        String actualOutput = mockGlobalMessageSource.get(KEY,ARGS);
+        String expectedOutput = mockMessageSource.getMessage(KEY, new Object[]{ARGS}, LocaleContextHolder.getLocale());
+        Assertions.assertSame(expectedOutput, actualOutput);
     }
 }
