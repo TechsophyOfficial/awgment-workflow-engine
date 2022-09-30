@@ -1,12 +1,15 @@
 package com.techsophy.tsf.workflow.engine.camunda.exception;
 
+import lombok.Getter;
+
 /**
  * Task not found exception
  */
+@Getter
 public class TaskNotFoundException extends RuntimeException
 {
-    final String errorcode;
-    final String message;
+    private final String errorcode;
+    private final String message;
     public TaskNotFoundException(String errorcode,String message)
     {
         super(message);

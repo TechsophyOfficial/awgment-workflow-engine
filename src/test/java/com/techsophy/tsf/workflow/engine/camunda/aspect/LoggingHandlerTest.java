@@ -15,6 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static com.techsophy.tsf.workflow.engine.camunda.constants.FormConstants.TEST_ACTIVE_PROFILE;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -40,7 +41,7 @@ class LoggingHandlerTest {
         Mockito.when((joinPoint.getSignature())).thenReturn(signature);
         Mockito.when((signature.getName())).thenReturn("abc");
         loggingHandler.logAfterThrowingController(joinPoint, exception);
-        verify(logger, times(0)).error(anyString());
+        verify(joinPoint, times(1)).getSignature();
     }
 
     @Test
@@ -48,7 +49,7 @@ class LoggingHandlerTest {
         Mockito.when((joinPoint.getSignature())).thenReturn(signature);
         Mockito.when((signature.getName())).thenReturn("abc");
         loggingHandler.logAfterThrowingService(joinPoint, exception);
-        Assertions.assertTrue(true);
+        verify(joinPoint,times(1)).getSignature();
     }
 
     @Test
