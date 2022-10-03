@@ -12,7 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TaskSerializerTest {
@@ -25,6 +25,6 @@ public class TaskSerializerTest {
         JsonGenerator jsonGenerator = mock(JsonGenerator.class);
         SerializerProvider serializerProvider = mock(SerializerProvider.class);
         taskSerializer.serialize(task,jsonGenerator,serializerProvider);
-        Assertions.assertTrue(true);
+        verify(jsonGenerator, times(1)).writeStartObject();
     }
 }
