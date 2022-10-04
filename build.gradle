@@ -84,5 +84,18 @@ test {
 jacocoTestReport {
     reports {
         xml.enabled = true
+        html.enabled true
     }
 }
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.30
+            }
+        }
+
+    }
+}
+check.dependsOn jacocoTestCoverageVerification

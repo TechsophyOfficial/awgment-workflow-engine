@@ -16,7 +16,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.List;
 import java.util.Map;
 
-import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.Execute_DMN_RULES;
+import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.EXECUTE_DMN_RULES;
 import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.GATEWAY_URL;
 import static com.techsophy.tsf.workflow.engine.camunda.constants.ErrorMessageConstants.UNABLE_TO_EVALUATE;
 import static com.techsophy.tsf.workflow.engine.camunda.utils.CommonUtils.isValidString;
@@ -38,13 +38,12 @@ public class DMNServiceImpl implements DMNService
     public List<Map<String, Object>> executeDMN(String ruleId, Map<String, Object> data)
     {
         WebClient webClient = null;
-        //String token = tokenUtils.getTokenFromContext();
         String token = tokenSupplier.getToken();
         if (isValidString(token))
         {
             webClient = webClientWrapper.createWebClient(token);
         }
-        String url = gatewayApi + Execute_DMN_RULES;
+        String url = gatewayApi + EXECUTE_DMN_RULES;
         String response = webClientWrapper.webclientRequest(webClient, url, HttpMethod.POST, new RulesExecutionRequestModel(ruleId, data));
         Map<String, Object> responseData = this.objectMapper.readValue(response, Map.class);
         if(responseData.containsKey("data"))

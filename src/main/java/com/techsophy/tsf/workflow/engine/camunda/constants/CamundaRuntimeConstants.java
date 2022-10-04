@@ -49,7 +49,7 @@ public class CamundaRuntimeConstants {
 
     // rule service
     public static final String DMN_ENGINE_BASEURL = "/rules/v1";
-    public static final String Execute_DMN_RULES = DMN_ENGINE_BASEURL + "/execute-dmn";
+    public static final String EXECUTE_DMN_RULES = DMN_ENGINE_BASEURL + "/execute-dmn";
 
     // tp-app-util service
     public static final String APP_UTIL_BASEURL = "/util/v1";

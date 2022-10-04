@@ -4,7 +4,6 @@ import com.techsophy.tsf.workflow.engine.camunda.dto.*;
 import org.camunda.bpm.engine.task.Task;
 
 import java.util.List;
-import java.util.Map;
 
 public interface RuntimeProcessService
 {

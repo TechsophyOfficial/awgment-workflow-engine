@@ -30,7 +30,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
     @ExceptionHandler(FormNotFoundException.class)
     public ResponseEntity<ApiErrorResponse> handleFormException(FormNotFoundException ex, WebRequest request)
     {
-        ApiErrorResponse errorDetails = new ApiErrorResponse(Instant.now(), ex.message, ex.errorcode,
+        ApiErrorResponse errorDetails = new ApiErrorResponse(Instant.now(), ex.getMessage(), ex.getErrorcode(),
                 HttpStatus.INTERNAL_SERVER_ERROR, request.getDescription(false));
         return new ResponseEntity<>(errorDetails, INTERNAL_SERVER_ERROR);
     }
@@ -72,7 +72,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
     @ExceptionHandler(TaskNotFoundException.class)
     public ResponseEntity<ApiErrorResponse> taskNotFoundException(TaskNotFoundException ex, WebRequest request)
     {
-        ApiErrorResponse errorDetails = new ApiErrorResponse(Instant.now(), ex.message, ex.errorcode,
+        ApiErrorResponse errorDetails = new ApiErrorResponse(Instant.now(), ex.getMessage(), ex.getErrorcode(),
                 HttpStatus.INTERNAL_SERVER_ERROR, request.getDescription(false));
         return new ResponseEntity<>(errorDetails, INTERNAL_SERVER_ERROR);
     }

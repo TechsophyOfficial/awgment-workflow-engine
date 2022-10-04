@@ -24,7 +24,7 @@ public class FormComponent implements Serializable
     private final String fieldKey;
     private final String type;
     private final boolean input;
-    private final Object defaultValue;
+    private final transient Object defaultValue;
     private final String inputType;
     private final DataSchema data;
     private final DataValueSchema[] values;
@@ -32,8 +32,8 @@ public class FormComponent implements Serializable
     private final String action;
     private final String event;
     private final String provider;
-    private final Object providerOptions;
-    private final Object rows;
+    private final transient Object providerOptions;
+    private final transient Object rows;
     private final FormComponent[] components;
     private final String storage;
     private final DataValueSchema[] fileTypes;

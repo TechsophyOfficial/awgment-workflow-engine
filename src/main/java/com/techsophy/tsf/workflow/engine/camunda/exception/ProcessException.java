@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 public class ProcessException extends RuntimeException {
-    String errorcode;
-    String message;
+    private final String errorcode;
+    private final String message;
     public ProcessException(String errorcode,String message)
     {
         super(message);

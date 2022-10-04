@@ -38,7 +38,6 @@ public class HistoricInstanceDTO
     private boolean suspended;
     private String formKey;
     private String tenantId;
-//    private String businessKey;
     private String componentId;
     private String componentType;
     private String question;

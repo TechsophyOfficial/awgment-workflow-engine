@@ -40,7 +40,7 @@ public abstract class AbstractApiConnector extends AbstractHttpConnector<HttpReq
      * @param tokenSupplier
      * @param propertyProvider
      */
-    public AbstractApiConnector(String connectorId, TokenSupplier tokenSupplier, RuntimeContextPropertyProvider propertyProvider)
+    protected AbstractApiConnector(String connectorId, TokenSupplier tokenSupplier, RuntimeContextPropertyProvider propertyProvider)
     {
         super(connectorId);
         this.tokenSupplier = tokenSupplier;

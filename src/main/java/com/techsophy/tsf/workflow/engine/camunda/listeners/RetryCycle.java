@@ -16,27 +16,24 @@ public class RetryCycle implements JavaDelegate {
     @Override
     public void execute(DelegateExecution ctx) throws Exception {
         JobExecutorContext jobExecutorContext = Context.getJobExecutorContext();
-        if (jobExecutorContext!=null && jobExecutorContext.getCurrentJob()!=null) {
-            // this is called from a Job
-            if (jobExecutorContext.getCurrentJob().getRetries()<=1) {
-                // and the job will run out of retries when it fails again
-                try {
-                    doExecute(ctx);
-                } catch (Exception ex) {
-                    // Probably save the exception somewhere
-                    throw new BpmnError(NO_RETRIES_ERROR);
-                }
-                return;
+        if (jobExecutorContext!=null && jobExecutorContext.getCurrentJob()!=null && jobExecutorContext.getCurrentJob().getRetries()<=1) {
+            // this is called from a Job and the job will run out of retries when it fails again
+            try {
+                doExecute(ctx);
+            } catch (Exception ex) {
+                // Probably save the exception somewhere
+                throw new BpmnError(NO_RETRIES_ERROR);
             }
+            return;
         }
         // otherwise normal behavior (including retries possibly)
         doExecute(ctx);
     }
 
-    private void doExecute(DelegateExecution ctx) {
+    private static void doExecute(DelegateExecution ctx) {
         if (fail) {
             countFailed++;
-            throw new RuntimeException("ServiceA fails as expected");
+            throw new UnsupportedOperationException("ServiceA fails as expected");
         }
         countSuccess++;
     }

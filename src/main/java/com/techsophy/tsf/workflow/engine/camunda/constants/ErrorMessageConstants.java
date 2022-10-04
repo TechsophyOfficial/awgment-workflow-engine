@@ -27,7 +27,7 @@ public class ErrorMessageConstants {
     public static final String NOT_VALID_CHECKLIST_ASSIGNEE = "AUGMNT-WORKFLOW-ENGINE-1016";
     public static final String UNABLE_TO_PARSE_EXECUTION_RESULT = "AUGMNT-WORKFLOW-ENGINE-1017";
 
-    public static final String No_USERS_IN_GROUP = "AUGMNT-WORKFLOW-ENGINE-1018";
+    public static final String NO_USERS_IN_GROUP = "AUGMNT-WORKFLOW-ENGINE-1018";
     public static final String INVALID_VARIABLE_IN_ASSIGNEE_FIELD = "AUGMNT-WORKFLOW-ENGINE-1019";
     public static final String MISMATCHED_DMN_OUTPUT_AND_ASSIGNEE_VALUE = "AUGMNT-WORKFLOW-ENGINE-1020";
     public static final String SUB_TASKS_COMPLETE_EXCEPTION = "AUGMNT-WORKFLOW-ENGINE-1116";

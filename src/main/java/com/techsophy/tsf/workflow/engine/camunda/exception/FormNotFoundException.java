@@ -1,12 +1,15 @@
 package com.techsophy.tsf.workflow.engine.camunda.exception;
 
+import lombok.Getter;
+
 /**
  * class for form not found exception
  */
+@Getter
 public class FormNotFoundException extends RuntimeException
 {
-    String errorcode;
-    String message;
+    private final String errorcode;
+    private final String message;
     public FormNotFoundException(String errorcode,String message)
     {
         super(message);

@@ -16,6 +16,7 @@ public class FormConstants
 
     //FormServiceConstants
     public final static String TEST_TYPE_COMPONENT ="component";
+    public static final String TEST_ACTIVE_PROFILE="test";
     public final static String TEST_TYPE_FORM ="form";
     public static final String TEST_FORMS_DATA = "testdata/form-schema1.json";
     public final static String TEST_ID_OR_NAME_LIKE ="abc";
@@ -29,4 +30,7 @@ public class FormConstants
     public final static  Instant TEST_UPDATED_ON = Instant.now();
     public final static String TEST_CREATED_BY_NAME ="user1";
     public final static String TEST_UPDATED_BY_NAME ="user1";
+
+    public final static String KEY ="key";
+    public final static String ARGS ="args";
 }

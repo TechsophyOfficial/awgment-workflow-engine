@@ -5,8 +5,8 @@ package com.techsophy.tsf.workflow.engine.camunda.exception;
  */
 public class EntityNotFoundByIdException extends RuntimeException
 {
-    String errorcode;
-    String message;
+    final String errorcode;
+    final String message;
     public EntityNotFoundByIdException(String errorcode,String message)
     {
         super(message);
