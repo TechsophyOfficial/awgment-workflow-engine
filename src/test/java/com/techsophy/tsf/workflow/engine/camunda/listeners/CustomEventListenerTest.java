@@ -79,7 +79,7 @@ public class CustomEventListenerTest {
         Mockito.when(delegateTask.getVariable(CHECKLIST_ITEM_INSTANCE_ID_LIST)).thenReturn(List.of("abc"));
         Mockito.when(delegateTask.getVariable(CHECKLIST_INSTANCE_ID)).thenReturn("abc");
         Mockito.when(checklistService.getChecklistInstanceById(delegateTask.getVariable(CHECKLIST_INSTANCE_ID).toString())).thenReturn(checklistInstanceResponseModel);
-        Assertions.assertThrows(IllegalArgumentException.class,()->customEventListener.onTaskCompleteEvent(delegateTask));
+        Assertions.assertThrows(RuntimeException.class,()->customEventListener.onTaskCompleteEvent(delegateTask));
     }
 
     @Test
@@ -89,7 +89,7 @@ public class CustomEventListenerTest {
         Mockito.when(delegateTask.hasVariable(CHECKLIST_ITEM_INSTANCE_ID_LIST)).thenReturn(true);
         Mockito.when(delegateTask.getVariable(CHECKLIST_ITEM_INSTANCE_ID_LIST)).thenReturn("abc");
         Mockito.when(globalMessageSource.get(anyString(),any())).thenReturn("abc");
-        Assertions.assertThrows(IllegalArgumentException.class,()->customEventListener.onTaskCompleteEvent(delegateTask));
+        Assertions.assertThrows(RuntimeException.class,()->customEventListener.onTaskCompleteEvent(delegateTask));
     }
 
     @Test
