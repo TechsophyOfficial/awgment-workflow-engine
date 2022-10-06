@@ -136,7 +136,7 @@ public class WrapperServiceImplTest
         ResponseEntity<byte[]> responseEntity = new ResponseEntity<>(bytes, getResponseHeaders(), HttpStatus.OK);
         when(restTemplate.exchange(any(RequestEntity.class), eq(byte[].class))).thenReturn(responseEntity);
         ResponseEntity<Resource> downloadResponse = wrapperService.handleRequest(params, entity, "form-runtime");
-        Assertions.assertNotEquals(downloadResponse, responseEntity);
+        Assertions.assertNotNull(downloadResponse);
     }
 
 //    @Test
@@ -201,7 +201,7 @@ public class WrapperServiceImplTest
     void getUserTaskExtensionByNameTest(){
         String taskId = null;
         String key = "key";
-        String response = wrapperService.getUserTaskExtensionByName(taskId, key);
+        String response;
         response = wrapperService.getUserTaskExtensionByName(taskId, key);
         Assertions.assertNotNull(response);
     }
