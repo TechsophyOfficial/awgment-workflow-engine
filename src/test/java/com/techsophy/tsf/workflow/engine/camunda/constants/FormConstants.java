@@ -30,6 +30,11 @@ public class FormConstants
     public final static  Instant TEST_UPDATED_ON = Instant.now();
     public final static String TEST_CREATED_BY_NAME ="user1";
     public final static String TEST_UPDATED_BY_NAME ="user1";
+    public static final String FORM_CONTENT = "testdata/form-content.json";
+    public final static String TOKEN ="token";
+    public final static String TEST = "test";
+    public static final String LOCAL_HOST_URL="http://localhost:8080";
+
 
     public final static String KEY ="key";
     public final static String ARGS ="args";
