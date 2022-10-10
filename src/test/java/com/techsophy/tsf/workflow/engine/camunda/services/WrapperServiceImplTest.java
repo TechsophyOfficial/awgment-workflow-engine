@@ -1,16 +1,24 @@
 package com.techsophy.tsf.workflow.engine.camunda.services;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.techsophy.tsf.workflow.engine.camunda.dto.ActionsDTO;
+import com.techsophy.tsf.workflow.engine.camunda.dto.FormSchema;
 import com.techsophy.tsf.workflow.engine.camunda.dto.TaskInstanceDTO;
+import com.techsophy.tsf.workflow.engine.camunda.service.impl.RuntimeFormServiceImpl;
 import com.techsophy.tsf.workflow.engine.camunda.service.impl.TokenSupplierImpl;
 import com.techsophy.tsf.workflow.engine.camunda.service.impl.WrapperServiceImpl;
 import org.camunda.bpm.engine.RepositoryService;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.model.bpmn.BpmnModelInstance;
+import org.camunda.bpm.model.bpmn.Query;
+import org.camunda.bpm.model.bpmn.instance.ExtensionElements;
 import org.camunda.bpm.model.bpmn.instance.UserTask;
+import org.camunda.bpm.model.bpmn.instance.camunda.CamundaProperties;
+import org.camunda.bpm.model.bpmn.instance.camunda.CamundaProperty;
 import org.camunda.bpm.model.cmmn.CmmnModelInstance;
+import org.camunda.bpm.model.xml.instance.ModelElementInstance;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +27,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
@@ -36,13 +46,17 @@ import java.net.URISyntaxException;
 import java.util.*;
 
 import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.*;
+import static com.techsophy.tsf.workflow.engine.camunda.constants.CheckListConstants.CHECKLIST_INSTANCE_ID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ActiveProfiles("test")
 //@SpringBootTest(classes = TestSecurityConfig.class)
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+
 public class WrapperServiceImplTest
 {
     private final String APP_NAME = "dms";
@@ -85,10 +99,16 @@ public class WrapperServiceImplTest
     CmmnModelInstance cmmnModelInstance;
 
     @Mock
+    ExtensionElements extensionElements;
+
+    @Mock
     BpmnModelInstance bpmnModelInstance;
 
     @Mock
     UserTask userTask1, userTask2;
+
+    @Mock
+    RuntimeFormServiceImpl runtimeFormService;
 
 
     @BeforeEach
@@ -205,13 +225,97 @@ public class WrapperServiceImplTest
         response = wrapperService.getUserTaskExtensionByName(taskId, key);
         Assertions.assertNotNull(response);
     }
+    //---------------------------------------------------------------------------------
 
     @Test
-    void setExtensionElementsToTaskTest(){
+    void setExtensionElementsToTaskTest1(){
         ActionsDTO actionsDTO = new ActionsDTO("test","test", "test","test");
         Date date = new Date();
         TaskInstanceDTO taskInstanceDTO = new TaskInstanceDTO("test","test", "test", date, date, date, "test","test", "test", "test","test", 5, "test","test", "test", "test","test", "test", true, "test","test", "test", "test","test", "test", "test", List.of(actionsDTO));
         Mockito.when(repositoryService.getBpmnModelInstance(any())).thenReturn(bpmnModelInstance);
+        TaskInstanceDTO response = wrapperService.setExtensionElementsToTask(taskInstanceDTO, task);
+        Assertions.assertNotNull(response);
+    }
+
+    //---------------------------------------------------------------------------------
+
+    @Test
+    void setExtensionElementsToTaskTest2(){
+        userTask1.setId("abc");
+        userTask2.setId("qwe");
+        Collection<UserTask> userTaskDefs = new ArrayList<>();
+        userTaskDefs.add(userTask1);
+        userTaskDefs.add(userTask2);
+        ActionsDTO actionsDTO = new ActionsDTO("test","test", "test","test");
+        Date date = new Date();
+        TaskInstanceDTO taskInstanceDTO = new TaskInstanceDTO("test","test", "test", date, date, date, "test","test", "test", "test","test", 5, "test","test", "test", "test","test", "test", true, "test","test", "test", "test","test", "test", "test", List.of(actionsDTO));
+        Mockito.when(task.getProcessDefinitionId()).thenReturn("abc");
+        Mockito.when(bpmnModelInstance.getModelElementsByType(UserTask.class)).thenReturn(userTaskDefs);
+        Mockito.when(userTask1.getId()).thenReturn("abc");
+        Mockito.when(repositoryService.getBpmnModelInstance(any())).thenReturn(bpmnModelInstance);
+        Mockito.when(task.getTaskDefinitionKey()).thenReturn("abc");
+        TaskInstanceDTO response = wrapperService.setExtensionElementsToTask(taskInstanceDTO, task);
+        Assertions.assertNotNull(response);
+    }
+//---------------------------------------------------------------------------------------
+    @Test
+    void setExtensionElementsToTaskTest3(){
+
+        List<String> list = new ArrayList<>();
+        list.add("abc");
+        list.add("cde");
+
+        Map<String,Object> component = new HashMap<>();
+        component.put(ACTIONS,list);
+        component.put("abc","qwe");
+        ModelElementInstance modelElementInstance = mock(ModelElementInstance.class);
+        CamundaProperty camundaProperty = mock(CamundaProperty.class);
+        when(camundaProperty.getCamundaName()).thenReturn(TYPE);
+        when(camundaProperty.getCamundaValue()).thenReturn(COMPONENT);
+        when(camundaProperty.getCamundaId()).thenReturn("id");
+
+        CamundaProperty camundaProperty1 = mock(CamundaProperty.class);
+        when(camundaProperty1.getCamundaName()).thenReturn(IS_DEFAULT);
+        when(camundaProperty1.getCamundaValue()).thenReturn("true");
+        when(camundaProperty1.getCamundaId()).thenReturn("id1");
+
+//        Query query = mock(Query.class);
+//        CamundaProperties camundaProperties = mock(CamundaProperties.class);
+        extensionElements.addExtensionElement("abc","key");
+        extensionElements.addExtensionElement("qwe","pair");
+
+        Query<CamundaProperties> query = mock(Query.class);
+        Query<ModelElementInstance> modelElementInstanceQuery = mock(Query.class);
+
+        CamundaProperties camundaProperties = mock(CamundaProperties.class);
+        Collection<CamundaProperty> property = new ArrayList<>();
+        property.add(camundaProperty);
+        property.add(camundaProperty1);
+
+        Mockito.when(query.count()).thenReturn(1);
+        userTask1.setId("abc");
+        userTask2.setId("qwe");
+        Collection<UserTask> userTaskDefs = new ArrayList<>();
+        userTaskDefs.add(userTask1);
+        userTaskDefs.add(userTask2);
+        Optional<UserTask> userTaskOptional = Optional.of(userTask1);
+        ActionsDTO actionsDTO = new ActionsDTO("test","test", "test","test");
+        Date date = new Date();
+        TaskInstanceDTO taskInstanceDTO = new TaskInstanceDTO("test","test", "test", date, date, date, "test","test", "test", "test","test", 5, "test","test", "test", "test","test", "test", true, "test","test", "test", "test","test", "test", "test", List.of(actionsDTO));
+        Mockito.when(task.getProcessDefinitionId()).thenReturn("abc");
+        Mockito.when(bpmnModelInstance.getModelElementsByType(UserTask.class)).thenReturn(userTaskDefs);
+        Mockito.when(userTask1.getId()).thenReturn("abc");
+        Mockito.when(repositoryService.getBpmnModelInstance(any())).thenReturn(bpmnModelInstance);
+        Mockito.when(task.getTaskDefinitionKey()).thenReturn("abc");
+        Mockito.when(userTaskOptional.get().getExtensionElements()).thenReturn(extensionElements);
+        Mockito.when(extensionElements.getElementsQuery()).thenReturn(modelElementInstanceQuery);
+        Mockito.when(extensionElements.getElementsQuery().filterByType(CamundaProperties.class)).thenReturn(query);
+        Mockito.when(query.singleResult()).thenReturn(camundaProperties);
+        Mockito.when(camundaProperties.getCamundaProperties()).thenReturn(property);
+        when(task.getFormKey()).thenReturn("abc");
+        when(runtimeFormService.fetchFormById(any())).thenReturn(new FormSchema(NAME,ID,component,1));
+        when(taskService.getVariableLocal(task.getId(), CHECKLIST_INSTANCE_ID)).thenReturn(123);
+        when(objectMapper.convertValue(any(),any(TypeReference.class))).thenReturn(List.of(actionsDTO));
         TaskInstanceDTO response = wrapperService.setExtensionElementsToTask(taskInstanceDTO, task);
         Assertions.assertNotNull(response);
     }
