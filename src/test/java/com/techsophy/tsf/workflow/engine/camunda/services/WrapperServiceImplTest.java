@@ -4,13 +4,19 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.techsophy.tsf.workflow.engine.camunda.dto.ActionsDTO;
 import com.techsophy.tsf.workflow.engine.camunda.dto.FormSchema;
+import com.techsophy.tsf.workflow.engine.camunda.dto.HistoricInstanceDTO;
 import com.techsophy.tsf.workflow.engine.camunda.dto.TaskInstanceDTO;
 import com.techsophy.tsf.workflow.engine.camunda.service.impl.RuntimeFormServiceImpl;
 import com.techsophy.tsf.workflow.engine.camunda.service.impl.TokenSupplierImpl;
 import com.techsophy.tsf.workflow.engine.camunda.service.impl.WrapperServiceImpl;
+import org.camunda.bpm.engine.HistoryService;
 import org.camunda.bpm.engine.RepositoryService;
 import org.camunda.bpm.engine.TaskService;
+import org.camunda.bpm.engine.history.HistoricTaskInstance;
+import org.camunda.bpm.engine.history.HistoricVariableInstance;
+import org.camunda.bpm.engine.history.HistoricVariableInstanceQuery;
 import org.camunda.bpm.engine.task.Task;
+import org.camunda.bpm.engine.task.TaskQuery;
 import org.camunda.bpm.model.bpmn.BpmnModelInstance;
 import org.camunda.bpm.model.bpmn.Query;
 import org.camunda.bpm.model.bpmn.instance.ExtensionElements;
@@ -18,6 +24,7 @@ import org.camunda.bpm.model.bpmn.instance.UserTask;
 import org.camunda.bpm.model.bpmn.instance.camunda.CamundaProperties;
 import org.camunda.bpm.model.bpmn.instance.camunda.CamundaProperty;
 import org.camunda.bpm.model.cmmn.CmmnModelInstance;
+import org.camunda.bpm.model.cmmn.instance.PlanItem;
 import org.camunda.bpm.model.xml.instance.ModelElementInstance;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,8 +54,8 @@ import java.util.*;
 
 import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.*;
 import static com.techsophy.tsf.workflow.engine.camunda.constants.CheckListConstants.CHECKLIST_INSTANCE_ID;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static com.techsophy.tsf.workflow.engine.camunda.constants.FormConstants.FORM_KEY;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -109,6 +116,9 @@ public class WrapperServiceImplTest
 
     @Mock
     RuntimeFormServiceImpl runtimeFormService;
+
+    @Mock
+    HistoryService historyService;
 
 
     @BeforeEach
@@ -299,7 +309,11 @@ public class WrapperServiceImplTest
         userTaskDefs.add(userTask1);
         userTaskDefs.add(userTask2);
         Optional<UserTask> userTaskOptional = Optional.of(userTask1);
-        ActionsDTO actionsDTO = new ActionsDTO("test","test", "test","test");
+        ActionsDTO actionsDTO = new ActionsDTO("test",CHECKLIST_INSTANCE_ID_VAR, TYPE,"test");
+        ActionsDTO actionsDTO1 = new ActionsDTO("test",CHECKLIST_INSTANCE_ID_VAR,IS_DEFAULT,"test");
+        List<ActionsDTO> actionsDTOList = new ArrayList<>();
+        actionsDTOList.add(actionsDTO);
+        actionsDTOList.add(actionsDTO1);
         Date date = new Date();
         TaskInstanceDTO taskInstanceDTO = new TaskInstanceDTO("test","test", "test", date, date, date, "test","test", "test", "test","test", 5, "test","test", "test", "test","test", "test", true, "test","test", "test", "test","test", "test", "test", List.of(actionsDTO));
         Mockito.when(task.getProcessDefinitionId()).thenReturn("abc");
@@ -315,8 +329,240 @@ public class WrapperServiceImplTest
         when(task.getFormKey()).thenReturn("abc");
         when(runtimeFormService.fetchFormById(any())).thenReturn(new FormSchema(NAME,ID,component,1));
         when(taskService.getVariableLocal(task.getId(), CHECKLIST_INSTANCE_ID)).thenReturn(123);
-        when(objectMapper.convertValue(any(),any(TypeReference.class))).thenReturn(List.of(actionsDTO));
+        when(objectMapper.convertValue(any(),any(TypeReference.class))).thenReturn(actionsDTOList);
+//        ActionsDTO actionsDTO1 = mock(ActionsDTO.class);
+//        when(actionsDTO1.getAction()).thenReturn(TYPE);
         TaskInstanceDTO response = wrapperService.setExtensionElementsToTask(taskInstanceDTO, task);
+        Assertions.assertNotNull(response);
+    }
+
+    @Test
+    void getUserTaskExtensionByNameWithProcessDefinitionIdTest(){
+        TaskQuery taskQuery = mock(TaskQuery.class);
+        CmmnModelInstance cmmnModelInstance = mock(CmmnModelInstance.class);
+        PlanItem planItem = mock(PlanItem.class);
+        PlanItem planItem1 = mock(PlanItem.class);
+        Collection<PlanItem> planItemCollection = new ArrayList<>();
+        planItemCollection.add(planItem);
+        planItemCollection.add(planItem1);
+        org.camunda.bpm.model.cmmn.instance.ExtensionElements extensionElements = mock(org.camunda.bpm.model.cmmn.instance.ExtensionElements.class);
+        extensionElements.addExtensionElement("abc","abc");
+        org.camunda.bpm.model.cmmn.Query<ModelElementInstance> modelElementInstanceQuery = mock(org.camunda.bpm.model.cmmn.Query.class);
+        org.camunda.bpm.model.cmmn.Query<CamundaProperties> camundaPropertiesQuery = mock(org.camunda.bpm.model.cmmn.Query.class);
+        CamundaProperties camundaProperties = mock(CamundaProperties.class);
+        CamundaProperty camundaProperty = mock(CamundaProperty.class);
+        CamundaProperty camundaProperty1 = mock(CamundaProperty.class);
+        Collection<CamundaProperty> property = new ArrayList<>();
+        property.add(camundaProperty);
+        property.add(camundaProperty1);
+
+        when(taskService.createTaskQuery()).thenReturn(taskQuery);
+        when(taskQuery.taskId(any())).thenReturn(taskQuery);
+        when(taskQuery.singleResult()).thenReturn(task);
+        when(task.getProcessDefinitionId()).thenReturn(null);
+        when(repositoryService.getCmmnModelInstance(task.getCaseDefinitionId())).thenReturn(cmmnModelInstance);
+        when(cmmnModelInstance.getModelElementsByType(PlanItem.class)).thenReturn(planItemCollection);
+        when(task.getTaskDefinitionKey()).thenReturn("abc");
+        when(planItem.getId()).thenReturn("abc");
+        when(planItem.getExtensionElements()).thenReturn(extensionElements);
+        when(extensionElements.getElementsQuery()).thenReturn(modelElementInstanceQuery);
+        when(modelElementInstanceQuery.filterByType(CamundaProperties.class)).thenReturn(camundaPropertiesQuery);
+        when(camundaPropertiesQuery.singleResult()).thenReturn(camundaProperties);
+        when(camundaProperties.getCamundaProperties()).thenReturn(property);
+        when(camundaProperty.getCamundaName()).thenReturn("key");
+        when(camundaProperty.getCamundaValue()).thenReturn("value");
+
+        String response = wrapperService.getUserTaskExtensionByName(TASK_ID,"key");
+        Assertions.assertNotNull(response);
+    }
+
+    @Test
+    void getUserTaskExtensionByNameWithNullExtentionElementTest(){
+        TaskQuery taskQuery = mock(TaskQuery.class);
+        CmmnModelInstance cmmnModelInstance = mock(CmmnModelInstance.class);
+        PlanItem planItem = mock(PlanItem.class);
+        PlanItem planItem1 = mock(PlanItem.class);
+        Collection<PlanItem> planItemCollection = new ArrayList<>();
+        planItemCollection.add(planItem);
+        planItemCollection.add(planItem1);
+        org.camunda.bpm.model.cmmn.instance.ExtensionElements extensionElements = mock(org.camunda.bpm.model.cmmn.instance.ExtensionElements.class);
+        extensionElements.addExtensionElement("abc","abc");
+        CamundaProperty camundaProperty = mock(CamundaProperty.class);
+        CamundaProperty camundaProperty1 = mock(CamundaProperty.class);
+        Collection<CamundaProperty> property = new ArrayList<>();
+        property.add(camundaProperty);
+        property.add(camundaProperty1);
+
+        when(taskService.createTaskQuery()).thenReturn(taskQuery);
+        when(taskQuery.taskId(any())).thenReturn(taskQuery);
+        when(taskQuery.singleResult()).thenReturn(task);
+        when(task.getProcessDefinitionId()).thenReturn(null);
+        when(repositoryService.getCmmnModelInstance(task.getCaseDefinitionId())).thenReturn(cmmnModelInstance);
+        when(cmmnModelInstance.getModelElementsByType(PlanItem.class)).thenReturn(planItemCollection);
+        when(task.getTaskDefinitionKey()).thenReturn("abc");
+        when(planItem.getId()).thenReturn("abc");
+        when(planItem.getExtensionElements()).thenReturn(null);
+
+        String response = wrapperService.getUserTaskExtensionByName(TASK_ID,"key");
+        Assertions.assertNotNull(response);
+    }
+
+    @Test
+    void getUserTaskExtensionByNameWithNullProcessDefinitionIdTest(){
+        TaskQuery taskQuery = mock(TaskQuery.class);
+        BpmnModelInstance BpmnModelInstance = mock(BpmnModelInstance.class);
+        PlanItem planItem = mock(PlanItem.class);
+        PlanItem planItem1 = mock(PlanItem.class);
+        Collection<PlanItem> planItemCollection = new ArrayList<>();
+        planItemCollection.add(planItem);
+        planItemCollection.add(planItem1);
+        ExtensionElements extensionElements = mock(ExtensionElements.class);
+        extensionElements.addExtensionElement("abc","abc");
+        Query<ModelElementInstance> modelElementInstanceQuery = mock(Query.class);
+        Query<CamundaProperties> camundaPropertiesQuery = mock(Query.class);
+        CamundaProperties camundaProperties = mock(CamundaProperties.class);
+        CamundaProperty camundaProperty = mock(CamundaProperty.class);
+        CamundaProperty camundaProperty1 = mock(CamundaProperty.class);
+        Collection<CamundaProperty> property = new ArrayList<>();
+        property.add(camundaProperty);
+        property.add(camundaProperty1);
+        Collection<UserTask> userTaskCollection = new ArrayList<>();
+        userTaskCollection.add(userTask1);
+        userTaskCollection.add(userTask2);
+
+        when(taskService.createTaskQuery()).thenReturn(taskQuery);
+        when(taskQuery.taskId(any())).thenReturn(taskQuery);
+        when(taskQuery.singleResult()).thenReturn(task);
+        when(task.getProcessDefinitionId()).thenReturn("process definition id");
+        when(repositoryService.getBpmnModelInstance(task.getProcessDefinitionId())).thenReturn(bpmnModelInstance);
+        when(bpmnModelInstance.getModelElementsByType(UserTask.class)).thenReturn(userTaskCollection);
+        when(task.getTaskDefinitionKey()).thenReturn("abc");
+        when(userTask1.getId()).thenReturn("abc");
+        when(userTask1.getExtensionElements()).thenReturn(extensionElements);
+        when(extensionElements.getElementsQuery()).thenReturn(modelElementInstanceQuery);
+        when(modelElementInstanceQuery.filterByType(CamundaProperties.class)).thenReturn(camundaPropertiesQuery);
+        when(camundaPropertiesQuery.singleResult()).thenReturn(camundaProperties);
+        when(camundaProperties.getCamundaProperties()).thenReturn(property);
+        when(camundaProperty.getCamundaName()).thenReturn("key");
+        when(camundaProperty.getCamundaValue()).thenReturn("value");
+
+        String response = wrapperService.getUserTaskExtensionByName(TASK_ID,"key");
+        Assertions.assertNotNull(response);
+    }
+
+    @Test
+    void getUserTaskExtensionByNameWithNullExtenstionElementTest(){
+        TaskQuery taskQuery = mock(TaskQuery.class);
+        BpmnModelInstance BpmnModelInstance = mock(BpmnModelInstance.class);
+        PlanItem planItem = mock(PlanItem.class);
+        PlanItem planItem1 = mock(PlanItem.class);
+        Collection<PlanItem> planItemCollection = new ArrayList<>();
+        planItemCollection.add(planItem);
+        planItemCollection.add(planItem1);
+        ExtensionElements extensionElements = mock(ExtensionElements.class);
+        extensionElements.addExtensionElement("abc","abc");
+        CamundaProperty camundaProperty = mock(CamundaProperty.class);
+        CamundaProperty camundaProperty1 = mock(CamundaProperty.class);
+        Collection<CamundaProperty> property = new ArrayList<>();
+        property.add(camundaProperty);
+        property.add(camundaProperty1);
+        Collection<UserTask> userTaskCollection = new ArrayList<>();
+        userTaskCollection.add(userTask1);
+        userTaskCollection.add(userTask2);
+
+        when(taskService.createTaskQuery()).thenReturn(taskQuery);
+        when(taskQuery.taskId(any())).thenReturn(taskQuery);
+        when(taskQuery.singleResult()).thenReturn(task);
+        when(task.getProcessDefinitionId()).thenReturn("process definition id");
+        when(repositoryService.getBpmnModelInstance(task.getProcessDefinitionId())).thenReturn(bpmnModelInstance);
+        when(bpmnModelInstance.getModelElementsByType(UserTask.class)).thenReturn(userTaskCollection);
+        when(task.getTaskDefinitionKey()).thenReturn("abc");
+        when(userTask1.getId()).thenReturn("abc");
+        when(userTask1.getExtensionElements()).thenReturn(null);
+
+        String response = wrapperService.getUserTaskExtensionByName(TASK_ID,"key");
+        Assertions.assertNotNull(response);
+    }
+
+    @Test
+    void setExtensionElementsToHistoricTaskTest(){
+        org.camunda.bpm.model.bpmn.instance.Task task1 = mock(org.camunda.bpm.model.bpmn.instance.Task.class);
+        HistoricInstanceDTO historicInstanceDTO = mock(HistoricInstanceDTO.class);
+        HistoricTaskInstance historicTaskInstance = mock(HistoricTaskInstance.class);
+        Collection<UserTask> userTaskCollection = new ArrayList<>();
+        userTaskCollection.add(userTask1);
+        userTaskCollection.add(userTask2);
+        Optional<UserTask> userTaskOptional = Optional.of(userTask1);
+        Query<ModelElementInstance> modelElementInstanceQuery = mock(Query.class);
+        Query<CamundaProperties> query = mock(Query.class);
+        CamundaProperties camundaProperties = mock(CamundaProperties.class);
+        CamundaProperty camundaProperty = mock(CamundaProperty.class);
+        CamundaProperty camundaProperty1 = mock(CamundaProperty.class);
+        CamundaProperty camundaProperty2 = mock(CamundaProperty.class);
+        CamundaProperty camundaProperty3 = mock(CamundaProperty.class);
+        Collection<CamundaProperty> property = new ArrayList<>();
+        property.add(camundaProperty);
+        property.add(camundaProperty1);
+        property.add(camundaProperty2);
+        property.add(camundaProperty3);
+        HistoricVariableInstance historicVariableInstance = mock(HistoricVariableInstance.class);
+        HistoricVariableInstanceQuery historicVariableInstanceQuery = mock(HistoricVariableInstanceQuery.class);
+        List<String> list = new ArrayList<>();
+        list.add("abc");
+        list.add("cde");
+        Map<String,Object> component = new HashMap<>();
+        component.put(ACTIONS,list);
+        component.put(FORM_NAME,"qwe");
+        component.put(QUESTION,"qwe");
+        FormSchema formSchema =new FormSchema(NAME,ID,component,1);
+        ActionsDTO actionsDTO = new ActionsDTO("test",CHECKLIST_INSTANCE_ID_VAR, TYPE,"test");
+        ActionsDTO actionsDTO1 = new ActionsDTO("test",CHECKLIST_INSTANCE_ID_VAR,IS_DEFAULT,"test");
+        List<ActionsDTO> actionsDTOList = new ArrayList<>();
+        actionsDTOList.add(actionsDTO);
+        actionsDTOList.add(actionsDTO1);
+
+
+        when(repositoryService.getBpmnModelInstance(any())).thenReturn(bpmnModelInstance);
+        when(bpmnModelInstance.getModelElementsByType(UserTask.class)).thenReturn(userTaskCollection);
+        when(historicTaskInstance.getTaskDefinitionKey()).thenReturn("abc");
+        when(userTask1.getId()).thenReturn("abc");
+        when(userTaskOptional.get().getExtensionElements()).thenReturn(extensionElements);
+        when(query.count()).thenReturn(1);
+        when(extensionElements.getElementsQuery()).thenReturn(modelElementInstanceQuery);
+        when(extensionElements.getElementsQuery().filterByType(CamundaProperties.class)).thenReturn(query);
+        when(query.singleResult()).thenReturn(camundaProperties);
+        when(camundaProperties.getCamundaProperties()).thenReturn(property);
+        when(historicTaskInstance.getTaskDefinitionKey()).thenReturn("abc");
+        when(bpmnModelInstance.getModelElementById(any())).thenReturn(task1);
+        when(task1.getAttributeValueNs(any(),any())).thenReturn(FORM_KEY);
+        when(historicTaskInstance.getId()).thenReturn(TASK_ID);
+        when(historyService.createHistoricVariableInstanceQuery()).thenReturn(historicVariableInstanceQuery);
+        when(historicVariableInstanceQuery.taskIdIn(any())).thenReturn(historicVariableInstanceQuery);
+        when(historicVariableInstanceQuery.variableName(anyString())).thenReturn(historicVariableInstanceQuery);
+        when(historicVariableInstanceQuery.singleResult()).thenReturn(historicVariableInstance);
+        when(historicVariableInstance.getValue()).thenReturn(1234);
+        when(camundaProperty.getCamundaName()).thenReturn(TYPE);
+        when(camundaProperty.getCamundaValue()).thenReturn(COMPONENT);
+        when(camundaProperty.getCamundaId()).thenReturn("id");
+
+        when(camundaProperty1.getCamundaName()).thenReturn(IS_DEFAULT);
+        when(camundaProperty1.getCamundaValue()).thenReturn("true");
+        when(camundaProperty1.getCamundaId()).thenReturn("id1");
+
+        when(camundaProperty2.getCamundaName()).thenReturn(FORM_NAME);
+        when(camundaProperty2.getCamundaValue()).thenReturn(FORM);
+        when(camundaProperty2.getCamundaId()).thenReturn("id1");
+
+        when(camundaProperty3.getCamundaName()).thenReturn(QUESTION);
+        when(camundaProperty3.getCamundaValue()).thenReturn(QUESTION);
+        when(camundaProperty3.getCamundaId()).thenReturn("id1");
+
+
+        when(runtimeFormService.fetchFormById(any())).thenReturn(formSchema);
+        when(objectMapper.convertValue(any(),any(TypeReference.class))).thenReturn(actionsDTOList);
+
+
+        HistoricInstanceDTO response = wrapperService.setExtensionElementsToHistoricTask(historicInstanceDTO,historicTaskInstance);
         Assertions.assertNotNull(response);
     }
 }
