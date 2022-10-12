@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class KeycloakAuthenticationProviderTest
+class KeycloakAuthenticationProviderTest
 {
     private final KeycloakAuthenticationProvider keycloakAuthenticationProvider = new KeycloakAuthenticationProvider();
     private final HttpServletRequest mockRequest = mock(HttpServletRequest.class);

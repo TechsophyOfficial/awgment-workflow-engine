@@ -45,7 +45,7 @@ public class KeycloakLogoutHandler implements LogoutSuccessHandler
 	 */
 	public KeycloakLogoutHandler(@Value("${spring.security.oauth2.client.provider.keycloak.authorization-uri:}") String oauth2UserAuthorizationUri)
 	{
-		if (!StringUtils.isEmpty(oauth2UserAuthorizationUri))
+		if (StringUtils.hasLength(oauth2UserAuthorizationUri))
 		{
 			// in order to get the valid logout uri: simply replace "/auth" at the end of the user authorization uri with "/logout"
 			this.oauth2UserLogoutUri = oauth2UserAuthorizationUri.replace("openid-connect/auth", "openid-connect/logout");
@@ -59,7 +59,7 @@ public class KeycloakLogoutHandler implements LogoutSuccessHandler
 	public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
 			throws IOException, ServletException
 	{
-		if (!StringUtils.isEmpty(oauth2UserLogoutUri))
+		if (StringUtils.hasLength(oauth2UserLogoutUri))
 		{
 			// Calculate redirect URI for Keycloak, something like http://<host:port>/camunda
 			String requestUrl = request.getRequestURL().toString();

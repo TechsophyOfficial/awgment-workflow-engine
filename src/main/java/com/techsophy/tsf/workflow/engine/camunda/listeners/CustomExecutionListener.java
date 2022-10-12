@@ -33,7 +33,7 @@ public class CustomExecutionListener
             ChecklistInstanceResponseModel checklistInstanceResponseModel = this.checklistService.getChecklistInstanceById(delegateExecution.getVariable(checklistInstanceForProcessInstanceVariable).toString());
             if(!checklistInstanceResponseModel.getStatus().equals(COMPLETE) && !checklistInstanceResponseModel.getStatus().equals(COMPLETE_WITH_OVERRIDE))
             {
-                throw new RuntimeException(CHECKLIST_ITEMS_INCOMPLETE_EXCEPTION);
+                throw new IllegalArgumentException(CHECKLIST_ITEMS_INCOMPLETE_EXCEPTION);
             }
         }
     }

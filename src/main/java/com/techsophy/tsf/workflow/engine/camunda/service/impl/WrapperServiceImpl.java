@@ -15,7 +15,6 @@ import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.history.HistoricTaskInstance;
 import org.camunda.bpm.engine.history.HistoricVariableInstance;
-import org.camunda.bpm.engine.history.HistoricVariableInstanceQuery;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.model.bpmn.BpmnModelInstance;
@@ -408,11 +407,11 @@ public class WrapperServiceImpl implements WrapperService {
         String taskId = historicTaskInstance.getId();
         HistoricVariableInstance historicVariableInstance = historyService.createHistoricVariableInstanceQuery().taskIdIn(taskId).variableName(CHECKLIST_INSTANCE_ID).singleResult();
         String checklistInstanceId =  (historicVariableInstance==null) ? null : historicVariableInstance.getValue().toString();
-        System.out.println("InstanceId :"+checklistInstanceId);
+        log.info("InstanceId :"+checklistInstanceId);
 
         HistoricVariableInstance historicVariableInstanceForDocument = historyService.createHistoricVariableInstanceQuery().taskIdIn(taskId).variableName(DOCUMENT_ID).singleResult();
         String documentId =  (historicVariableInstanceForDocument==null) ? null : historicVariableInstanceForDocument.getValue().toString();
-        System.out.println("documentId :"+documentId);
+        log.info("documentId :"+documentId);
 
         camundaProperties.stream().forEach(prop -> extensions.put(prop.getCamundaName(), prop.getCamundaValue()));
         if (formKey!= null && extensions.containsKey(TYPE) && extensions.get(TYPE).equals(COMPONENT)

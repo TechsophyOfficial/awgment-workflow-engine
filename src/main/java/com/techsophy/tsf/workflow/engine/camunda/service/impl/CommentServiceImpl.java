@@ -101,7 +101,7 @@ public class CommentServiceImpl implements CommentService
             comments=this.taskService.getTaskComments(task);
             finalComments.addAll(comments);
         }
-        finalComments.sort(Comparator.comparing(o->o.getTime()));
+        finalComments.sort(Comparator.comparing(Comment::getTime));
         return finalComments;
     }
 }

@@ -56,9 +56,9 @@ public class RuntimeFormServiceImpl implements RuntimeFormService
         httpHeaders.setAccept(List.of(MediaType.APPLICATION_JSON));
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer "+tokenSupplier.getToken());
-        HttpEntity<?> httpEntity = new HttpEntity<Object>(httpHeaders);
-        ResponseEntity<Map> responseEntity =  restTemplate.exchange(url, HttpMethod.GET, httpEntity, Map.class);
-        ApiResponse apiResponse = this.objectMapper.convertValue(responseEntity.getBody(), ApiResponse.class);
+        HttpEntity<?> httpEntity = new HttpEntity<>(httpHeaders);
+        ResponseEntity<?> responseEntity =  restTemplate.exchange(url, HttpMethod.GET, httpEntity, Map.class);
+        ApiResponse<?> apiResponse = this.objectMapper.convertValue(responseEntity.getBody(), ApiResponse.class);
         return this.objectMapper.convertValue(apiResponse.getData(), FormSchema.class);
     }
 
@@ -68,7 +68,7 @@ public class RuntimeFormServiceImpl implements RuntimeFormService
         String url=gatewayURI + FORM_RUNTIME_ENDPOINT_URL + "/" + formKey;
         WebClient webClient = webClientWrapper.createWebClient(tokenSupplier.getToken());
         String response = webClientWrapper.webclientRequest(webClient, url, HttpMethod.GET, String.class);
-        ApiResponse apiResponse = this.objectMapper.readValue(response, ApiResponse.class);
+        ApiResponse<?> apiResponse = this.objectMapper.readValue(response, ApiResponse.class);
         return this.objectMapper.convertValue(apiResponse.getData(), FormSchema.class);
     }
 }
