@@ -2,10 +2,7 @@ package com.techsophy.tsf.workflow.engine.camunda.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.techsophy.tsf.workflow.engine.camunda.dto.ActionsDTO;
-import com.techsophy.tsf.workflow.engine.camunda.dto.FormSchema;
-import com.techsophy.tsf.workflow.engine.camunda.dto.HistoricInstanceDTO;
-import com.techsophy.tsf.workflow.engine.camunda.dto.TaskInstanceDTO;
+import com.techsophy.tsf.workflow.engine.camunda.dto.*;
 import com.techsophy.tsf.workflow.engine.camunda.service.impl.RuntimeFormServiceImpl;
 import com.techsophy.tsf.workflow.engine.camunda.service.impl.TokenSupplierImpl;
 import com.techsophy.tsf.workflow.engine.camunda.service.impl.WrapperServiceImpl;
@@ -56,15 +53,13 @@ import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntime
 import static com.techsophy.tsf.workflow.engine.camunda.constants.CheckListConstants.CHECKLIST_INSTANCE_ID;
 import static com.techsophy.tsf.workflow.engine.camunda.constants.FormConstants.FORM_KEY;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ActiveProfiles("test")
-//@SpringBootTest(classes = TestSecurityConfig.class)
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 
-public class WrapperServiceImplTest
+class WrapperServiceImplTest
 {
     private final String APP_NAME = "dms";
     private final String FILE_NAME = "test-file.txt";
@@ -158,8 +153,6 @@ public class WrapperServiceImplTest
         MultiValueMap<String, String> matcherParams = getCommonParams();
         matcherParams.add(FORM, "/" + FILE_NAME);
         ReflectionTestUtils.setField(wrapperService, "gatewayUrl", dmsUrl);
-//        URI uri = UriComponentsBuilder.fromUri(new URI(wrapperService.getAppUrl(APP_NAME))).queryParams(matcherParams).build().toUri();
-//        RequestEntity<?> entityMatcher = new RequestEntity<>(body, headers, HttpMethod.GET, uri);
         MultiValueMap<String, String> params = getCommonParams();
         params.add("form", "/" + FILENAME_WITH_GUID);
         RequestEntity<?> entity = new RequestEntity<>(body1, new HttpHeaders(), HttpMethod.GET, new URI("wrapper/dms"));
@@ -168,31 +161,6 @@ public class WrapperServiceImplTest
         ResponseEntity<Resource> downloadResponse = wrapperService.handleRequest(params, entity, "form-runtime");
         Assertions.assertNotNull(downloadResponse);
     }
-
-//    @Test
-//    void testHandleRequest() throws URISyntaxException
-//    {
-//        RequestDataDTO requestDataDTO = new RequestDataDTO("http://abc.com","method",new Payload("abc"),"abc");
-//        LinkedHashMap<String,Object> body1 = new LinkedHashMap<>();;
-////        byte[] bytes = new byte[2];
-////        MultiValueMap<String, String> matcherParams = getCommonParams();
-////        matcherParams.add(FORM, "/" + FILE_NAME);
-//        ReflectionTestUtils.setField(wrapperService, "gatewayUrl", dmsUrl);
-////        URI uri = UriComponentsBuilder.fromUri(new URI(wrapperService.getAppUrl(APP_NAME))).queryParams(matcherParams).build().toUri();
-////        RequestEntity<?> entityMatcher = new RequestEntity<>(body, headers, HttpMethod.GET, uri);
-//
-//        MultiValueMap<String, String> params = getCommonParams();
-//        params.add("form", "/" + FILENAME_WITH_GUID);
-//        RequestEntity<?> entity = new RequestEntity<>(body1, new HttpHeaders(), HttpMethod.GET, new URI("wrapper/dms"));
-////        ResponseEntity<byte[]> responseEntity = new ResponseEntity<>(bytes, getResponseHeaders(), HttpStatus.OK);
-////
-////        when(restTemplate.exchange(any(RequestEntity.class), eq(byte[].class))).thenReturn(responseEntity);
-//        when(objectMapper.convertValue(any(),eq(RequestDataDTO.class))).thenReturn(requestDataDTO);
-//        when(HttpMethod.valueOf(any())).thenReturn(method);
-//
-//        ResponseEntity<Resource> downloadResponse = wrapperService.handleRequest(params, entity, "abc");
-////        Assertions.assertEquals(downloadResponse, responseEntity);
-//    }
 
     @Test
     void testGetMultipartRequestEntity()
@@ -235,19 +203,16 @@ public class WrapperServiceImplTest
         response = wrapperService.getUserTaskExtensionByName(taskId, key);
         Assertions.assertNotNull(response);
     }
-    //---------------------------------------------------------------------------------
 
     @Test
-    void setExtensionElementsToTaskTest1(){
+    void setExtensionElementsToTaskTest(){
         ActionsDTO actionsDTO = new ActionsDTO("test","test", "test","test");
         Date date = new Date();
         TaskInstanceDTO taskInstanceDTO = new TaskInstanceDTO("test","test", "test", date, date, date, "test","test", "test", "test","test", 5, "test","test", "test", "test","test", "test", true, "test","test", "test", "test","test", "test", "test", List.of(actionsDTO));
         Mockito.when(repositoryService.getBpmnModelInstance(any())).thenReturn(bpmnModelInstance);
-        TaskInstanceDTO response = wrapperService.setExtensionElementsToTask(taskInstanceDTO, task);
-        Assertions.assertNotNull(response);
+        wrapperService.setExtensionElementsToTask(taskInstanceDTO, task);
+        Mockito.verify(repositoryService,Mockito.times(1)).getBpmnModelInstance(any());
     }
-
-    //---------------------------------------------------------------------------------
 
     @Test
     void setExtensionElementsToTaskTest2(){
@@ -264,44 +229,39 @@ public class WrapperServiceImplTest
         Mockito.when(userTask1.getId()).thenReturn("abc");
         Mockito.when(repositoryService.getBpmnModelInstance(any())).thenReturn(bpmnModelInstance);
         Mockito.when(task.getTaskDefinitionKey()).thenReturn("abc");
-        TaskInstanceDTO response = wrapperService.setExtensionElementsToTask(taskInstanceDTO, task);
-        Assertions.assertNotNull(response);
+        wrapperService.setExtensionElementsToTask(taskInstanceDTO, task);
+        verify(repositoryService,times(1)).getBpmnModelInstance(any());
     }
-//---------------------------------------------------------------------------------------
     @Test
     void setExtensionElementsToTaskTest3(){
-
         List<String> list = new ArrayList<>();
         list.add("abc");
         list.add("cde");
-
         Map<String,Object> component = new HashMap<>();
         component.put(ACTIONS,list);
         component.put("abc","qwe");
         ModelElementInstance modelElementInstance = mock(ModelElementInstance.class);
         CamundaProperty camundaProperty = mock(CamundaProperty.class);
-        when(camundaProperty.getCamundaName()).thenReturn(TYPE);
+        when(camundaProperty.getCamundaName()).thenReturn("propertyName");
         when(camundaProperty.getCamundaValue()).thenReturn(COMPONENT);
         when(camundaProperty.getCamundaId()).thenReturn("id");
-
         CamundaProperty camundaProperty1 = mock(CamundaProperty.class);
         when(camundaProperty1.getCamundaName()).thenReturn(IS_DEFAULT);
         when(camundaProperty1.getCamundaValue()).thenReturn("true");
         when(camundaProperty1.getCamundaId()).thenReturn("id1");
-
-//        Query query = mock(Query.class);
-//        CamundaProperties camundaProperties = mock(CamundaProperties.class);
+        CamundaProperty camundaProperty2 = mock(CamundaProperty.class);
+        when(camundaProperty2.getCamundaName()).thenReturn(SCREEN_TYPE_ID);
+        when(camundaProperty2.getCamundaValue()).thenReturn("true");
+        when(camundaProperty2.getCamundaId()).thenReturn("id1");
         extensionElements.addExtensionElement("abc","key");
         extensionElements.addExtensionElement("qwe","pair");
-
         Query<CamundaProperties> query = mock(Query.class);
         Query<ModelElementInstance> modelElementInstanceQuery = mock(Query.class);
-
         CamundaProperties camundaProperties = mock(CamundaProperties.class);
         Collection<CamundaProperty> property = new ArrayList<>();
         property.add(camundaProperty);
         property.add(camundaProperty1);
-
+        property.add(camundaProperty2);
         Mockito.when(query.count()).thenReturn(1);
         userTask1.setId("abc");
         userTask2.setId("qwe");
@@ -310,7 +270,8 @@ public class WrapperServiceImplTest
         userTaskDefs.add(userTask2);
         Optional<UserTask> userTaskOptional = Optional.of(userTask1);
         ActionsDTO actionsDTO = new ActionsDTO("test",CHECKLIST_INSTANCE_ID_VAR, TYPE,"test");
-        ActionsDTO actionsDTO1 = new ActionsDTO("test",CHECKLIST_INSTANCE_ID_VAR,IS_DEFAULT,"test");
+        ActionsDTO actionsDTO1 = new ActionsDTO("test",DOCUMENT_ID_VAR,IS_DEFAULT,"test");
+        ActionsDTO actionsDTO2 = new ActionsDTO("test",SCREEN_TYPE_ID_VAR,IS_DEFAULT,"test");
         List<ActionsDTO> actionsDTOList = new ArrayList<>();
         actionsDTOList.add(actionsDTO);
         actionsDTOList.add(actionsDTO1);
@@ -330,10 +291,8 @@ public class WrapperServiceImplTest
         when(runtimeFormService.fetchFormById(any())).thenReturn(new FormSchema(NAME,ID,component,1));
         when(taskService.getVariableLocal(task.getId(), CHECKLIST_INSTANCE_ID)).thenReturn(123);
         when(objectMapper.convertValue(any(),any(TypeReference.class))).thenReturn(actionsDTOList);
-//        ActionsDTO actionsDTO1 = mock(ActionsDTO.class);
-//        when(actionsDTO1.getAction()).thenReturn(TYPE);
-        TaskInstanceDTO response = wrapperService.setExtensionElementsToTask(taskInstanceDTO, task);
-        Assertions.assertNotNull(response);
+        wrapperService.setExtensionElementsToTask(taskInstanceDTO, task);
+        verify(repositoryService,times(1)).getBpmnModelInstance(any());
     }
 
     @Test
@@ -371,9 +330,8 @@ public class WrapperServiceImplTest
         when(camundaProperties.getCamundaProperties()).thenReturn(property);
         when(camundaProperty.getCamundaName()).thenReturn("key");
         when(camundaProperty.getCamundaValue()).thenReturn("value");
-
-        String response = wrapperService.getUserTaskExtensionByName(TASK_ID,"key");
-        Assertions.assertNotNull(response);
+        wrapperService.getUserTaskExtensionByName(TASK_ID,"key");
+        verify(repositoryService,times(1)).getCmmnModelInstance(any());
     }
 
     @Test
@@ -402,9 +360,8 @@ public class WrapperServiceImplTest
         when(task.getTaskDefinitionKey()).thenReturn("abc");
         when(planItem.getId()).thenReturn("abc");
         when(planItem.getExtensionElements()).thenReturn(null);
-
-        String response = wrapperService.getUserTaskExtensionByName(TASK_ID,"key");
-        Assertions.assertNotNull(response);
+        wrapperService.getUserTaskExtensionByName(TASK_ID,"key");
+        verify(repositoryService,times(1)).getCmmnModelInstance(any());
     }
 
     @Test
@@ -445,9 +402,8 @@ public class WrapperServiceImplTest
         when(camundaProperties.getCamundaProperties()).thenReturn(property);
         when(camundaProperty.getCamundaName()).thenReturn("key");
         when(camundaProperty.getCamundaValue()).thenReturn("value");
-
-        String response = wrapperService.getUserTaskExtensionByName(TASK_ID,"key");
-        Assertions.assertNotNull(response);
+        wrapperService.getUserTaskExtensionByName(TASK_ID,"key");
+        verify(repositoryService,times(1)).getBpmnModelInstance(any());
     }
 
     @Test
@@ -479,9 +435,8 @@ public class WrapperServiceImplTest
         when(task.getTaskDefinitionKey()).thenReturn("abc");
         when(userTask1.getId()).thenReturn("abc");
         when(userTask1.getExtensionElements()).thenReturn(null);
-
-        String response = wrapperService.getUserTaskExtensionByName(TASK_ID,"key");
-        Assertions.assertNotNull(response);
+        wrapperService.getUserTaskExtensionByName(TASK_ID,"key");
+        verify(repositoryService,times(1)).getBpmnModelInstance(any());
     }
 
     @Test
@@ -521,7 +476,6 @@ public class WrapperServiceImplTest
         actionsDTOList.add(actionsDTO);
         actionsDTOList.add(actionsDTO1);
 
-
         when(repositoryService.getBpmnModelInstance(any())).thenReturn(bpmnModelInstance);
         when(bpmnModelInstance.getModelElementsByType(UserTask.class)).thenReturn(userTaskCollection);
         when(historicTaskInstance.getTaskDefinitionKey()).thenReturn("abc");
@@ -544,25 +498,18 @@ public class WrapperServiceImplTest
         when(camundaProperty.getCamundaName()).thenReturn(TYPE);
         when(camundaProperty.getCamundaValue()).thenReturn(COMPONENT);
         when(camundaProperty.getCamundaId()).thenReturn("id");
-
         when(camundaProperty1.getCamundaName()).thenReturn(IS_DEFAULT);
         when(camundaProperty1.getCamundaValue()).thenReturn("true");
         when(camundaProperty1.getCamundaId()).thenReturn("id1");
-
         when(camundaProperty2.getCamundaName()).thenReturn(FORM_NAME);
         when(camundaProperty2.getCamundaValue()).thenReturn(FORM);
         when(camundaProperty2.getCamundaId()).thenReturn("id1");
-
         when(camundaProperty3.getCamundaName()).thenReturn(QUESTION);
         when(camundaProperty3.getCamundaValue()).thenReturn(QUESTION);
         when(camundaProperty3.getCamundaId()).thenReturn("id1");
-
-
         when(runtimeFormService.fetchFormById(any())).thenReturn(formSchema);
         when(objectMapper.convertValue(any(),any(TypeReference.class))).thenReturn(actionsDTOList);
-
-
-        HistoricInstanceDTO response = wrapperService.setExtensionElementsToHistoricTask(historicInstanceDTO,historicTaskInstance);
-        Assertions.assertNotNull(response);
+        wrapperService.setExtensionElementsToHistoricTask(historicInstanceDTO,historicTaskInstance);
+        verify(repositoryService,times(1)).getBpmnModelInstance(any());
     }
 }
