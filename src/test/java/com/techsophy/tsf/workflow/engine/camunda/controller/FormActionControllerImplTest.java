@@ -16,6 +16,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -40,6 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class FormActionControllerImplTest {
 
     private static  final SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor jwtRead = jwt().authorities(new SimpleGrantedAuthority("READ"));
@@ -151,4 +154,54 @@ public class FormActionControllerImplTest {
         ApiResponse<FormSchemaResponse> actual = formActionController.completeAndFetchNextTask(taskDTO);
         Assertions.assertEquals(expected,actual);
     }
+
+    @Test
+    void completeCurrentActiveTaskTest(){
+        Map<String,Object> variable = new HashMap<>();
+        variable.put("key","value");
+        TaskDTO taskDTO = new TaskDTO(BUSINESS_KEY,TASK_ID,variable);
+        ApiResponse<Void> expected = new ApiResponse<>(null,true,COMPLETE_TASK_SUCCESS);
+        ApiResponse<Void> actual = formActionController.completeCurrentActiveTask(taskDTO);
+        Assertions.assertEquals(expected,actual);
+    }
+
+    @Test
+    void updateProcessVariablesTest(){
+        Map<String,Object> variable = new HashMap<>();
+        variable.put("key","value");
+        ProcessVariablesDTO processVariablesDTO = new ProcessVariablesDTO(BUSINESS_KEY,variable);
+        ApiResponse<Void> expected = new ApiResponse<>(null,true,FORM_UPDATE_SUCCESS);
+        ApiResponse<Void> actual = formActionController.updateProcessVariables(processVariablesDTO);
+        Assertions.assertEquals(expected,actual);
+    }
+
+
+
+    @Test
+    void  createOrFetchProcessInstanceTest(){
+        Map<String,Object> variable = new HashMap<>();
+        variable.put("key","value");
+        ProcessInstanceResponseDTO processInstanceResponseDTO = new ProcessInstanceResponseDTO(PROCESS_INSTANCE_ID,BUSINESS_KEY,variable,false);
+        ProcessInstanceDTO processInstanceDTO =  new ProcessInstanceDTO("processDefinitionKey",variable,BUSINESS_KEY,FORM_KEY);
+        Mockito.when(runtimeProcessService.createOrFetchProcessInstance(processInstanceDTO)).thenReturn(processInstanceResponseDTO);
+        ApiResponse<ProcessInstanceResponseDTO> expected = new ApiResponse<>(null,true,PROCESS_CREATION);
+        ApiResponse<ProcessInstanceResponseDTO> actual = formActionController.createProcessInstance(processInstanceDTO);
+        Assertions.assertEquals(expected,actual);
+    }
+
+    @Test
+    void resumeProcessTest(){
+        ResumeProcessRequestDto reqDto =  new ResumeProcessRequestDto();
+        ApiResponse<Void> expected = new ApiResponse<>(null,true,"Process instance resumed successfully");
+        ApiResponse<Void> actual = formActionController.resumeProcess(reqDto);
+        Assertions.assertEquals(expected,actual);
+    }
+
+    @Test
+    void completeTaskTest(){
+        ApiResponse<Void> expected = new ApiResponse<>(null,true,"Task is completed successfully");
+        ApiResponse<Void> actual = formActionController.completeTask(CHECKLIST_INSTANCE_ID_VAR);
+        Assertions.assertEquals(expected,actual);
+    }
+
 }
