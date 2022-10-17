@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class CustomEventListenerTest {
+class CustomEventListenerTest {
     @Mock
     DelegateTask delegateTask;
     @Mock

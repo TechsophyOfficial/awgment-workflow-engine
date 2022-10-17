@@ -25,12 +25,11 @@ import java.util.List;
 
 import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.*;
 import static com.techsophy.tsf.workflow.engine.camunda.constants.FormConstants.BUSINESS_KEY;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 
 @ExtendWith(MockitoExtension.class)
-public class CommentControllerImplTest {
+class CommentControllerImplTest {
 
     private static  final SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor jwtRead = jwt().authorities(new SimpleGrantedAuthority("READ"));
     private static  final SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor jwtSaveOrUpdate = jwt().authorities(new SimpleGrantedAuthority("AWGMENT_FORM_CREATE_OR_UPDATE"));
