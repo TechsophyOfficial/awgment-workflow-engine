@@ -261,8 +261,10 @@ class RuntimeProcessServiceImplTest {
 
     @Test
     void createOrFetchProcessInstanceTest(){
+        String expectedOutput = "InstanceId";
         ProcessInstanceDTO processInstanceDTO = new ProcessInstanceDTO("key", Map.of("key", "val"), "bKey", "fKey");
         ProcessInstance processInstance = Mockito.mock(ProcessInstance.class);
+        when(processInstance.getProcessInstanceId()).thenReturn(expectedOutput);
         HistoricVariableInstanceQuery historicVariableInstanceQuery = Mockito.mock(HistoricVariableInstanceQuery.class);
         HistoricVariableInstance historicVariableInstance = Mockito.mock(HistoricVariableInstance.class);
         ProcessInstanceQuery processInstanceQuery = Mockito.mock(ProcessInstanceQuery.class);
@@ -275,14 +277,13 @@ class RuntimeProcessServiceImplTest {
         Mockito.when(historicVariableInstanceQuery.list()).thenReturn(List.of(historicVariableInstance));
         Mockito.when(historicVariableInstance.getName()).thenReturn("name");
         Mockito.when(historicVariableInstance.getValue()).thenReturn("value");
-
         String actualOutput = runtimeProcessService.createOrFetchProcessInstance(processInstanceDTO).getProcessInstanceId();
-        String expectedOutput = processInstance.getProcessInstanceId();
         Assertions.assertSame(expectedOutput, actualOutput);
     }
 
 @Test
 void createOrFetchProcessInstanceTestWithNullProcessInstance() throws IOException {
+    String expectedOutput = "ProcessInstanceId";
     Map<String,Object> map = new HashMap<>();
     map.put("key","value");
     FormComponent formComponent = new FormComponent("label", "ph", "desc", true, "vo", null, "key",
@@ -292,6 +293,7 @@ void createOrFetchProcessInstanceTestWithNullProcessInstance() throws IOExceptio
     FormioFormSchema formioFormSchema = new FormioFormSchema("display", new FormComponent[]{formComponent});
     ProcessInstanceDTO processInstanceDTO = new ProcessInstanceDTO("key", map, "bKey", "fKey");
     ProcessInstance processInstance = Mockito.mock(ProcessInstance.class);
+    when(processInstance.getProcessInstanceId()).thenReturn(expectedOutput);
     HistoricVariableInstanceQuery historicVariableInstanceQuery = Mockito.mock(HistoricVariableInstanceQuery.class);
     HistoricVariableInstance historicVariableInstance = Mockito.mock(HistoricVariableInstance.class);
     ProcessInstanceQuery processInstanceQuery = Mockito.mock(ProcessInstanceQuery.class);
@@ -307,9 +309,7 @@ void createOrFetchProcessInstanceTestWithNullProcessInstance() throws IOExceptio
     Mockito.when(historicVariableInstanceQuery.list()).thenReturn(List.of(historicVariableInstance));
     Mockito.when(historicVariableInstance.getName()).thenReturn("name");
     Mockito.when(historicVariableInstance.getValue()).thenReturn("value");
-
     String actualOutput = runtimeProcessService.createOrFetchProcessInstance(processInstanceDTO).getProcessInstanceId();
-    String expectedOutput = processInstance.getProcessInstanceId();
     Assertions.assertSame(expectedOutput, actualOutput);
 }
 
