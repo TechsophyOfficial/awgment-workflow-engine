@@ -26,7 +26,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class ChecklistServiceImplTest {
+class ChecklistServiceImplTest {
     @Mock
     WebClientWrapper webClientWrapper;
     @Mock
@@ -94,7 +94,7 @@ public class ChecklistServiceImplTest {
     }
 
     @Test
-    void completeChecklistItemsByIdsTest() throws JsonProcessingException {
+    void completeChecklistItemsByIdsTest(){
         Map<String, List<String>> idList = Map.of("key", List.of("val1"));
         ApiResponse<String> apiResponse = new ApiResponse<>("test",true, "message");
         Mockito.when(webClientWrapper.createWebClient(any())).thenReturn(webClient);

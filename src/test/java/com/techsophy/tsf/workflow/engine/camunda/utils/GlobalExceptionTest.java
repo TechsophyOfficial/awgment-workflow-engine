@@ -2,8 +2,6 @@ package com.techsophy.tsf.workflow.engine.camunda.utils;
 
 import com.techsophy.tsf.workflow.engine.camunda.exception.*;
 import com.techsophy.tsf.workflow.engine.camunda.model.ApiErrorResponse;
-import com.techsophy.tsf.workflow.engine.camunda.model.ApiResponse;
-import org.apache.tomcat.util.digester.DocumentProperties;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,12 +18,11 @@ import javax.validation.ConstraintViolationException;
 
 import java.nio.charset.Charset;
 import java.text.ParseException;
-import java.util.Set;
 
 import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
-public class GlobalExceptionTest {
+class GlobalExceptionTest {
     @Mock
     WebRequest webRequest;
     @InjectMocks
@@ -47,13 +44,12 @@ public class GlobalExceptionTest {
         Assertions.assertNotNull(response);
     }
 
-//    @Test
-//    void constraintViolationExceptionTest(){
-//        ConstraintViolation constraintViolation = mock(ConstraintViolation.class);
-//        ConstraintViolationException constraintViolationException = new ConstraintViolationException("args",constraintViolation);
-//        ResponseEntity<ApiErrorResponse> response = globalExceptionHandler.constraintValidationException(constraintViolationException,webRequest);
-//        Assertions.assertNotNull(response);
-//    }
+    @Test
+    void constraintViolationExceptionTest(){
+        ConstraintViolationException constraintViolationException = mock(ConstraintViolationException.class);
+        ResponseEntity<ApiErrorResponse> response = globalExceptionHandler.constraintValidationException(constraintViolationException,webRequest);
+        Assertions.assertNotNull(response);
+    }
 
     @Test
     void TaskNotFoundExceptionTest(){

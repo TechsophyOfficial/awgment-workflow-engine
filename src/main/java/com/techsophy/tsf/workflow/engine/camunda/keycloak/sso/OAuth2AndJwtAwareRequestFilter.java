@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 
 /*
@@ -27,7 +26,6 @@ import java.util.Optional;
  * */
 public class OAuth2AndJwtAwareRequestFilter extends HttpFilter
 {
-    private static final List<String> NAME_CLAIMS = List.of("clientId", "name", "given_name", "preferred_username", "email", "sub");
 
     @Override
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException

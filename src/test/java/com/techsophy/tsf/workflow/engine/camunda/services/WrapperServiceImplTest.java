@@ -8,10 +8,13 @@ import com.techsophy.tsf.workflow.engine.camunda.service.impl.TokenSupplierImpl;
 import com.techsophy.tsf.workflow.engine.camunda.service.impl.WrapperServiceImpl;
 import org.camunda.bpm.engine.HistoryService;
 import org.camunda.bpm.engine.RepositoryService;
+import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.history.HistoricTaskInstance;
 import org.camunda.bpm.engine.history.HistoricVariableInstance;
 import org.camunda.bpm.engine.history.HistoricVariableInstanceQuery;
+import org.camunda.bpm.engine.runtime.ProcessInstance;
+import org.camunda.bpm.engine.runtime.ProcessInstanceQuery;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.task.TaskQuery;
 import org.camunda.bpm.model.bpmn.BpmnModelInstance;
@@ -52,6 +55,7 @@ import java.util.*;
 import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.*;
 import static com.techsophy.tsf.workflow.engine.camunda.constants.CheckListConstants.CHECKLIST_INSTANCE_ID;
 import static com.techsophy.tsf.workflow.engine.camunda.constants.FormConstants.FORM_KEY;
+import static javax.ws.rs.HttpMethod.GET;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -115,6 +119,9 @@ class WrapperServiceImplTest
     @Mock
     HistoryService historyService;
 
+    @Mock
+    RuntimeService runtimeService;
+
 
     @BeforeEach
     void init()
@@ -141,8 +148,8 @@ class WrapperServiceImplTest
         when(tokenSupplier.getToken()).thenReturn("token");
         ResponseEntity<byte[]> responseEntity = new ResponseEntity<>(bytes,getResponseHeaders(), HttpStatus.OK);
         when(restTemplate.exchange(any(RequestEntity.class), eq(byte[].class))).thenReturn(responseEntity);
-        ResponseEntity<Resource> response = wrapperService.handleRequest(params, entity, APP_NAME);
-        Assertions.assertNotNull(response);
+        wrapperService.handleRequest(params, entity, APP_NAME);
+        verify(restTemplate,times(1)).exchange(any(RequestEntity.class), eq(byte[].class));
     }
 
     @Test
@@ -159,7 +166,79 @@ class WrapperServiceImplTest
         ResponseEntity<byte[]> responseEntity = new ResponseEntity<>(bytes, getResponseHeaders(), HttpStatus.OK);
         when(restTemplate.exchange(any(RequestEntity.class), eq(byte[].class))).thenReturn(responseEntity);
         ResponseEntity<Resource> downloadResponse = wrapperService.handleRequest(params, entity, "form-runtime");
-        Assertions.assertNotNull(downloadResponse);
+        verify(restTemplate,times(1)).exchange(any(RequestEntity.class), eq(byte[].class));
+    }
+
+    @Test
+    void handleRequestTest() throws URISyntaxException {
+        byte[] bytes = "InputStream resource [resource loaded through InputStream]".getBytes();
+        MultiValueMap<String, String> params = getCommonParams();
+        params.add("name", FILENAME_WITH_GUID);
+        params.add(PROCESS_INSTANCE_ID,PROCESS_INSTANCE_ID);
+        ReflectionTestUtils.setField(wrapperService, "gatewayUrl", dmsUrl);
+        ProcessInstance processInstance = Mockito.mock(ProcessInstance.class);
+        ProcessInstanceQuery processInstanceQuery = Mockito.mock(ProcessInstanceQuery.class);
+
+        RequestEntity<?> entity = new RequestEntity<>(body, new HttpHeaders(), HttpMethod.POST, new URI("wrapper/dms"));
+        when(tokenSupplier.getToken()).thenReturn("token");
+        ResponseEntity<byte[]> responseEntity = new ResponseEntity<>(bytes,getResponseHeaders(), HttpStatus.OK);
+        when(restTemplate.exchange(any(RequestEntity.class), eq(byte[].class))).thenReturn(responseEntity);
+
+        Mockito.when(runtimeService.createProcessInstanceQuery()).thenReturn(processInstanceQuery);
+        Mockito.when(processInstanceQuery.processInstanceId(any())).thenReturn(processInstanceQuery);
+        Mockito.when(processInstanceQuery.active()).thenReturn(processInstanceQuery);
+        Mockito.when(processInstanceQuery.singleResult()).thenReturn(processInstance);
+        when(processInstance.getBusinessKey()).thenReturn("abc");
+        wrapperService.handleRequest(params, entity, APP_NAME);
+        verify(runtimeService,times(1)).createProcessInstanceQuery();
+    }
+
+    @Test
+    void handleRequestGetRequestTest() throws URISyntaxException {
+        byte[] bytes = "InputStream resource [resource loaded through InputStream]".getBytes();
+        MultiValueMap<String, String> params = getCommonParams();
+        params.add("name", FILENAME_WITH_GUID);
+        params.add(FORM, FILENAME_WITH_GUID);
+        params.add(PROCESS_INSTANCE_ID,PROCESS_INSTANCE_ID);
+        ReflectionTestUtils.setField(wrapperService, "gatewayUrl", dmsUrl);
+        ProcessInstance processInstance = Mockito.mock(ProcessInstance.class);
+        ProcessInstanceQuery processInstanceQuery = Mockito.mock(ProcessInstanceQuery.class);
+
+        RequestEntity<?> entity = new RequestEntity<>(body, new HttpHeaders(), HttpMethod.GET, new URI("wrapper/dms"));
+        when(tokenSupplier.getToken()).thenReturn("token");
+        ResponseEntity<byte[]> responseEntity = new ResponseEntity<>(bytes,getResponseHeaders(), HttpStatus.OK);
+        when(restTemplate.exchange(any(RequestEntity.class), eq(byte[].class))).thenReturn(responseEntity);
+
+        Mockito.when(runtimeService.createProcessInstanceQuery()).thenReturn(processInstanceQuery);
+        Mockito.when(processInstanceQuery.processInstanceId(any())).thenReturn(processInstanceQuery);
+        Mockito.when(processInstanceQuery.active()).thenReturn(processInstanceQuery);
+        Mockito.when(processInstanceQuery.singleResult()).thenReturn(processInstance);
+        when(processInstance.getBusinessKey()).thenReturn("abc");
+        wrapperService.handleRequest(params, entity, APP_NAME);
+        verify(runtimeService,times(1)).createProcessInstanceQuery();
+    }
+
+    @Test
+    void handleRequestRequestTest() throws URISyntaxException {
+        byte[] bytes = "InputStream resource [resource loaded through InputStream]".getBytes();
+        MultiValueMap<String, String> params = getCommonParams();
+        params.add("name", FILENAME_WITH_GUID);
+        params.add(FORM, FILENAME_WITH_GUID);
+        params.add(PROCESS_INSTANCE_ID,PROCESS_INSTANCE_ID);
+        ReflectionTestUtils.setField(wrapperService, "gatewayUrl", dmsUrl);
+        RequestEntity<?> entity = new RequestEntity<>(body, new HttpHeaders(), HttpMethod.GET, new URI("wrapper/dms"));
+        when(tokenSupplier.getToken()).thenReturn("token");
+        ResponseEntity<byte[]> responseEntity = new ResponseEntity<>(bytes,getResponseHeaders(), HttpStatus.OK);
+
+        Map<String,String> maps = new HashMap<>();
+        maps.put("key","value");
+        maps.put("abc","qwe");
+        RequestDataDTO requestDataDTO = new RequestDataDTO("abc.com",GET,"payload","requestparams");
+        when(objectMapper.convertValue(entity.getBody(), RequestDataDTO.class)).thenReturn(requestDataDTO);
+        when(objectMapper.convertValue(any(),any(TypeReference.class))).thenReturn(maps);
+        when(restTemplate.exchange(any(RequestEntity.class), eq(byte[].class))).thenReturn(responseEntity);
+        wrapperService.handleRequest(params, entity, "formtype");
+        verify(restTemplate,times(1)).exchange(any(RequestEntity.class), eq(byte[].class));
     }
 
     @Test
@@ -167,9 +246,7 @@ class WrapperServiceImplTest
     {
         MockMultipartHttpServletRequest mockMultipartHttpServletRequest = new MockMultipartHttpServletRequest();
         MultipartFile file = new MockMultipartFile("file", FILE_NAME, MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
-
         mockMultipartHttpServletRequest.addFile(file);
-
         RequestEntity<MultiValueMap<String, Resource>> requestEntity = wrapperService.getMultipartRequestEntity(mockMultipartHttpServletRequest);
         Assertions.assertEquals(mockMultipartHttpServletRequest.getMultiFileMap().size(), Objects.requireNonNull(requestEntity.getBody()).size());
     }
@@ -215,7 +292,7 @@ class WrapperServiceImplTest
     }
 
     @Test
-    void setExtensionElementsToTaskTest2(){
+    void setExtensionElementsTest(){
         userTask1.setId("abc");
         userTask2.setId("qwe");
         Collection<UserTask> userTaskDefs = new ArrayList<>();
@@ -233,14 +310,13 @@ class WrapperServiceImplTest
         verify(repositoryService,times(1)).getBpmnModelInstance(any());
     }
     @Test
-    void setExtensionElementsToTaskTest3(){
+    void setExtensionElementsTaskTest(){
         List<String> list = new ArrayList<>();
         list.add("abc");
         list.add("cde");
         Map<String,Object> component = new HashMap<>();
         component.put(ACTIONS,list);
         component.put("abc","qwe");
-        ModelElementInstance modelElementInstance = mock(ModelElementInstance.class);
         CamundaProperty camundaProperty = mock(CamundaProperty.class);
         when(camundaProperty.getCamundaName()).thenReturn("propertyName");
         when(camundaProperty.getCamundaValue()).thenReturn(COMPONENT);
@@ -272,6 +348,69 @@ class WrapperServiceImplTest
         ActionsDTO actionsDTO = new ActionsDTO("test",CHECKLIST_INSTANCE_ID_VAR, TYPE,"test");
         ActionsDTO actionsDTO1 = new ActionsDTO("test",DOCUMENT_ID_VAR,IS_DEFAULT,"test");
         ActionsDTO actionsDTO2 = new ActionsDTO("test",SCREEN_TYPE_ID_VAR,IS_DEFAULT,"test");
+        List<ActionsDTO> actionsDTOList = new ArrayList<>();
+        actionsDTOList.add(actionsDTO);
+        actionsDTOList.add(actionsDTO1);
+        Date date = new Date();
+        TaskInstanceDTO taskInstanceDTO = new TaskInstanceDTO("test","test", "test", date, date, date, "test","test", "test", "test","test", 5, "test","test", "test", "test","test", "test", true, "test","test", "test", "test","test", "test", "test", List.of(actionsDTO));
+        Mockito.when(task.getProcessDefinitionId()).thenReturn("abc");
+        Mockito.when(bpmnModelInstance.getModelElementsByType(UserTask.class)).thenReturn(userTaskDefs);
+        Mockito.when(userTask1.getId()).thenReturn("abc");
+        Mockito.when(repositoryService.getBpmnModelInstance(any())).thenReturn(bpmnModelInstance);
+        Mockito.when(task.getTaskDefinitionKey()).thenReturn("abc");
+        Mockito.when(userTaskOptional.get().getExtensionElements()).thenReturn(extensionElements);
+        Mockito.when(extensionElements.getElementsQuery()).thenReturn(modelElementInstanceQuery);
+        Mockito.when(extensionElements.getElementsQuery().filterByType(CamundaProperties.class)).thenReturn(query);
+        Mockito.when(query.singleResult()).thenReturn(camundaProperties);
+        Mockito.when(camundaProperties.getCamundaProperties()).thenReturn(property);
+        when(task.getFormKey()).thenReturn("abc");
+        when(runtimeFormService.fetchFormById(any())).thenReturn(new FormSchema(NAME,ID,component,1));
+        when(taskService.getVariableLocal(task.getId(), CHECKLIST_INSTANCE_ID)).thenReturn(123);
+        when(objectMapper.convertValue(any(),any(TypeReference.class))).thenReturn(actionsDTOList);
+        wrapperService.setExtensionElementsToTask(taskInstanceDTO, task);
+        verify(repositoryService,times(1)).getBpmnModelInstance(any());
+    }
+
+    @Test
+    void setExtensionElementTest(){
+        List<String> list = new ArrayList<>();
+        list.add("abc");
+        list.add("cde");
+
+        Map<String,Object> component = new HashMap<>();
+        component.put(ACTIONS,list);
+        component.put("abc","qwe");
+
+        CamundaProperty camundaProperty = mock(CamundaProperty.class);
+        when(camundaProperty.getCamundaName()).thenReturn(TYPE);
+        when(camundaProperty.getCamundaValue()).thenReturn(COMPONENT);
+        when(camundaProperty.getCamundaId()).thenReturn("id");
+
+        CamundaProperty camundaProperty1 = mock(CamundaProperty.class);
+        when(camundaProperty1.getCamundaName()).thenReturn(IS_DEFAULT);
+        when(camundaProperty1.getCamundaValue()).thenReturn("true");
+        when(camundaProperty1.getCamundaId()).thenReturn("id1");
+
+        extensionElements.addExtensionElement("abc","key");
+        extensionElements.addExtensionElement("qwe","pair");
+
+        Query<CamundaProperties> query = mock(Query.class);
+        Query<ModelElementInstance> modelElementInstanceQuery = mock(Query.class);
+
+        CamundaProperties camundaProperties = mock(CamundaProperties.class);
+        Collection<CamundaProperty> property = new ArrayList<>();
+        property.add(camundaProperty);
+        property.add(camundaProperty1);
+
+        Mockito.when(query.count()).thenReturn(1);
+        userTask1.setId("abc");
+        userTask2.setId("qwe");
+        Collection<UserTask> userTaskDefs = new ArrayList<>();
+        userTaskDefs.add(userTask1);
+        userTaskDefs.add(userTask2);
+        Optional<UserTask> userTaskOptional = Optional.of(userTask1);
+        ActionsDTO actionsDTO = new ActionsDTO("test",CHECKLIST_INSTANCE_ID_VAR, TYPE,"test");
+        ActionsDTO actionsDTO1 = new ActionsDTO("test",CHECKLIST_INSTANCE_ID_VAR,IS_DEFAULT,"test");
         List<ActionsDTO> actionsDTOList = new ArrayList<>();
         actionsDTOList.add(actionsDTO);
         actionsDTOList.add(actionsDTO1);

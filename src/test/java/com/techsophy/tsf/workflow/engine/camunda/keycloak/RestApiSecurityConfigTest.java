@@ -22,29 +22,26 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @AutoConfigureMockMvc(addFilters = false)
 @AllArgsConstructor(onConstructor_ = {@Autowired})
 @SpringBootTest(classes = TestSecurityConfig.class, webEnvironment = RANDOM_PORT)
-public class RestApiSecurityConfigTest
-{
+class RestApiSecurityConfigTest {
     private final RestApiSecurityConfig restApiSecurityConfig;
 
-//    @Test
-//    void testKeycloakAuthenticationFilter()
-//    {
-//        FilterRegistrationBean<KeycloakAuthenticationFilter> filterRegistrationBean = restApiSecurityConfig.keycloakAuthenticationFilter();
-//
-//        assertNotNull(filterRegistrationBean);
-//
-//        // Order is important while registering filter beans
-//        assertThat(filterRegistrationBean.getOrder()).isEqualTo(102);
-//    }
+    @Test
+    void testKeycloakAuthenticationFilter() {
+        FilterRegistrationBean<KeycloakAuthenticationFilter> filterRegistrationBean = restApiSecurityConfig.keycloakAuthenticationFilter();
 
-//    @Test
-//    void testCorsFilter()
-//    {
-//        FilterRegistrationBean<CorsFilter> filterRegistrationBean = restApiSecurityConfig.corsFilter();
-//
-//        assertNotNull(filterRegistrationBean);
-//
-//        // Order is important while registering filter beans
-//        assertThat(filterRegistrationBean.getOrder()).isEqualTo(Ordered.HIGHEST_PRECEDENCE);
-//    }
+        assertNotNull(filterRegistrationBean);
+
+        // Order is important while registering filter beans
+        assertThat(filterRegistrationBean.getOrder()).isEqualTo(102);
+    }
+
+    @Test
+    void testCorsFilter() {
+        FilterRegistrationBean<CorsFilter> filterRegistrationBean = restApiSecurityConfig.corsFilter();
+
+        assertNotNull(filterRegistrationBean);
+
+        // Order is important while registering filter beans
+        assertThat(filterRegistrationBean.getOrder()).isEqualTo(Ordered.HIGHEST_PRECEDENCE);
+    }
 }

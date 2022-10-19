@@ -18,7 +18,6 @@ import org.camunda.bpm.engine.runtime.ProcessInstanceQuery;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.task.TaskQuery;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,13 +28,10 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -265,8 +261,10 @@ class RuntimeProcessServiceImplTest {
 
     @Test
     void createOrFetchProcessInstanceTest(){
+        String expectedOutput = "InstanceId";
         ProcessInstanceDTO processInstanceDTO = new ProcessInstanceDTO("key", Map.of("key", "val"), "bKey", "fKey");
         ProcessInstance processInstance = Mockito.mock(ProcessInstance.class);
+        when(processInstance.getProcessInstanceId()).thenReturn(expectedOutput);
         HistoricVariableInstanceQuery historicVariableInstanceQuery = Mockito.mock(HistoricVariableInstanceQuery.class);
         HistoricVariableInstance historicVariableInstance = Mockito.mock(HistoricVariableInstance.class);
         ProcessInstanceQuery processInstanceQuery = Mockito.mock(ProcessInstanceQuery.class);
@@ -279,18 +277,48 @@ class RuntimeProcessServiceImplTest {
         Mockito.when(historicVariableInstanceQuery.list()).thenReturn(List.of(historicVariableInstance));
         Mockito.when(historicVariableInstance.getName()).thenReturn("name");
         Mockito.when(historicVariableInstance.getValue()).thenReturn("value");
-
         String actualOutput = runtimeProcessService.createOrFetchProcessInstance(processInstanceDTO).getProcessInstanceId();
-        String expectedOutput = processInstance.getProcessInstanceId();
         Assertions.assertSame(expectedOutput, actualOutput);
     }
 
+@Test
+void createOrFetchProcessInstanceTestWithNullProcessInstance() throws IOException {
+    String expectedOutput = "ProcessInstanceId";
+    Map<String,Object> map = new HashMap<>();
+    map.put("key","value");
+    FormComponent formComponent = new FormComponent("label", "ph", "desc", true, "vo", null, "key",
+            "fk", "type", true, null, "it", null, null, true, "action",
+            "event", "provider", null, null, null, "storage", null, true, "url",
+            "format", "dT", true, "html", "title", null, "pre", "suf", true, null);
+    FormioFormSchema formioFormSchema = new FormioFormSchema("display", new FormComponent[]{formComponent});
+    ProcessInstanceDTO processInstanceDTO = new ProcessInstanceDTO("key", map, "bKey", "fKey");
+    ProcessInstance processInstance = Mockito.mock(ProcessInstance.class);
+    when(processInstance.getProcessInstanceId()).thenReturn(expectedOutput);
+    HistoricVariableInstanceQuery historicVariableInstanceQuery = Mockito.mock(HistoricVariableInstanceQuery.class);
+    HistoricVariableInstance historicVariableInstance = Mockito.mock(HistoricVariableInstance.class);
+    ProcessInstanceQuery processInstanceQuery = Mockito.mock(ProcessInstanceQuery.class);
+    Mockito.when(runtimeService.createProcessInstanceQuery()).thenReturn(processInstanceQuery);
+    Mockito.when(processInstanceQuery.processInstanceBusinessKey(processInstanceDTO.getBusinessKey())).thenReturn(processInstanceQuery);
+    Mockito.when(processInstanceQuery.active()).thenReturn(processInstanceQuery);
+    Mockito.when(processInstanceQuery.singleResult()).thenReturn(null);
+    when(runtimeFormService.fetchFormById(any(),any())).thenReturn(new FormSchema("name","id",map,1));
+    when(objectMapper.convertValue(any(),eq(FormioFormSchema.class))).thenReturn(formioFormSchema);
+    Mockito.when(runtimeService.startProcessInstanceByKey(processInstanceDTO.getProcessDefinitionKey(), processInstanceDTO.getBusinessKey(), map)).thenReturn(processInstance);
+    Mockito.when(historyService.createHistoricVariableInstanceQuery()).thenReturn(historicVariableInstanceQuery);
+    Mockito.when(historicVariableInstanceQuery.processInstanceId(any())).thenReturn(historicVariableInstanceQuery);
+    Mockito.when(historicVariableInstanceQuery.list()).thenReturn(List.of(historicVariableInstance));
+    Mockito.when(historicVariableInstance.getName()).thenReturn("name");
+    Mockito.when(historicVariableInstance.getValue()).thenReturn("value");
+    String actualOutput = runtimeProcessService.createOrFetchProcessInstance(processInstanceDTO).getProcessInstanceId();
+    Assertions.assertSame(expectedOutput, actualOutput);
+}
 
     @Test
     void resumeProcessTest() {
         ProcessInstanceQuery processInstanceQuery = Mockito.mock(ProcessInstanceQuery.class);
         MessageCorrelationBuilder messageCorrelationBuilder = Mockito.mock(MessageCorrelationBuilder.class);
         ResumeProcessRequestDto resumeProcessRequestDto = new ResumeProcessRequestDto();
+        ProcessInstance processInstance = Mockito.mock(ProcessInstance.class);
         Map<String, Object> variable = Map.of("key", "val");
         resumeProcessRequestDto.setProcessInstanceId("id");
         resumeProcessRequestDto.setBusinessKey("bKey");
@@ -300,7 +328,34 @@ class RuntimeProcessServiceImplTest {
         Mockito.when(runtimeService.createProcessInstanceQuery()).thenReturn(processInstanceQuery);
         Mockito.when(processInstanceQuery.processInstanceId(resumeProcessRequestDto.getProcessInstanceId())).thenReturn(processInstanceQuery);
         Mockito.when(processInstanceQuery.active()).thenReturn(processInstanceQuery);
+        Mockito.when(processInstanceQuery.singleResult()).thenReturn(processInstance);
+        when(runtimeService.createMessageCorrelation(any())).thenReturn(messageCorrelationBuilder);
+        when(messageCorrelationBuilder.processInstanceBusinessKey(any())).thenReturn(messageCorrelationBuilder);
+        when(messageCorrelationBuilder.setVariables(any())).thenReturn(messageCorrelationBuilder);
+        runtimeProcessService.resumeProcess(resumeProcessRequestDto);
+        verify(runtimeService, times(1)).createProcessInstanceQuery();
+    }
 
+
+    @Test
+    void resumeProcessWithGetBusinessKeyTest() {
+        ProcessInstanceQuery processInstanceQuery = Mockito.mock(ProcessInstanceQuery.class);
+        MessageCorrelationBuilder messageCorrelationBuilder = Mockito.mock(MessageCorrelationBuilder.class);
+        ResumeProcessRequestDto resumeProcessRequestDto = new ResumeProcessRequestDto();
+        ProcessInstance processInstance = Mockito.mock(ProcessInstance.class);
+        Map<String, Object> variable = Map.of("key", "val");
+        resumeProcessRequestDto.setProcessInstanceId(null);
+        resumeProcessRequestDto.setBusinessKey("bKey");
+        resumeProcessRequestDto.setVariables(variable);
+        resumeProcessRequestDto.setMessage("msg");
+
+        Mockito.when(runtimeService.createProcessInstanceQuery()).thenReturn(processInstanceQuery);
+        Mockito.when(processInstanceQuery.processInstanceBusinessKey(resumeProcessRequestDto.getBusinessKey())).thenReturn(processInstanceQuery);
+        Mockito.when(processInstanceQuery.active()).thenReturn(processInstanceQuery);
+        Mockito.when(processInstanceQuery.unlimitedList()).thenReturn(List.of(processInstance));
+        when(runtimeService.createMessageCorrelation(any())).thenReturn(messageCorrelationBuilder);
+        when(messageCorrelationBuilder.processInstanceBusinessKey(any())).thenReturn(messageCorrelationBuilder);
+        when(messageCorrelationBuilder.setVariables(any())).thenReturn(messageCorrelationBuilder);
         runtimeProcessService.resumeProcess(resumeProcessRequestDto);
         verify(runtimeService, times(1)).createProcessInstanceQuery();
     }

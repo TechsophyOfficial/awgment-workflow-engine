@@ -21,7 +21,7 @@ import java.util.Map;
 import static org.mockito.ArgumentMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
-public class DMSWrapperServiceImplTest {
+class DMSWrapperServiceImplTest {
     @Mock
     WebClientWrapper webClientWrapper;
     @Mock

@@ -1,9 +1,7 @@
 package com.techsophy.tsf.workflow.engine.camunda.utils;
 
-import org.camunda.bpm.model.bpmn.impl.instance.camunda.CamundaPropertyImpl;
 import org.camunda.bpm.model.bpmn.instance.camunda.CamundaProperty;
 import org.camunda.bpm.model.xml.impl.ModelInstanceImpl;
-import org.camunda.bpm.model.xml.impl.instance.ModelTypeInstanceContext;
 import org.camunda.bpm.model.xml.impl.type.ModelElementTypeImpl;
 import org.camunda.bpm.model.xml.instance.DomElement;
 import org.junit.jupiter.api.Assertions;
@@ -16,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
-public class CommonUtilsTest {
+class CommonUtilsTest {
     @Mock
     CamundaProperty camundaProperty;
     @InjectMocks
