@@ -55,6 +55,7 @@ import java.util.*;
 import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.*;
 import static com.techsophy.tsf.workflow.engine.camunda.constants.CheckListConstants.CHECKLIST_INSTANCE_ID;
 import static com.techsophy.tsf.workflow.engine.camunda.constants.FormConstants.FORM_KEY;
+import static javax.ws.rs.HttpMethod.GET;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -147,8 +148,8 @@ class WrapperServiceImplTest
         when(tokenSupplier.getToken()).thenReturn("token");
         ResponseEntity<byte[]> responseEntity = new ResponseEntity<>(bytes,getResponseHeaders(), HttpStatus.OK);
         when(restTemplate.exchange(any(RequestEntity.class), eq(byte[].class))).thenReturn(responseEntity);
-        ResponseEntity<Resource> response = wrapperService.handleRequest(params, entity, APP_NAME);
-        Assertions.assertNotNull(response);
+        wrapperService.handleRequest(params, entity, APP_NAME);
+        verify(restTemplate,times(1)).exchange(any(RequestEntity.class), eq(byte[].class));
     }
 
     @Test
@@ -165,7 +166,7 @@ class WrapperServiceImplTest
         ResponseEntity<byte[]> responseEntity = new ResponseEntity<>(bytes, getResponseHeaders(), HttpStatus.OK);
         when(restTemplate.exchange(any(RequestEntity.class), eq(byte[].class))).thenReturn(responseEntity);
         ResponseEntity<Resource> downloadResponse = wrapperService.handleRequest(params, entity, "form-runtime");
-        Assertions.assertNotNull(downloadResponse);
+        verify(restTemplate,times(1)).exchange(any(RequestEntity.class), eq(byte[].class));
     }
 
     @Test
@@ -188,8 +189,8 @@ class WrapperServiceImplTest
         Mockito.when(processInstanceQuery.active()).thenReturn(processInstanceQuery);
         Mockito.when(processInstanceQuery.singleResult()).thenReturn(processInstance);
         when(processInstance.getBusinessKey()).thenReturn("abc");
-        ResponseEntity<Resource> response = wrapperService.handleRequest(params, entity, APP_NAME);
-        Assertions.assertNotNull(response);
+        wrapperService.handleRequest(params, entity, APP_NAME);
+        verify(runtimeService,times(1)).createProcessInstanceQuery();
     }
 
     @Test
@@ -213,10 +214,10 @@ class WrapperServiceImplTest
         Mockito.when(processInstanceQuery.active()).thenReturn(processInstanceQuery);
         Mockito.when(processInstanceQuery.singleResult()).thenReturn(processInstance);
         when(processInstance.getBusinessKey()).thenReturn("abc");
-        ResponseEntity<Resource> response = wrapperService.handleRequest(params, entity, APP_NAME);
-        Assertions.assertNotNull(response);
+        wrapperService.handleRequest(params, entity, APP_NAME);
+        verify(runtimeService,times(1)).createProcessInstanceQuery();
     }
-//---------------------------------------------------------
+
     @Test
     void handleRequestRequestTest() throws URISyntaxException {
         byte[] bytes = "InputStream resource [resource loaded through InputStream]".getBytes();
@@ -225,25 +226,19 @@ class WrapperServiceImplTest
         params.add(FORM, FILENAME_WITH_GUID);
         params.add(PROCESS_INSTANCE_ID,PROCESS_INSTANCE_ID);
         ReflectionTestUtils.setField(wrapperService, "gatewayUrl", dmsUrl);
-        ProcessInstance processInstance = Mockito.mock(ProcessInstance.class);
-        ProcessInstanceQuery processInstanceQuery = Mockito.mock(ProcessInstanceQuery.class);
-
         RequestEntity<?> entity = new RequestEntity<>(body, new HttpHeaders(), HttpMethod.GET, new URI("wrapper/dms"));
         when(tokenSupplier.getToken()).thenReturn("token");
         ResponseEntity<byte[]> responseEntity = new ResponseEntity<>(bytes,getResponseHeaders(), HttpStatus.OK);
 
-
-
-
-        Map<String,String> map = new HashMap<>();
-        map.put("key","value");
-        map.put("abc","qwe");
-        RequestDataDTO requestDataDTO = new RequestDataDTO("abc.com","method","payload","requestparams");
+        Map<String,String> maps = new HashMap<>();
+        maps.put("key","value");
+        maps.put("abc","qwe");
+        RequestDataDTO requestDataDTO = new RequestDataDTO("abc.com",GET,"payload","requestparams");
         when(objectMapper.convertValue(entity.getBody(), RequestDataDTO.class)).thenReturn(requestDataDTO);
-        when(objectMapper.convertValue(requestDataDTO.getRequestParams(), new TypeReference<Map<String, String>>() {})).thenReturn(map);
+        when(objectMapper.convertValue(any(),any(TypeReference.class))).thenReturn(maps);
         when(restTemplate.exchange(any(RequestEntity.class), eq(byte[].class))).thenReturn(responseEntity);
-        ResponseEntity<Resource> response = wrapperService.handleRequest(params, entity, "formtype");
-        Assertions.assertNotNull(response);
+        wrapperService.handleRequest(params, entity, "formtype");
+        verify(restTemplate,times(1)).exchange(any(RequestEntity.class), eq(byte[].class));
     }
 
     @Test
@@ -251,9 +246,7 @@ class WrapperServiceImplTest
     {
         MockMultipartHttpServletRequest mockMultipartHttpServletRequest = new MockMultipartHttpServletRequest();
         MultipartFile file = new MockMultipartFile("file", FILE_NAME, MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
-
         mockMultipartHttpServletRequest.addFile(file);
-
         RequestEntity<MultiValueMap<String, Resource>> requestEntity = wrapperService.getMultipartRequestEntity(mockMultipartHttpServletRequest);
         Assertions.assertEquals(mockMultipartHttpServletRequest.getMultiFileMap().size(), Objects.requireNonNull(requestEntity.getBody()).size());
     }
@@ -299,7 +292,7 @@ class WrapperServiceImplTest
     }
 
     @Test
-    void setExtensionElementsToTaskTest2(){
+    void setExtensionElementsTest(){
         userTask1.setId("abc");
         userTask2.setId("qwe");
         Collection<UserTask> userTaskDefs = new ArrayList<>();
@@ -317,14 +310,13 @@ class WrapperServiceImplTest
         verify(repositoryService,times(1)).getBpmnModelInstance(any());
     }
     @Test
-    void setExtensionElementsToTaskTest3(){
+    void setExtensionElementsTaskTest(){
         List<String> list = new ArrayList<>();
         list.add("abc");
         list.add("cde");
         Map<String,Object> component = new HashMap<>();
         component.put(ACTIONS,list);
         component.put("abc","qwe");
-        ModelElementInstance modelElementInstance = mock(ModelElementInstance.class);
         CamundaProperty camundaProperty = mock(CamundaProperty.class);
         when(camundaProperty.getCamundaName()).thenReturn("propertyName");
         when(camundaProperty.getCamundaValue()).thenReturn(COMPONENT);
@@ -380,8 +372,7 @@ class WrapperServiceImplTest
     }
 
     @Test
-    void setExtensionElementsToTaskTest4(){
-
+    void setExtensionElementTest(){
         List<String> list = new ArrayList<>();
         list.add("abc");
         list.add("cde");
@@ -389,7 +380,7 @@ class WrapperServiceImplTest
         Map<String,Object> component = new HashMap<>();
         component.put(ACTIONS,list);
         component.put("abc","qwe");
-        ModelElementInstance modelElementInstance = mock(ModelElementInstance.class);
+
         CamundaProperty camundaProperty = mock(CamundaProperty.class);
         when(camundaProperty.getCamundaName()).thenReturn(TYPE);
         when(camundaProperty.getCamundaValue()).thenReturn(COMPONENT);
@@ -439,9 +430,8 @@ class WrapperServiceImplTest
         when(runtimeFormService.fetchFormById(any())).thenReturn(new FormSchema(NAME,ID,component,1));
         when(taskService.getVariableLocal(task.getId(), CHECKLIST_INSTANCE_ID)).thenReturn(123);
         when(objectMapper.convertValue(any(),any(TypeReference.class))).thenReturn(actionsDTOList);
-
-        TaskInstanceDTO response = wrapperService.setExtensionElementsToTask(taskInstanceDTO, task);
-        Assertions.assertNotNull(response);
+        wrapperService.setExtensionElementsToTask(taskInstanceDTO, task);
+        verify(repositoryService,times(1)).getBpmnModelInstance(any());
     }
 
     @Test
