@@ -17,9 +17,8 @@ class DefaultRuntimeContextPropertyProviderTest {
 
     @Test
     void getEngineUrlTest(){
-        String expected = "jagadish-lap";
-        String actual = defaultRuntimeContextPropertyProvider.getEngineUrl();
-        Assertions.assertEquals(expected,actual);
+        String result = defaultRuntimeContextPropertyProvider.getEngineUrl();
+        Assertions.assertNotNull(result);
     }
 
 //    @Test

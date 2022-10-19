@@ -8,10 +8,13 @@ import com.techsophy.tsf.workflow.engine.camunda.service.impl.TokenSupplierImpl;
 import com.techsophy.tsf.workflow.engine.camunda.service.impl.WrapperServiceImpl;
 import org.camunda.bpm.engine.HistoryService;
 import org.camunda.bpm.engine.RepositoryService;
+import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.history.HistoricTaskInstance;
 import org.camunda.bpm.engine.history.HistoricVariableInstance;
 import org.camunda.bpm.engine.history.HistoricVariableInstanceQuery;
+import org.camunda.bpm.engine.runtime.ProcessInstance;
+import org.camunda.bpm.engine.runtime.ProcessInstanceQuery;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.task.TaskQuery;
 import org.camunda.bpm.model.bpmn.BpmnModelInstance;
@@ -115,6 +118,9 @@ class WrapperServiceImplTest
     @Mock
     HistoryService historyService;
 
+    @Mock
+    RuntimeService runtimeService;
+
 
     @BeforeEach
     void init()
@@ -160,6 +166,84 @@ class WrapperServiceImplTest
         when(restTemplate.exchange(any(RequestEntity.class), eq(byte[].class))).thenReturn(responseEntity);
         ResponseEntity<Resource> downloadResponse = wrapperService.handleRequest(params, entity, "form-runtime");
         Assertions.assertNotNull(downloadResponse);
+    }
+
+    @Test
+    void handleRequestTest() throws URISyntaxException {
+        byte[] bytes = "InputStream resource [resource loaded through InputStream]".getBytes();
+        MultiValueMap<String, String> params = getCommonParams();
+        params.add("name", FILENAME_WITH_GUID);
+        params.add(PROCESS_INSTANCE_ID,PROCESS_INSTANCE_ID);
+        ReflectionTestUtils.setField(wrapperService, "gatewayUrl", dmsUrl);
+        ProcessInstance processInstance = Mockito.mock(ProcessInstance.class);
+        ProcessInstanceQuery processInstanceQuery = Mockito.mock(ProcessInstanceQuery.class);
+
+        RequestEntity<?> entity = new RequestEntity<>(body, new HttpHeaders(), HttpMethod.POST, new URI("wrapper/dms"));
+        when(tokenSupplier.getToken()).thenReturn("token");
+        ResponseEntity<byte[]> responseEntity = new ResponseEntity<>(bytes,getResponseHeaders(), HttpStatus.OK);
+        when(restTemplate.exchange(any(RequestEntity.class), eq(byte[].class))).thenReturn(responseEntity);
+
+        Mockito.when(runtimeService.createProcessInstanceQuery()).thenReturn(processInstanceQuery);
+        Mockito.when(processInstanceQuery.processInstanceId(any())).thenReturn(processInstanceQuery);
+        Mockito.when(processInstanceQuery.active()).thenReturn(processInstanceQuery);
+        Mockito.when(processInstanceQuery.singleResult()).thenReturn(processInstance);
+        when(processInstance.getBusinessKey()).thenReturn("abc");
+        ResponseEntity<Resource> response = wrapperService.handleRequest(params, entity, APP_NAME);
+        Assertions.assertNotNull(response);
+    }
+
+    @Test
+    void handleRequestGetRequestTest() throws URISyntaxException {
+        byte[] bytes = "InputStream resource [resource loaded through InputStream]".getBytes();
+        MultiValueMap<String, String> params = getCommonParams();
+        params.add("name", FILENAME_WITH_GUID);
+        params.add(FORM, FILENAME_WITH_GUID);
+        params.add(PROCESS_INSTANCE_ID,PROCESS_INSTANCE_ID);
+        ReflectionTestUtils.setField(wrapperService, "gatewayUrl", dmsUrl);
+        ProcessInstance processInstance = Mockito.mock(ProcessInstance.class);
+        ProcessInstanceQuery processInstanceQuery = Mockito.mock(ProcessInstanceQuery.class);
+
+        RequestEntity<?> entity = new RequestEntity<>(body, new HttpHeaders(), HttpMethod.GET, new URI("wrapper/dms"));
+        when(tokenSupplier.getToken()).thenReturn("token");
+        ResponseEntity<byte[]> responseEntity = new ResponseEntity<>(bytes,getResponseHeaders(), HttpStatus.OK);
+        when(restTemplate.exchange(any(RequestEntity.class), eq(byte[].class))).thenReturn(responseEntity);
+
+        Mockito.when(runtimeService.createProcessInstanceQuery()).thenReturn(processInstanceQuery);
+        Mockito.when(processInstanceQuery.processInstanceId(any())).thenReturn(processInstanceQuery);
+        Mockito.when(processInstanceQuery.active()).thenReturn(processInstanceQuery);
+        Mockito.when(processInstanceQuery.singleResult()).thenReturn(processInstance);
+        when(processInstance.getBusinessKey()).thenReturn("abc");
+        ResponseEntity<Resource> response = wrapperService.handleRequest(params, entity, APP_NAME);
+        Assertions.assertNotNull(response);
+    }
+//---------------------------------------------------------
+    @Test
+    void handleRequestRequestTest() throws URISyntaxException {
+        byte[] bytes = "InputStream resource [resource loaded through InputStream]".getBytes();
+        MultiValueMap<String, String> params = getCommonParams();
+        params.add("name", FILENAME_WITH_GUID);
+        params.add(FORM, FILENAME_WITH_GUID);
+        params.add(PROCESS_INSTANCE_ID,PROCESS_INSTANCE_ID);
+        ReflectionTestUtils.setField(wrapperService, "gatewayUrl", dmsUrl);
+        ProcessInstance processInstance = Mockito.mock(ProcessInstance.class);
+        ProcessInstanceQuery processInstanceQuery = Mockito.mock(ProcessInstanceQuery.class);
+
+        RequestEntity<?> entity = new RequestEntity<>(body, new HttpHeaders(), HttpMethod.GET, new URI("wrapper/dms"));
+        when(tokenSupplier.getToken()).thenReturn("token");
+        ResponseEntity<byte[]> responseEntity = new ResponseEntity<>(bytes,getResponseHeaders(), HttpStatus.OK);
+
+
+
+
+        Map<String,String> map = new HashMap<>();
+        map.put("key","value");
+        map.put("abc","qwe");
+        RequestDataDTO requestDataDTO = new RequestDataDTO("abc.com","method","payload","requestparams");
+        when(objectMapper.convertValue(entity.getBody(), RequestDataDTO.class)).thenReturn(requestDataDTO);
+        when(objectMapper.convertValue(requestDataDTO.getRequestParams(), new TypeReference<Map<String, String>>() {})).thenReturn(map);
+        when(restTemplate.exchange(any(RequestEntity.class), eq(byte[].class))).thenReturn(responseEntity);
+        ResponseEntity<Resource> response = wrapperService.handleRequest(params, entity, "formtype");
+        Assertions.assertNotNull(response);
     }
 
     @Test
