@@ -124,7 +124,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
      * @return ResponseEntity
      */
     @ExceptionHandler(ProcessException.class)
-    public ResponseEntity<ApiErrorResponse> handleProcessException(Exception ex, WebRequest request)
+    public ResponseEntity<ApiErrorResponse> handleProcessException(ProcessException ex, WebRequest request)
     {
         ApiErrorResponse errorDetails = new ApiErrorResponse(Instant.now(), ex.getMessage(), ex.getMessage(),
                 HttpStatus.INTERNAL_SERVER_ERROR, request.getDescription(false));
@@ -138,10 +138,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
      * @param status
      * @return ApiErrorResponse
      */
-//    private ApiErrorResponse getErrorDetails(WebRequest request, Exception ex, HttpStatus status)
-//    {
-//        return this.getErrorResponse(status, ex, request.getDescription(false));
-//    }
 
     /**
      * Error Response
@@ -150,8 +146,4 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
      * @param path
      * @return
      */
-//    public ApiErrorResponse getErrorResponse(HttpStatus status, Throwable e, String path)
-//    {
-//        return new ApiErrorResponse(Instant.now(), e.getMessage(), e.getMessage(), status,  Map.of());
-//    }
 }

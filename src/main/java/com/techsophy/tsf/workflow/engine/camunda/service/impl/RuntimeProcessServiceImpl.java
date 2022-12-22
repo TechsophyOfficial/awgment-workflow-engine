@@ -76,7 +76,6 @@ public class RuntimeProcessServiceImpl implements RuntimeProcessService {
 
 
         Map<String, Object> processVariables = null;
-        Map<String, Object> variables;
         Task task = Optional.ofNullable(this.taskService.createTaskQuery().processInstanceBusinessKey(processInstanceRequest.getBusinessKey()).active().initializeFormKeys().singleResult()).orElseThrow(() -> new TaskNotFoundException(TASK_NOT_FOUND, globalMessageSource.get(TASK_NOT_FOUND + processInstanceRequest.getBusinessKey())));
 
         if (task.getFormKey() != null) {
@@ -257,17 +256,16 @@ public class RuntimeProcessServiceImpl implements RuntimeProcessService {
             List<ProcessInstance> instanceObj;
 
             instanceObj = runtimeService.createProcessInstanceQuery().processInstanceBusinessKey(reqDto.getBusinessKey()).active().unlimitedList();
-            if (instanceObj.size() > 1) {
 
-                throw new ProcessException(MORE_THAN_ONE_PROCESS_FOUND_FOR_BUSINESSKEY, globalMessageSource.get(MORE_THAN_ONE_PROCESS_FOUND_FOR_BUSINESSKEY));
-            }
             if (instanceObj != null)
             {
+                if (instanceObj.size() > 1) {
+                    throw new ProcessException(MORE_THAN_ONE_PROCESS_FOUND_FOR_BUSINESSKEY, globalMessageSource.get(MORE_THAN_ONE_PROCESS_FOUND_FOR_BUSINESSKEY));
+                }
                 runtimeService.createMessageCorrelation(reqDto.getMessage())
                         .processInstanceBusinessKey(reqDto.getBusinessKey()).setVariables(reqDto.getVariables())
                         .correlate();
             }
-
         }
     }
 

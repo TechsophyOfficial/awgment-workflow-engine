@@ -9,9 +9,9 @@ import org.camunda.bpm.engine.impl.jobexecutor.JobExecutorContext;
 public class RetryCycle implements JavaDelegate {
     private static final String NO_RETRIES_ERROR = "NO_RETRIES";
 
-    public static boolean fail = false;
-    public static int countFailed = 0;
-    public static int countSuccess = 0;
+    private static boolean fail = false;
+    private static int countFailed = 0;
+    private static int countSuccess = 0;
 
     @Override
     public void execute(DelegateExecution ctx) throws Exception {
@@ -19,7 +19,7 @@ public class RetryCycle implements JavaDelegate {
         if (jobExecutorContext!=null && jobExecutorContext.getCurrentJob()!=null && jobExecutorContext.getCurrentJob().getRetries()<=1) {
             // this is called from a Job and the job will run out of retries when it fails again
             try {
-                doExecute(ctx);
+                doExecute();
             } catch (Exception ex) {
                 // Probably save the exception somewhere
                 throw new BpmnError(NO_RETRIES_ERROR);
@@ -27,10 +27,10 @@ public class RetryCycle implements JavaDelegate {
             return;
         }
         // otherwise normal behavior (including retries possibly)
-        doExecute(ctx);
+        doExecute();
     }
 
-    private static void doExecute(DelegateExecution ctx) {
+    private static void doExecute() {
         if (fail) {
             countFailed++;
             throw new UnsupportedOperationException("ServiceA fails as expected");
