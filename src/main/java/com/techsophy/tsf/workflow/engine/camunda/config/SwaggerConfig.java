@@ -16,6 +16,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static com.techsophy.tsf.workflow.engine.camunda.constants.LogMessages.DESCRYPTION;
+
 @Configuration
 @EnableSwagger2
 @AllArgsConstructor
@@ -48,6 +50,6 @@ public class SwaggerConfig
 
     private static String getDescription()
     {
-        return "Catalog of Application endpoints that can be used in DMP applications.";
+        return DESCRYPTION;
     }
 }

@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpMethod.*;
 
 @ExtendWith(MockitoExtension.class)
-public class WebClientWrapperTest {
+class WebClientWrapperTest {
     @InjectMocks
     WebClientWrapper webClientWrapper;
     @Mock

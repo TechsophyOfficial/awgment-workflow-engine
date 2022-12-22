@@ -16,6 +16,10 @@ public class LogMessages
     public static final String CHECKLIST_INVOCATION_END = "Checklist invocation completed with checklist instance id: %s";
     public static final String DOCUMENT_GENERATION_START = "Document generation started using template id :%s";
     public static final String DOCUMENTATION_GENERATION_END = "Document generation completed with document id :%s";
+    public static final String REST_CALL_WITH_URI = "Rest call with uri {}";
+    public static final String WRAPPER_SERVICE_END = "END: Wrapper service layer";
+    public static final String USERTASK_INFO ="usertaskID: {},taskdefkey: {}";
+    public static final String DESCRYPTION ="Catalog of Application endpoints that can be used in DMP applications.";
 
     private LogMessages(){}
 

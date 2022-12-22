@@ -1,7 +1,5 @@
 package com.techsophy.tsf.workflow.engine.camunda.connectors;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.techsophy.tsf.workflow.engine.camunda.service.TokenSupplier;
 import org.apache.commons.lang3.StringUtils;
@@ -71,10 +69,6 @@ public abstract class AbstractApiConnector extends AbstractHttpConnector<HttpReq
                     }
 
 
-            } catch (JsonMappingException e) {
-                e.printStackTrace();
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
