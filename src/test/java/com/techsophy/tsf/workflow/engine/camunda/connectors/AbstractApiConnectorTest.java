@@ -21,11 +21,11 @@ class AbstractApiConnectorTest
 {
     private final TestConnector connector;
 
-//    @Test
-//    public void shouldDiscoverConnectorTest()
-//    {
-//        Assertions.assertNotNull(this.connector);
-//    }
+    @Test
+    void shouldDiscoverConnectorTest()
+    {
+        Assertions.assertNotNull(this.connector);
+    }
 
 //    @Test
 //    public void shouldEnrichRequest() throws IOException

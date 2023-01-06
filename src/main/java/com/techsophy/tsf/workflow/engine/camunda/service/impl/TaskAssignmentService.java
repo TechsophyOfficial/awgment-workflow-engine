@@ -81,25 +81,24 @@ public class TaskAssignmentService
                 .listPage(0, 1);
         String lastTaskAssignedUser = historicTaskInstances.get(0).getAssignee();
         boolean shouldAssignNextUser = false;
-
+        String assignee =users.get(0).getId();
         while (usersItr.hasNext())
         {
             String user = ((User) usersItr.next()).getId();
             if(shouldAssignNextUser || lastTaskAssignedUser == null)
             {
-                delegateTask.setAssignee(user);
+
+                assignee = user;
                 break;
             }
             if(user.equals(lastTaskAssignedUser))
             {
                 shouldAssignNextUser = true;
             }
-            if(!usersItr.hasNext())
-            {
-                delegateTask.setAssignee(users.get(0).getId());
-                break;
-            }
+
         }
+
+        delegateTask.setAssignee(assignee);
     }
 
     private List<User> getUsersFromCandidateGroupByTaskId(DelegateTask delegateTask)
