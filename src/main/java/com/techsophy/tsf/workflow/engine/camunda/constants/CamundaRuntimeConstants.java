@@ -24,7 +24,6 @@ public class CamundaRuntimeConstants {
 
     //    cors config
     public static final String ALL_PATHS = "/**";
-    public static final String CAMUNDA_PATH = "/camunda/*";
 
     //    rest connector
     public static final String GATEWAY_URI = "${gateway.uri}";
