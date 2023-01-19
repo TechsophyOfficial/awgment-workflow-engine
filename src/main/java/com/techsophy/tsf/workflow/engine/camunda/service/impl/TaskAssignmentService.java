@@ -18,7 +18,7 @@ import java.util.*;
 import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.LOAD_BALANCE_ALGORITHM;
 import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.ROUND_ROBIN_ALGORITHM;
 import static com.techsophy.tsf.workflow.engine.camunda.constants.ErrorMessageConstants.INVALID_ALGORITHM_EXCEPTION;
-import static com.techsophy.tsf.workflow.engine.camunda.constants.ErrorMessageConstants.No_USERS_IN_GROUP;
+import static com.techsophy.tsf.workflow.engine.camunda.constants.ErrorMessageConstants.NO_USERS_IN_GROUP;
 import static com.techsophy.tsf.workflow.engine.camunda.utils.CommonUtils.isValidString;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.collectingAndThen;
@@ -73,7 +73,7 @@ public class TaskAssignmentService
     public void setAssigneeByRoundRobinAlgorithm(DelegateTask delegateTask)
     {
         List<User> users = getUsersFromCandidateGroupByTaskId(delegateTask);
-        Iterator usersItr = users.listIterator();
+        Iterator<?> usersItr = users.listIterator();
         List<HistoricTaskInstance> historicTaskInstances = historyService.createHistoricTaskInstanceQuery()
                 .taskDefinitionKey(delegateTask.getTaskDefinitionKey())
                 .taskAssigneeLike("%")
@@ -81,25 +81,24 @@ public class TaskAssignmentService
                 .listPage(0, 1);
         String lastTaskAssignedUser = historicTaskInstances.get(0).getAssignee();
         boolean shouldAssignNextUser = false;
-
+        String assignee =users.get(0).getId();
         while (usersItr.hasNext())
         {
             String user = ((User) usersItr.next()).getId();
             if(shouldAssignNextUser || lastTaskAssignedUser == null)
             {
-                delegateTask.setAssignee(user);
+
+                assignee = user;
                 break;
             }
             if(user.equals(lastTaskAssignedUser))
             {
                 shouldAssignNextUser = true;
             }
-            if(!usersItr.hasNext())
-            {
-                delegateTask.setAssignee(users.get(0).getId());
-                break;
-            }
+
         }
+
+        delegateTask.setAssignee(assignee);
     }
 
     private List<User> getUsersFromCandidateGroupByTaskId(DelegateTask delegateTask)
@@ -111,7 +110,7 @@ public class TaskAssignmentService
                 .collect(collectingAndThen(toCollection(() -> new TreeSet<>(comparing(User::getId))), ArrayList::new));
         if(users.isEmpty())
         {
-            throw new RuntimeException(globalMessageSource.get(No_USERS_IN_GROUP, delegateTask.getId()));
+            throw new IllegalArgumentException(globalMessageSource.get(NO_USERS_IN_GROUP, delegateTask.getId()));
         }
         return users;
     }

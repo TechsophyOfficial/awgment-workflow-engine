@@ -12,7 +12,7 @@ import org.springframework.web.filter.ForwardedHeaderFilter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class WebAppSecurityConfigTest
+class WebAppSecurityConfigTest
 {
     KeycloakLogoutHandler keycloakLogoutHandler = new KeycloakLogoutHandler("http://localhost:8080");
     WebAppSecurityConfig webAppSecurityConfig = new WebAppSecurityConfig(keycloakLogoutHandler);

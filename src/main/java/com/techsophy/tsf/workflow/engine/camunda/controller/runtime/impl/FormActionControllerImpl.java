@@ -113,7 +113,7 @@ public class FormActionControllerImpl implements FormActionController {
     @Override
     public ApiResponse<ProcessInstanceResponseDTO> createOrFetchProcessInstance(ProcessInstanceDTO processInstanceRequest) {
         ProcessInstanceResponseDTO processInstanceResponseDTO = runtimeProcessService.createOrFetchProcessInstance(processInstanceRequest);
-        if (processInstanceResponseDTO.getAlreadyExists()) {
+        if (Boolean.TRUE.equals(processInstanceResponseDTO.getAlreadyExists())) {
             return new ApiResponse<>(processInstanceResponseDTO, true, PROCESS_RETRIEVED);
         }
         return new ApiResponse<>(processInstanceResponseDTO, true, PROCESS_CREATION);
@@ -129,12 +129,11 @@ public class FormActionControllerImpl implements FormActionController {
     public ApiResponse<List<Task>> getSubTasks(String taskId) throws JsonProcessingException {
        runtimeProcessService.getSubTasks(taskId);
 
-        return new ApiResponse(runtimeProcessService.getSubTasks(taskId), true, "sub tasks fetched  successfully");
+        return new ApiResponse<>(runtimeProcessService.getSubTasks(taskId), true, "sub tasks fetched  successfully");
     }
 
     @Override
     public ApiResponse<Void> completeTask(String checklistInstanceId) {
-//        runtimeProcessService.getIdAndCompleteTask(checklistInstanceId);
         return new ApiResponse<>(null,true,"Task is completed successfully");
     }
 

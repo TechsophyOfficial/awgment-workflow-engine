@@ -17,8 +17,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.List;
 
 import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.*;
-import static com.techsophy.tsf.workflow.engine.camunda.constants.CheckListConstants.CHECKLIST_INSTANCE_ID_PARAM;
-import static com.techsophy.tsf.workflow.engine.camunda.constants.CheckListConstants.GET_ITEM_INSTANCES;
 
 @Service
 @RequiredArgsConstructor
@@ -40,8 +38,7 @@ public class AppUtilServiceImpl implements AppUtilService
                 .toUriString();
         WebClient webClient = webClientWrapper.createWebClient(tokenSupplier.getToken());
         String response = webClientWrapper.webclientRequest(webClient, url, HttpMethod.GET, null);
-        ApiResponse apiResponse = this.objectMapper.readValue(response, ApiResponse.class);
-        List<PropertiesModel> propertiesModels = this.objectMapper.convertValue(apiResponse.getData(), new TypeReference<List<PropertiesModel>>() {});
-        return propertiesModels;
+        ApiResponse<?> apiResponse = this.objectMapper.readValue(response, ApiResponse.class);
+        return this.objectMapper.convertValue(apiResponse.getData(), new TypeReference<List<PropertiesModel>>() {});
     }
 }

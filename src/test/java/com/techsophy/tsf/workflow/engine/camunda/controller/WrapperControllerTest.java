@@ -30,52 +30,52 @@ class WrapperControllerTest
     private final String CONSTANT_URL = "http://localhost:8080/service/v1/wrapper/";
     private static final String CONTACT_DETAILS_DATA = "testdata/contact-details.json";
 
-//    private MockMvc mockMvc;
-//
-//    @Mock
-//    WrapperServiceImpl wrapperServiceImpl;
-//
-//    @InjectMocks
-//    WrapperControllerImpl wrapperControllerImpl;
-//
-//
-//    @BeforeEach
-//    public void setup()
-//    {
-//        MockitoAnnotations.initMocks(this);
-//    }
-//
-//    @Test
-//    void testHandleForPost()
-//    {
-//        URI uri = URI.create(CONSTANT_URL + APP_NAME);
-//        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-//        body.add(FILE_NAME_KEY,FILE_NAME);
-//        ResponseEntity<Resource> response = new ResponseEntity(mock(Object.class), new LinkedMultiValueMap<>(),
-//                HttpStatus.OK);
-//        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-//        RequestEntity<MultiValueMap<String, Resource>> requestEntity = new RequestEntity(body, new HttpHeaders(), HttpMethod.POST, uri, null);
-//        MockMultipartHttpServletRequest mockMultipartHttpServletRequest = new MockMultipartHttpServletRequest();
-//        MultipartFile file = new MockMultipartFile("file", FILE_NAME, MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
-//        mockMultipartHttpServletRequest.addFile(file);
-//        when(wrapperServiceImpl.getMultipartRequestEntity(mockMultipartHttpServletRequest)).thenReturn(requestEntity);
-//        when(wrapperServiceImpl.handleRequest(params, requestEntity, APP_NAME)).thenReturn(response);
-//        ResponseEntity<Resource> result = wrapperControllerImpl.handle(params,mockMultipartHttpServletRequest,APP_NAME);
-//        Assertions.assertEquals(result,response);
-//    }
-//
-//    @Test
-//    void testHandleForGet()
-//    {
-//        URI uri = URI.create(CONSTANT_URL + APP_NAME);
-//        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-//        body.add(FILE_NAME_KEY,FILE_NAME);
-//        ResponseEntity<Resource> response = new ResponseEntity(mock(Object.class),new LinkedMultiValueMap<>(),
-//                HttpStatus.OK);
-//        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-//        RequestEntity<?> requestEntity = new RequestEntity(body, new HttpHeaders(), HttpMethod.GET, uri, null);
-//        when(wrapperServiceImpl.handleRequest(params, requestEntity,APP_NAME)).thenReturn(response);
-//        ResponseEntity<Resource> result = wrapperControllerImpl.handle(params,requestEntity,APP_NAME);
-//        Assertions.assertEquals(result,response);
-//    }
+    private MockMvc mockMvc;
+
+    @Mock
+    WrapperServiceImpl wrapperServiceImpl;
+
+    @InjectMocks
+    WrapperControllerImpl wrapperControllerImpl;
+
+
+    @BeforeEach
+    public void setup()
+    {
+        MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    void testHandleForPost()
+    {
+        URI uri = URI.create(CONSTANT_URL + APP_NAME);
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add(FILE_NAME_KEY,FILE_NAME);
+        ResponseEntity<Resource> response = new ResponseEntity(mock(Object.class), new LinkedMultiValueMap<>(),
+                HttpStatus.OK);
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        RequestEntity<MultiValueMap<String, Resource>> requestEntity = new RequestEntity(body, new HttpHeaders(), HttpMethod.POST, uri, null);
+        MockMultipartHttpServletRequest mockMultipartHttpServletRequest = new MockMultipartHttpServletRequest();
+        MultipartFile file = new MockMultipartFile("file", FILE_NAME, MediaType.TEXT_PLAIN_VALUE, "Hello, World!".getBytes());
+        mockMultipartHttpServletRequest.addFile(file);
+        when(wrapperServiceImpl.getMultipartRequestEntity(mockMultipartHttpServletRequest)).thenReturn(requestEntity);
+        when(wrapperServiceImpl.handleRequest(params, requestEntity, APP_NAME)).thenReturn(response);
+        ResponseEntity<Resource> result = wrapperControllerImpl.handle(params,mockMultipartHttpServletRequest,APP_NAME);
+        Assertions.assertEquals(result,response);
+    }
+
+    @Test
+    void testHandleForGet()
+    {
+        URI uri = URI.create(CONSTANT_URL + APP_NAME);
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add(FILE_NAME_KEY,FILE_NAME);
+        ResponseEntity<Resource> response = new ResponseEntity(mock(Object.class),new LinkedMultiValueMap<>(),
+                HttpStatus.OK);
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        RequestEntity<?> requestEntity = new RequestEntity(body, new HttpHeaders(), HttpMethod.GET, uri, null);
+        when(wrapperServiceImpl.handleRequest(params, requestEntity,APP_NAME)).thenReturn(response);
+        ResponseEntity<Resource> result = wrapperControllerImpl.handle(params,requestEntity,APP_NAME);
+        Assertions.assertEquals(result,response);
+    }
 }

@@ -9,12 +9,14 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.ALL_PATHS;
-import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.CAMUNDA_PATH;
 
 @Configuration
 public class CorsConfig
 {
-    /**
+
+  String camunda = "/camunda/*";
+
+  /**
      * Cors configuration to allow all sources
      * @return CorsConfigurationSource
      */
@@ -39,7 +41,7 @@ public class CorsConfig
     public FilterRegistrationBean<CorsFilter> corsFilterRegistrationBean() {
         FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(corsConfigurationSource()));
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        bean.addUrlPatterns(CAMUNDA_PATH);
+        bean.addUrlPatterns(camunda);
         return bean;
     }
 }
