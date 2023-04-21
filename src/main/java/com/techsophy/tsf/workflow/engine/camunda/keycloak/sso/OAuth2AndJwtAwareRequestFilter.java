@@ -15,7 +15,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+
+import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.ISS;
+import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.URL_SEPERATOR;
 
 /*
  *   SecurityContextHolderAwareRequestFilter doesn't seem to be able to extract
@@ -69,4 +74,31 @@ public class OAuth2AndJwtAwareRequestFilter extends HttpFilter
         }
         return Optional.empty();
     }
+    public static Optional<String> getTenant() {
+
+        String tenantName = null;
+        SecurityContext context = SecurityContextHolder.getContext();
+        if (context != null) {
+            Authentication authentication = context.getAuthentication();
+            if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken)) {
+                Object principal = authentication.getPrincipal();
+                if (principal instanceof OAuth2User) {
+                    return Optional.empty();//.of(((OAuth2User) principal).getName()).filter(StringUtils::isNotEmpty);
+                }
+
+                if (principal instanceof Jwt) {
+                    Jwt jwt = (Jwt) principal;
+                    String issuer = String.valueOf(jwt.getIssuer());
+
+                    List<String> elements = Arrays.asList(issuer.split(URL_SEPERATOR));
+                    tenantName = elements.get(elements.size() - 1);
+
+                    return Optional.ofNullable(tenantName);
+
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
 }

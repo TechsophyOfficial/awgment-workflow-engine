@@ -156,4 +156,34 @@ public class CamundaRuntimeConstants {
     public static final String DUE = "due";
     public static final String FOLLOW_UP = "followUp";
     public static final String ASSIGNEEE="assignee";
+
+    //  Other Constants
+    public static final String KEYCLOAK_ISSUER_URI = "${keycloak.url.auth}";
+    public static final String PREFERED_USERNAME="preferred_username";
+    public static final String AUTHORIZATION="Authorization";
+    public static final String APPLICATION_JSON="application/json";
+
+    public static final String GET="GET";
+    public static final String PUT="PUT";
+    public static final String DELETE="DELETE";
+
+    public static final String POST = "POST";
+    public static final String  URL_SEPERATOR="/";
+    public static final String AUTHENTICATION_FAILED="Authentication failed";
+    public static final String ISS="iss";
+    public static final String EMPTY_STRING = "String Is Empty";
+    public static final int SEVEN =7;
+    public static final int ONE =1 ;
+    public static final String REGEX_SPLIT="\\.";
+    public static final String INVALID_TOKEN="Invalid token";
+    public static final String UNABLE_GET_TOKEN="Unable to get token";
+    public static final String USER_INFO_URL= "/protocol/openid-connect/userinfo";
+    public static final String TOKEN_VERIFICATION_FAILED= "AWGMENT-UX-CONTROLLER-1005";
+    public static final String CLIENT_ROLES="clientRoles";
+    public static final String AWGMENT_ROLES_MISSING_IN_CLIENT_ROLES ="AwgmentRoles are missing in clientRoles";
+    public static final String CLIENT_ROLES_MISSING_IN_USER_INFORMATION="ClientRoles are missing in the userInformation";
+
+    public static final String WEBCLIENT_BUFFER_SIZE = "${webclient.buffer-size}";
+
+
 }

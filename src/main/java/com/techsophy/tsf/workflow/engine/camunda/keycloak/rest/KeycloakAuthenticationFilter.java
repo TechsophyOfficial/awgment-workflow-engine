@@ -1,6 +1,7 @@
 package com.techsophy.tsf.workflow.engine.camunda.keycloak.rest;
 
 
+import com.techsophy.tsf.workflow.engine.camunda.config.TenantAuthenticationManagerResolver;
 import com.techsophy.tsf.workflow.engine.camunda.keycloak.sso.OAuth2AndJwtAwareRequestFilter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,8 @@ public class KeycloakAuthenticationFilter implements Filter
 
         try
         {
+            String tenant = OAuth2AndJwtAwareRequestFilter.getTenant().orElse("techsophy-platform");
+            TenantAuthenticationManagerResolver.TENANT_CONTEXT.set(tenant);
             identityService.setAuthentication(userId, this.getUserGroups(userId));
             chain.doFilter(request, response);
         }

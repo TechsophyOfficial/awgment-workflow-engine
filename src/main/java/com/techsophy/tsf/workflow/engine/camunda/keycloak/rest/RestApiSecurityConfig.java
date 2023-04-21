@@ -1,5 +1,6 @@
 package com.techsophy.tsf.workflow.engine.camunda.keycloak.rest;
 
+import com.techsophy.tsf.workflow.engine.camunda.config.TenantAuthenticationManagerResolver;
 import com.techsophy.tsf.workflow.engine.camunda.keycloak.sso.OAuth2AndJwtAwareRequestFilter;
 import lombok.AllArgsConstructor;
 import org.camunda.bpm.engine.IdentityService;
@@ -36,11 +37,13 @@ public class RestApiSecurityConfig extends WebSecurityConfigurerAdapter
     private final RestApiSecurityConfigurationProperties configProps;
     private final CorsConfigurationSource corsConfigurationSource;
 
+    private TenantAuthenticationManagerResolver tenantAuthenticationManagerResolver;
+
     @Override
     public void configure(final HttpSecurity http) throws Exception
     {
-        String jwkSetUri = applicationContext.getEnvironment().getRequiredProperty(
-                "spring.security.oauth2.client.provider." + configProps.getProvider() + ".jwk-set-uri");
+//        String jwkSetUri = applicationContext.getEnvironment().getRequiredProperty(
+//                "spring.security.oauth2.client.provider." + configProps.getProvider() + ".jwk-set-uri");
 
         http
                 .csrf().ignoringAntMatchers("/api/**", "/engine-rest/**", "/service/**", "/wrapper/**")
@@ -51,8 +54,11 @@ public class RestApiSecurityConfig extends WebSecurityConfigurerAdapter
                 .authorizeRequests()
                 .anyRequest().authenticated()
                 .and()
-                .oauth2ResourceServer()
-                .jwt().jwkSetUri(jwkSetUri);
+                .oauth2ResourceServer(oAuth ->
+                    oAuth.authenticationManagerResolver(tenantAuthenticationManagerResolver)
+                );
+
+//                .jwt().jwkSetUri(jwkSetUri);
 
         http.addFilterAfter(new OAuth2AndJwtAwareRequestFilter(), SecurityContextHolderAwareRequestFilter.class);
     }

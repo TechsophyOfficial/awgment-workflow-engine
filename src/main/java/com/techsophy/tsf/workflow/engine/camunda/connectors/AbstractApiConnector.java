@@ -11,13 +11,18 @@ import org.camunda.connect.httpclient.HttpResponse;
 import org.camunda.connect.httpclient.impl.AbstractHttpConnector;
 import org.camunda.connect.httpclient.impl.HttpRequestImpl;
 import org.camunda.connect.httpclient.impl.HttpResponseImpl;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -27,10 +32,15 @@ import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntime
  * this class  uses http resquest and response of camunda and create
  * custom request and response body
  */
+
+@ConfigurationProperties(prefix="tenants")
 public abstract class AbstractApiConnector extends AbstractHttpConnector<HttpRequest, HttpResponse>
 {
     private final TokenSupplier tokenSupplier;
     private final RuntimeContextPropertyProvider propertyProvider;
+
+
+    private Map<String, List<String>> configs;
 
     /**
      * Parameterized constructor
@@ -101,6 +111,8 @@ public abstract class AbstractApiConnector extends AbstractHttpConnector<HttpReq
     @Override
     public final HttpResponse execute(HttpRequest request)
     {
+
+
         request.url(this.getGatewayURI() + request.getUrl());
         request.header(HttpHeaders.AUTHORIZATION, BEARER + " " + tokenSupplier.getToken());
         request.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
@@ -109,6 +121,7 @@ public abstract class AbstractApiConnector extends AbstractHttpConnector<HttpReq
         {
             request.header(USERNAME, this.propertyProvider.getProcessInitiator());
         }
+        System.out.println("*****************"+request.getUrl());
         return super.execute(request);
     }
 
