@@ -32,6 +32,7 @@ dependencies {
         exclude(module: 'camunda-connect-connectors-all')
     }
 
+    implementation 'org.keycloak:keycloak-admin-client:15.0.2'
     implementation group: 'org.camunda.bpm.springboot', name: 'camunda-bpm-spring-boot-starter-webapp', version:'7.14.0'
     implementation group: 'org.camunda.bpm', name: 'camunda-engine-plugin-spin', version:'7.14.0'
     implementation group: 'org.camunda.spin', name: 'camunda-spin-dataformat-all', version:'1.10.0'
