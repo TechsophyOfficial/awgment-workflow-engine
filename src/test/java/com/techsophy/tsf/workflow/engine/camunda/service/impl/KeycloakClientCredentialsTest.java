@@ -35,8 +35,6 @@ import java.util.Map;
     @Mock
     ClientResource clientResource;
     @Mock
-    private Map<String, ClientDetails> tenantSecretCacheMock;
-    @Mock
     CredentialRepresentation credentialRepresentation;
     @InjectMocks
     private KeycloakClientCredentials keycloakClientCredentials;
@@ -51,9 +49,16 @@ import java.util.Map;
         ClientDetails clientDetails = new ClientDetails();
         clientDetails.setClientId("1212");
         clientDetails.setSecret("121");
-        Mockito.when(tenantSecretCacheMock.get(ArgumentMatchers.anyString())).thenReturn(clientDetails);
+        Mockito.when(keycloak.realm(ArgumentMatchers.anyString())).thenReturn(realmResource);
+        Mockito.when(realmResource.clients()).thenReturn(clientsResource);
+        Mockito.when(clientsResource.get(ArgumentMatchers.anyString())).thenReturn(clientResource);
+        ClientRepresentation clientRepresentation = new ClientRepresentation();
+        clientRepresentation.setId("123");
+        Mockito.when(clientResource.getSecret()).thenReturn(credentialRepresentation);
+        Mockito.when(clientsResource.findByClientId(ArgumentMatchers.anyString())).thenReturn(List.of(clientRepresentation));
         keycloakClientCredentials.fetchClientDetails("techsophy-platform",false);
-        Mockito.verify(tenantSecretCacheMock,Mockito.times(1)).get(ArgumentMatchers.anyString());
+        keycloakClientCredentials.fetchClientDetails("techsophy-platform",false);
+        Mockito.verify(clientsResource,Mockito.times(1)).findByClientId(ArgumentMatchers.anyString());
     }
     @Test
     void fetchClientDetailsBooleanTrueArg()
@@ -69,12 +74,18 @@ import java.util.Map;
         Mockito.verify(credentialRepresentation,Mockito.times(1)).getValue();
     }
     @Test
-    void fetchClientDetailsNotFoundException()
+    void fetchClientDetailsClientIdNotFoundException()
     {
         Mockito.when(keycloak.realm(ArgumentMatchers.anyString())).thenReturn(realmResource);
         Mockito.when(realmResource.clients()).thenReturn(clientsResource);
         List<ClientRepresentation> lisOfData = new ArrayList<>();
         Mockito.when(clientsResource.findByClientId(ArgumentMatchers.anyString())).thenReturn(lisOfData);
+        Assertions.assertThrows(IllegalArgumentException.class,()->keycloakClientCredentials.fetchClientDetails("techsophy-platform",true));
+    }
+    @Test
+    void fetchClientDetailsRealmNotFoundException()
+    {
+        Mockito.when(keycloak.realm(ArgumentMatchers.anyString())).thenReturn(null);
         Assertions.assertThrows(IllegalArgumentException.class,()->keycloakClientCredentials.fetchClientDetails("techsophy-platform",true));
     }
 }

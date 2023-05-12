@@ -8,18 +8,18 @@ import org.keycloak.representations.idm.ClientRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @Component
 public class KeycloakClientCredentials implements FetchClientCredentials {
 
-    @Value("${keycloak.master.username}")
+//    @Value("${keycloak.master.username}")
     String userName;
 
-    @Value("${keycloak.master.password}")
+//    @Value("${keycloak.master.password}")
     String password;
 
     @Value("${keycloak.auth-server-url}")
@@ -33,7 +33,7 @@ public class KeycloakClientCredentials implements FetchClientCredentials {
 
     @Value("${keycloak.master.client.id:admin-cli}")
     String adminClientId;
-    private Map<String, ClientDetails> tenantSecretCache = new HashMap<>();
+    private Map<String, ClientDetails> tenantSecretCache = new ConcurrentHashMap<>();
 
     private Keycloak keycloak;
     public void init() {
@@ -62,6 +62,10 @@ public class KeycloakClientCredentials implements FetchClientCredentials {
         init();
         RealmResource realm = keycloak
                 .realm(tenant);
+        if(realm==null)
+        {
+            throw new IllegalArgumentException();
+        }
         List<ClientRepresentation> clientRepresentation =
                 realm.clients()
                         .findByClientId(clientId);
