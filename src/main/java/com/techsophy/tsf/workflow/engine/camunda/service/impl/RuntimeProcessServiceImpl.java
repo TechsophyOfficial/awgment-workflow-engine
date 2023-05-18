@@ -142,7 +142,8 @@ public class RuntimeProcessServiceImpl implements RuntimeProcessService {
             processVariables = getProcessVariables(processInstanceRequest.getFormKey(),
                     processInstanceRequest.getVariables(), LATEST);
         }
-        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(processInstanceRequest.getProcessDefinitionKey(), processInstanceRequest.getBusinessKey(), processVariables);
+        ProcessInstance processInstance = runtimeService.createProcessInstanceByKey(processInstanceRequest.getProcessDefinitionKey()).processDefinitionTenantId("techsophy-platform").businessKey(processInstanceRequest.getBusinessKey()).setVariables(processVariables).execute();
+//        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(processInstanceRequest.getProcessDefinitionKey(), processInstanceRequest.getBusinessKey(), processVariables);
         Map<String, Object> variables = historyService.createHistoricVariableInstanceQuery().processInstanceId(processInstance.getId()).list().stream().collect(Collectors.toMap(HistoricVariableInstance::getName, HistoricVariableInstance::getValue));
         if (variables.containsKey(ERROR_CODE) || variables.containsKey(ERROR_MESSAGE))
         {
@@ -405,6 +406,5 @@ public class RuntimeProcessServiceImpl implements RuntimeProcessService {
         historicInstanceDTO.setRootProcessInstanceId(historicTaskInstance.getRootProcessInstanceId());
         return historicInstanceDTO;
     }
-
 
 }

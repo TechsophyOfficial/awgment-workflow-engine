@@ -36,12 +36,12 @@ public class KeycloakAuthenticationFilter implements Filter
             throws IOException, ServletException
     {
         String userId = OAuth2AndJwtAwareRequestFilter.getUserName().orElseThrow(UNKNOWN_USER_EXCEPTION);
-
+        String tenantName = OAuth2AndJwtAwareRequestFilter.getTenantName().orElseThrow();
         log.debug("Extracted userId from bearer token: {}", userId);
 
         try
         {
-            identityService.setAuthentication(userId, this.getUserGroups(userId));
+            identityService.setAuthentication(userId, this.getUserGroups(userId),List.of(tenantName));
             chain.doFilter(request, response);
         }
         finally

@@ -21,6 +21,7 @@ public class CamundaRuntimeConstants {
     public static final String DATE_TIME = "datetime";
     public static final String BEARER = "Bearer";
     public static final String USERNAME = "X-USERID";
+    public static final String  URL_SEPERATOR="/";
 
     //    cors config
     public static final String ALL_PATHS = "/**";

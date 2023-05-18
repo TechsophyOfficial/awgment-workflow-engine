@@ -15,7 +15,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+
+import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.URL_SEPERATOR;
 
 /*
  *   SecurityContextHolderAwareRequestFilter doesn't seem to be able to extract
@@ -64,6 +68,26 @@ public class OAuth2AndJwtAwareRequestFilter extends HttpFilter
                 {
                     Jwt jwt = (Jwt) principal;
                     return Optional.of(jwt.getClaim("preferred_username"));
+                }
+            }
+        }
+        return Optional.empty();
+    }
+    public static Optional<String> getTenantName()
+    {
+        String tenantName = " ";
+        SecurityContext context = SecurityContextHolder.getContext();
+        if (context != null)
+        {
+            Authentication authentication = context.getAuthentication();
+            if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken))
+            {
+                Object principal = authentication.getPrincipal();
+                if (principal instanceof Jwt)
+                {
+                    Jwt jwt = (Jwt) principal;
+                    List<String> iss = List.of(jwt.getClaim("iss").toString().split(URL_SEPERATOR));
+                    return Optional.of(iss.get(iss.size()-1));
                 }
             }
         }

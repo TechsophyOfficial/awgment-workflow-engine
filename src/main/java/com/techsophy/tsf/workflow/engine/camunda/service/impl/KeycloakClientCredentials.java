@@ -16,10 +16,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class KeycloakClientCredentials implements FetchClientCredentials {
 
-//    @Value("${keycloak.master.username}")
+    @Value("${keycloak.master.username}")
     String userName;
 
-//    @Value("${keycloak.master.password}")
+    @Value("${keycloak.master.password}")
     String password;
 
     @Value("${keycloak.auth-server-url}")

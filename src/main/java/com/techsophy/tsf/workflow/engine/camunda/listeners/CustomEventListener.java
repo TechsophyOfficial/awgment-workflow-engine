@@ -1,5 +1,6 @@
 package com.techsophy.tsf.workflow.engine.camunda.listeners;
 
+import com.techsophy.multitenancy.mongo.config.TenantContext;
 import com.techsophy.tsf.workflow.engine.camunda.config.GlobalMessageSource;
 import com.techsophy.tsf.workflow.engine.camunda.exception.EvaluationException;
 import com.techsophy.tsf.workflow.engine.camunda.model.*;
@@ -52,6 +53,7 @@ public class CustomEventListener
     @EventListener(condition = TASK_COMPLETE_EVENT_LISTENER_CONDITION)
     public void onTaskCompleteEvent(DelegateTask delegateTask)
     {
+        TenantContext.setTenantId(delegateTask.getTenantId());
         log.info(String.format(COMPLETE_TASK_EVENT_START, delegateTask.getName()));
         if(delegateTask.hasVariableLocal(CHECKLIST_INSTANCE_ID))
         {
@@ -81,6 +83,7 @@ public class CustomEventListener
     @SneakyThrows
     public void onTaskCreatedEvent(DelegateTask delegateTask)
     {
+        TenantContext.setTenantId(delegateTask.getTenantId());
         log.info(String.format(CREATE_TASK_EVENT_START, delegateTask.getName()));
         ExtensionElements extensionElements = delegateTask.getBpmnModelElementInstance().getExtensionElements();
         if(extensionElements == null)
