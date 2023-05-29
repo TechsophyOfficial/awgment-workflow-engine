@@ -22,6 +22,8 @@ public class CamundaRuntimeConstants {
     public static final String BEARER = "Bearer";
     public static final String USERNAME = "X-USERID";
     public static final String  URL_SEPERATOR="/";
+    public static final String  DEPLOYMENT_URI="/camunda/engine-rest/deployment/create";
+    public static final String CURRENT_PROJECT="com.techsophy.tsf.workflow.engine.camunda.*";
 
     //    cors config
     public static final String ALL_PATHS = "/**";
@@ -77,7 +79,7 @@ public class CamundaRuntimeConstants {
     public static final String ERROR_MESSAGE = "errorMessage";
     public static final String ERROR = "error";
     public static final String ERROR_CODE = "errorCode";
-    public static final String FORM = "form";
+    public static final String FORM = "for((HttpServletRequest) request).getRequestURI();m";
     public static final String DMS = "dms";
     public static final String FORM_RUNTIME = "form-runtime";
     public static final String GATEWAY_URL = "${gateway.uri}";

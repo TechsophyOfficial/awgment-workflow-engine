@@ -1,12 +1,11 @@
 package com.techsophy.tsf.workflow.engine.camunda.keycloak.rest;
 
-
+import com.techsophy.multitenancy.mongo.config.TenantContext;
 import com.techsophy.tsf.workflow.engine.camunda.keycloak.sso.OAuth2AndJwtAwareRequestFilter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.camunda.bpm.engine.IdentityService;
 import org.camunda.bpm.engine.identity.Group;
-
 import javax.servlet.*;
 import java.io.IOException;
 import java.util.List;
@@ -18,6 +17,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @AllArgsConstructor
+
 public class KeycloakAuthenticationFilter implements Filter
 {
     private static final Supplier<ServletException> UNKNOWN_USER_EXCEPTION = () ->
@@ -39,9 +39,9 @@ public class KeycloakAuthenticationFilter implements Filter
         String tenantName = OAuth2AndJwtAwareRequestFilter.getTenantName().orElseThrow();
         log.debug("Extracted userId from bearer token: {}", userId);
 
-        try
-        {
-            identityService.setAuthentication(userId, this.getUserGroups(userId),List.of(tenantName));
+        try {
+            identityService.setAuthentication(userId, this.getUserGroups(userId), List.of(tenantName));
+            TenantContext.setTenantId(tenantName);
             chain.doFilter(request, response);
         }
         finally

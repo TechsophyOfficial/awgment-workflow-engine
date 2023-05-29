@@ -6,6 +6,7 @@ import com.techsophy.tsf.workflow.engine.camunda.config.GlobalMessageSource;
 import com.techsophy.tsf.workflow.engine.camunda.dto.*;
 import com.techsophy.tsf.workflow.engine.camunda.exception.ProcessException;
 import com.techsophy.tsf.workflow.engine.camunda.exception.TaskNotFoundException;
+import com.techsophy.tsf.workflow.engine.camunda.keycloak.sso.OAuth2AndJwtAwareRequestFilter;
 import com.techsophy.tsf.workflow.engine.camunda.serializers.TaskSerializer;
 import com.techsophy.tsf.workflow.engine.camunda.service.RuntimeFormService;
 import com.techsophy.tsf.workflow.engine.camunda.service.RuntimeProcessService;
@@ -17,6 +18,7 @@ import org.camunda.bpm.engine.*;
 import org.camunda.bpm.engine.history.HistoricTaskInstance;
 import org.camunda.bpm.engine.history.HistoricTaskInstanceQuery;
 import org.camunda.bpm.engine.history.HistoricVariableInstance;
+import org.camunda.bpm.engine.repository.ProcessDefinition;
 import org.camunda.bpm.engine.rest.dto.history.HistoricTaskInstanceQueryDto;
 import org.camunda.bpm.engine.rest.dto.task.TaskQueryDto;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
@@ -136,14 +138,14 @@ public class RuntimeProcessServiceImpl implements RuntimeProcessService {
     @Override
     public ProcessInstanceResponseDTO createProcessInstance(ProcessInstanceDTO processInstanceRequest)
     {
+        String tenantName = OAuth2AndJwtAwareRequestFilter.getTenantName().orElseThrow();
         Map<String, Object> processVariables = processInstanceRequest.getVariables();
         if (processInstanceRequest.getFormKey() != null && !processInstanceRequest.getFormKey().equals(""))
         {
             processVariables = getProcessVariables(processInstanceRequest.getFormKey(),
                     processInstanceRequest.getVariables(), LATEST);
         }
-        ProcessInstance processInstance = runtimeService.createProcessInstanceByKey(processInstanceRequest.getProcessDefinitionKey()).processDefinitionTenantId("techsophy-platform").businessKey(processInstanceRequest.getBusinessKey()).setVariables(processVariables).execute();
-//        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(processInstanceRequest.getProcessDefinitionKey(), processInstanceRequest.getBusinessKey(), processVariables);
+        ProcessInstance processInstance = runtimeService.createProcessInstanceByKey(processInstanceRequest.getProcessDefinitionKey()).processDefinitionTenantId(tenantName).businessKey(processInstanceRequest.getBusinessKey()).setVariables(processVariables).execute();
         Map<String, Object> variables = historyService.createHistoricVariableInstanceQuery().processInstanceId(processInstance.getId()).list().stream().collect(Collectors.toMap(HistoricVariableInstance::getName, HistoricVariableInstance::getValue));
         if (variables.containsKey(ERROR_CODE) || variables.containsKey(ERROR_MESSAGE))
         {
