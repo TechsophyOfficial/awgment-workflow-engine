@@ -91,6 +91,16 @@ public class RestApiSecurityConfig extends WebSecurityConfigurerAdapter
     }
 
     @Bean
+    public FilterRegistrationBean<DeploymentFilter> deploymentFilter()
+    {
+        FilterRegistrationBean<DeploymentFilter> filterRegistration = new FilterRegistrationBean<>();
+        filterRegistration.setFilter(new DeploymentFilter());
+        filterRegistration.setOrder(103); // make sure the filter is registered after the Spring Security Filter Chain
+        filterRegistration.addUrlPatterns("/engine-rest/deployment/*");
+        return filterRegistration;
+    }
+
+    @Bean
     public FilterRegistrationBean<CorsFilter> corsFilter()
     {
         FilterRegistrationBean<CorsFilter> filterRegistration = new FilterRegistrationBean<>();
