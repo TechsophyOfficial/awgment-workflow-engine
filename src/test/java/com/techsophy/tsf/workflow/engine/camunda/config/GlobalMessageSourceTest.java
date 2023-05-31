@@ -9,14 +9,11 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-
-import java.lang.reflect.Array;
-
-import static com.techsophy.tsf.workflow.engine.camunda.constants.FormConstants.*;
+import static com.techsophy.tsf.workflow.engine.camunda.constants.WorkflowEngineConstants.*;
 import static org.mockito.ArgumentMatchers.*;
 
-class GlobalMessageSourceTest {
-
+class GlobalMessageSourceTest
+{
     @Mock
     MessageSource mockMessageSource;
     @InjectMocks
