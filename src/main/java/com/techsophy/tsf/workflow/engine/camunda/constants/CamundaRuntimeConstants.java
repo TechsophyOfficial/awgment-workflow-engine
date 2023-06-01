@@ -4,7 +4,25 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class CamundaRuntimeConstants {
+public class CamundaRuntimeConstants
+{
+    //JWTRoleConverter
+    public static final String CLIENT_ROLES="clientRoles";
+    public static final String USER_INFO_URL= "/protocol/openid-connect/userinfo";
+    public static final String AWGMENT_ROLES_MISSING_IN_CLIENT_ROLES ="AwgmentRoles are missing in clientRoles";
+    public static final String CLIENT_ROLES_MISSING_IN_USER_INFORMATION="ClientRoles are missing in the userInformation";
+    public static final String PREFERED_USERNAME="preferred_username";
+    public static final String EMPTY_STRING="";
+    public static final String REGEX_SPLIT="\\.";
+    public static final String ISS="iss";
+    public static final String URL_SEPERATOR="/";
+    public static final int SEVEN=7;
+    public static final int ONE=1;
+    public static final String GET="GET";
+    public static final String POST = "POST";
+
+    /*CustomFilterConstants*/
+    public static final String AUTHORIZATION="Authorization";
     public static final String BASE_URL = "/service/v1";
     public static final String FORM_RUNTIME_ENDPOINT_URL = "/form-runtime/v1/forms";
     public static final String FORM_MODELER_ENDPOINT_URL = "/form-modeler/v1/history/forms/";
@@ -17,7 +35,6 @@ public class CamundaRuntimeConstants {
     public static final String COMMENT_CREATED_SUCCESS = "Comment created successfully";
     public static final String FETCH_COMMENT_SUCCESS = "Comments fetched successfully";
     public static final String COMPLETE_TASK_SUCCESS = "Task completed successfully";
-    public static final String GET_ALL_TASKS_SUCCESS = "Fetched all tasks successfully";
     public static final String DATE_TIME = "datetime";
     public static final String BEARER = "Bearer";
     public static final String USERNAME = "X-USERID";
@@ -102,11 +119,6 @@ public class CamundaRuntimeConstants {
     public static final String NAME = "name";
     public static final String PROCESS_INSTANCE_ID = "processInstanceId";
     public static final String DMS_UPLOAD_FILE = "/dms/v1/documents/file";
-
-    public static final String CONTENT_TYPE = "Content-Type";
-    public static final String CONTENT_DISPOSITION = "Content-Disposition";
-    public static final String ATTACHMENT_FILE_NAME = "attachment; filename=\"";
-    public static final String SLASH_INVERTED_COMMA = "\"";
     public static final String TASK_ID = "taskId";
     public static final String FORM_VERSION = "formVersion";
 
@@ -138,20 +150,14 @@ public class CamundaRuntimeConstants {
 
     // Properties
     public static final String DOCUMENT_TYPE_AND_TEMPLATE_MAPPING = "DOCUMENT_TYPE_AND_TEMPLATE_MAPPING";
-    public static final String CLIENT_LETTER_CATEGORY = "client_letter";
-    public static final String DOCUMENT_TYPE_ID_PROP = "documentTypeId";
     public static final String TEMPLATE_ID_PROP = "templateId";
     public static final String DOCUMENT_NAME_PROP = "documentName";
     public static final String DOCUMENT_DESCRIPTION_PROP = "documentDescription";
     public static final String DOCUMENT_PATH_PROP = "documentPath";
 
     // task assignment
-    public static final String ALGORITHM = "algorithm";
-    public static final String DMN = "dmn";
     public static final String LOAD_BALANCE_ALGORITHM = "load-balance";
     public static final String ROUND_ROBIN_ALGORITHM = "round-robin";
-    public static final String YES = "yes";
-    public static final String NO = "no";
     public static final String PARENT_TASK_ID = "parentTaskId";
     public static final String DESCRIPTION = "description";
     public static final String DELEGATION_STATE = "delegationState";

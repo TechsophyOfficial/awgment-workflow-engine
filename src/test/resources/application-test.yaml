@@ -54,6 +54,7 @@ plugin.identity.keycloak:
 
 
 keycloak:
+  issuer-uri: ${keycloak.url.auth}
   realm:
     name: abc
   client:
