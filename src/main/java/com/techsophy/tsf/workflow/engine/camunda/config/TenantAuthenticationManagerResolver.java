@@ -8,7 +8,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationManagerResolver;
 import org.springframework.security.oauth2.jwt.JwtDecoders;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +24,6 @@ public class TenantAuthenticationManagerResolver  implements AuthenticationManag
     @Value("${keycloak.issuer-uri}")
     private  String keycloakIssuerUri;
     private final TokenUtils tokenUtils;
-    private JWTRoleConverter jwtRoleConverter;
 
     @Override
     public AuthenticationManager resolve(HttpServletRequest request)
@@ -48,14 +46,6 @@ public class TenantAuthenticationManagerResolver  implements AuthenticationManag
     public AuthenticationManager fromTenant(String tenant)
     {
         JwtAuthenticationProvider jwtAuthenticationProvider = new JwtAuthenticationProvider(JwtDecoders.fromIssuerLocation(keycloakIssuerUri+tenant));
-        jwtAuthenticationProvider.setJwtAuthenticationConverter(authenticationConverter());
         return jwtAuthenticationProvider :: authenticate;
-    }
-
-    public JwtAuthenticationConverter authenticationConverter()
-    {
-        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
-        converter.setJwtGrantedAuthoritiesConverter(jwtRoleConverter);
-        return converter;
     }
 }

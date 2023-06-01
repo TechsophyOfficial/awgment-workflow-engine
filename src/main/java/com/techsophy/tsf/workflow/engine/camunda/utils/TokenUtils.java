@@ -7,16 +7,10 @@ import com.techsophy.tsf.workflow.engine.camunda.exception.InvalidInputException
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 import java.util.*;
 import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.*;
-import static com.techsophy.tsf.workflow.engine.camunda.constants.ErrorMessageConstants.*;
+import static com.techsophy.tsf.workflow.engine.camunda.constants.ErrorMessageConstants.INVALID_TOKEN;
 
 @Component
 @AllArgsConstructor(onConstructor_ = {@Autowired})
@@ -52,75 +46,6 @@ public class TokenUtils
             tenantName=elements.get(elements.size()-1);
         }
         return tenantName;
-    }
-
-    public String getTokenFromContext()
-    {
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        if (securityContext != null)
-        {
-            Authentication authentication = securityContext.getAuthentication();
-            if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken))
-            {
-                Object principal = authentication.getPrincipal();
-                if (principal instanceof OAuth2User)
-                {
-                    return Optional.of(((OAuth2User) principal).getName()).orElseThrow(()->new SecurityException(AUTHENTICATION_FAILED));
-                }
-                else if (principal instanceof Jwt)
-                {
-                    Jwt jwt = (Jwt) principal;
-
-                    return jwt.getTokenValue();
-                }
-                else
-                {
-                    throw new SecurityException(UNABLE_GET_TOKEN);
-                }
-            }
-            else
-            {
-                throw new SecurityException(UNABLE_GET_TOKEN);
-            }
-        }
-        else
-        {
-            throw new SecurityException(UNABLE_GET_TOKEN);
-        }
-    }
-
-    public String getLoggedInUserId()
-    {
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        if (securityContext != null)
-        {
-            Authentication authentication = securityContext.getAuthentication();
-            if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken))
-            {
-                Object principal = authentication.getPrincipal();
-                if (principal instanceof OAuth2User)
-                {
-                    return Optional.of(((OAuth2User) principal).getName()).orElseThrow(()->new SecurityException(AUTHENTICATION_FAILED));
-                }
-                else if (principal instanceof Jwt)
-                {
-                    Jwt jwt = (Jwt) principal;
-                    return jwt.getClaim(PREFERED_USERNAME);
-                }
-                else
-                {
-                    throw new SecurityException(AUTHENTICATION_FAILED);
-                }
-            }
-            else
-            {
-                throw new SecurityException(AUTHENTICATION_FAILED);
-            }
-        }
-        else
-        {
-            throw new SecurityException(AUTHENTICATION_FAILED);
-        }
     }
 
     @SneakyThrows
