@@ -38,7 +38,6 @@ public class CamundaRuntimeConstants
     public static final String DATE_TIME = "datetime";
     public static final String BEARER = "Bearer";
     public static final String USERNAME = "X-USERID";
-    public static final String  URL_SEPERATOR="/";
     public static final String  DEPLOYMENT_URI="/camunda/engine-rest/deployment/create";
     public static final String CURRENT_PROJECT="com.techsophy.tsf.workflow.engine.camunda.*";
 
