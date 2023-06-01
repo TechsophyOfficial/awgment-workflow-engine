@@ -86,6 +86,11 @@ public class OAuth2AndJwtAwareRequestFilter extends HttpFilter
                     List<String> iss = List.of(jwt.getClaim("iss").toString().split(URL_SEPERATOR));
                     return Optional.of(iss.get(iss.size()-1));
                 }
+                if(principal instanceof OAuth2User)
+                {
+                    List<String> iss = List.of(((OAuth2User) principal).getAttributes().get("iss").toString().split(URL_SEPERATOR));
+                    return Optional.of(iss.get(iss.size()-1));
+                }
             }
         }
         return Optional.empty();
