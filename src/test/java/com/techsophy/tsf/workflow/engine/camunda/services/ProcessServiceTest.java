@@ -5,8 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.techsophy.tsf.workflow.engine.camunda.config.TestSecurityConfig;
-import com.techsophy.tsf.workflow.engine.camunda.dto.*;
-import com.techsophy.tsf.workflow.engine.camunda.exception.TaskNotFoundException;
+import com.techsophy.tsf.workflow.engine.camunda.dto.FormSchema;
+import com.techsophy.tsf.workflow.engine.camunda.dto.ProcessInstanceDTO;
+import com.techsophy.tsf.workflow.engine.camunda.dto.ProcessInstanceResponseDTO;
 import com.techsophy.tsf.workflow.engine.camunda.service.impl.RuntimeFormServiceImpl;
 import com.techsophy.tsf.workflow.engine.camunda.service.impl.RuntimeProcessServiceImpl;
 import lombok.AllArgsConstructor;
@@ -19,17 +20,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
-
-import static au.com.origin.snapshots.SnapshotMatcher.expect;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.techsophy.tsf.workflow.engine.camunda.constants.ErrorMessageConstants.TASK_NOT_FOUND;
-import static com.techsophy.tsf.workflow.engine.camunda.constants.FormConstants.BUSINESS_KEY;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("test")
