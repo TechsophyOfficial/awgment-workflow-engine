@@ -79,7 +79,7 @@ public class CamundaRuntimeConstants {
     public static final String ERROR_MESSAGE = "errorMessage";
     public static final String ERROR = "error";
     public static final String ERROR_CODE = "errorCode";
-    public static final String FORM = "for((HttpServletRequest) request).getRequestURI();m";
+    public static final String FORM = "form";
     public static final String DMS = "dms";
     public static final String FORM_RUNTIME = "form-runtime";
     public static final String GATEWAY_URL = "${gateway.uri}";
