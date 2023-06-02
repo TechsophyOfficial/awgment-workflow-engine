@@ -15,6 +15,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.CREATE_PATH_SUPPLIER;
+
 /**
  * get token with new time stamp
  */
@@ -54,7 +56,7 @@ public class TokenSupplierImpl implements TokenSupplier
     {
         ClientDetails details = keycloakClientCredentials.fetchClientDetails(tenant,value);
         tenantConfig = KeycloakClientConfig.create(tenantConfig,details.getClientId(),details.getSecret());
-        tokenCallable = (TokenCallable) MethodUtils.invokeMethod(AuthzClient.create(tenantConfig), true, "createPatSupplier");
+        tokenCallable = (TokenCallable) MethodUtils.invokeMethod(AuthzClient.create(tenantConfig), true, CREATE_PATH_SUPPLIER);
         tenantTokenMap.put(tenant,tokenCallable);
         return tokenCallable;
     }

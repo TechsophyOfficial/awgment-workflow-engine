@@ -153,6 +153,7 @@ public class CamundaRuntimeConstants
     public static final String DOCUMENT_NAME_PROP = "documentName";
     public static final String DOCUMENT_DESCRIPTION_PROP = "documentDescription";
     public static final String DOCUMENT_PATH_PROP = "documentPath";
+    public static final String CREATE_PATH_SUPPLIER = "createPatSupplier";
 
     // task assignment
     public static final String LOAD_BALANCE_ALGORITHM = "load-balance";
