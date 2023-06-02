@@ -6,9 +6,8 @@ import org.camunda.bpm.engine.rest.security.auth.impl.ContainerBasedAuthenticati
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.util.StringUtils;
-
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,16 +22,15 @@ public class KeycloakAuthenticationProvider extends ContainerBasedAuthentication
     {
         // Extract user-name-attribute of the OAuth2 token
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (!(authentication instanceof OAuth2AuthenticationToken) || !(authentication.getPrincipal() instanceof OidcUser))
+		if (!(authentication instanceof OAuth2AuthenticationToken) || !(authentication.getPrincipal() instanceof OAuth2User))
 		{
 			return AuthenticationResult.unsuccessful();
 		}
-        String userId = ((OidcUser)authentication.getPrincipal()).getName();
+        String userId = ((OAuth2User)authentication.getPrincipal()).getName();
         if (!StringUtils.hasLength(userId))
         {
             return AuthenticationResult.unsuccessful();
         }
-
         // Authentication successful
         AuthenticationResult authenticationResult = new AuthenticationResult(userId, true);
         authenticationResult.setGroups(getUserGroups(userId, engine));

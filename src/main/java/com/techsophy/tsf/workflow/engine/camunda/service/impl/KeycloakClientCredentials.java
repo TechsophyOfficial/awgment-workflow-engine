@@ -16,10 +16,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class KeycloakClientCredentials implements FetchClientCredentials {
 
-//    @Value("${keycloak.master.username}")
+    @Value("${keycloak.multi-realm.username}")
     String userName;
 
-//    @Value("${keycloak.master.password}")
+    @Value("${keycloak.multi-realm.password}")
     String password;
 
     @Value("${keycloak.auth-server-url}")
@@ -33,7 +33,7 @@ public class KeycloakClientCredentials implements FetchClientCredentials {
 
     @Value("${keycloak.master.client.id:admin-cli}")
     String adminClientId;
-    private Map<String, ClientDetails> tenantSecretCache = new ConcurrentHashMap<>();
+    private final Map<String, ClientDetails> tenantSecretCache = new ConcurrentHashMap<>();
 
     private Keycloak keycloak;
     public void init() {
@@ -44,7 +44,7 @@ public class KeycloakClientCredentials implements FetchClientCredentials {
 
     @Override
     public ClientDetails fetchClientDetails(String tenant, boolean refreshSecret)  {
-        ClientDetails clientDetails =null;
+        ClientDetails clientDetails;
 
         if(!refreshSecret){
             clientDetails = tenantSecretCache.get(tenant);
