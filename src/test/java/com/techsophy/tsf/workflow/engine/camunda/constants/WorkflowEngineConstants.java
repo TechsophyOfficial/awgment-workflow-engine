@@ -8,10 +8,6 @@ import javax.validation.constraints.NotNull;
 public class WorkflowEngineConstants
 {
     //TokenUtilsTest
-    public static final String PREFERED_USER_NAME = "preferred_username";
-    public static final String ALG = "alg";
-    public static final String NONE = "none";
-    public static final String TENANT = "tenant";
     public final static String FORM_KEY = "FormKeyTest";
     public final static String BUSINESS_KEY = "gsfttestprocess";
 
@@ -24,4 +20,10 @@ public class WorkflowEngineConstants
     public static final String LOCAL_HOST_URL="http://localhost:8080";
     public final static String KEY ="key";
     public final static String ARGS ="args";
+    public static final String KIMS="KIMS";
+    public static final String TECHSOPHY_PLATFORM="techsophy-platform";
+    public static final String TEST_URL="http://localhost:8080/";
+    public static final String CLIENT_ID="camunda-identity-service";
+    public static final String CLIENT_SECRET="101";
+    public static final String REALMS="realms/";
 }
