@@ -9,13 +9,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AuthenticationManagerResolver;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.filter.ForwardedHeaderFilter;
-
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 
 /**
@@ -28,6 +30,8 @@ import java.util.Collections;
 public class WebAppSecurityConfig extends WebSecurityConfigurerAdapter
 {
     private final KeycloakLogoutHandler keycloakLogoutHandler;
+    private final ClientRegistrationRepository repository;
+    private final AuthenticationManagerResolver<HttpServletRequest> authenticationManagerResolver;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception
@@ -46,11 +50,11 @@ public class WebAppSecurityConfig extends WebSecurityConfigurerAdapter
                                         .permitAll()
                 )
                 .oauth2Login()
+                .clientRegistrationRepository(repository)
                 .and()
                 .logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/app/**/logout"))
                 .logoutSuccessHandler(keycloakLogoutHandler);
-
         http.addFilterAfter(new OAuth2AndJwtAwareRequestFilter(), SecurityContextHolderAwareRequestFilter.class);
     }
 

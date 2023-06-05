@@ -1,9 +1,13 @@
 package com.techsophy.tsf.workflow.engine.camunda.keycloak;
 
+import com.techsophy.tsf.workflow.engine.camunda.config.TenantAuthenticationManagerResolver;
 import com.techsophy.tsf.workflow.engine.camunda.keycloak.sso.KeycloakLogoutHandler;
+import com.techsophy.tsf.workflow.engine.camunda.keycloak.sso.KeycloakRealmRepository;
 import com.techsophy.tsf.workflow.engine.camunda.keycloak.sso.WebAppSecurityConfig;
+import com.techsophy.tsf.workflow.engine.camunda.utils.TokenUtils;
 import org.camunda.bpm.webapp.impl.security.auth.ContainerBasedAuthenticationFilter;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.core.Ordered;
 import org.springframework.web.context.request.RequestContextListener;
@@ -15,7 +19,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class WebAppSecurityConfigTest
 {
     KeycloakLogoutHandler keycloakLogoutHandler = new KeycloakLogoutHandler("http://localhost:8080");
-    WebAppSecurityConfig webAppSecurityConfig = new WebAppSecurityConfig(keycloakLogoutHandler);
+    KeycloakRealmRepository keycloakRealmRepository=new KeycloakRealmRepository();
+    @Mock
+    TokenUtils tokenUtils;
+    TenantAuthenticationManagerResolver tenantAuthenticationManagerResolver=new TenantAuthenticationManagerResolver("http://keycloak",tokenUtils);
+    WebAppSecurityConfig webAppSecurityConfig = new WebAppSecurityConfig(keycloakLogoutHandler,keycloakRealmRepository,tenantAuthenticationManagerResolver);
 
     @Test
     void testContainerBasedAuthFilter()
