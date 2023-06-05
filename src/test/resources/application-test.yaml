@@ -22,7 +22,6 @@ spring:
 tenants:
   registrations:
     - techsophy-platform
-    - KIMS
 
 camunda:
   bpm:
