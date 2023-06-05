@@ -5,6 +5,7 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.jwt.Jwt;
 
@@ -88,8 +89,7 @@ public class OAuth2AndJwtAwareRequestFilter extends HttpFilter
                 }
                 if(principal instanceof OAuth2User)
                 {
-                    List<String> iss = List.of(((OAuth2User) principal).getAttributes().get("iss").toString().split(URL_SEPERATOR));
-                    return Optional.of(iss.get(iss.size()-1));
+                    return Optional.of(((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId());
                 }
             }
         }
