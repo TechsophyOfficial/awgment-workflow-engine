@@ -19,6 +19,11 @@ spring:
             issuer-uri: ${keycloak.url.auth}/auth/realms/${keycloak.realm.name}
             token-uri: ${keycloak.url.token}/auth/realms/${keycloak.realm.name}/protocol/openid-connect/token
 
+tenants:
+  registrations:
+    - techsophy-platform
+    - KIMS
+
 camunda:
   bpm:
     deployment-resource-pattern: classpath:/testdata/*.bpmn
@@ -65,7 +70,7 @@ keycloak:
     auth: http://localhost:8180
     plugin: http://localhost:8180
   auth-server-url: https://keycloak-tsplatform.techsophy.com/auth
-  master:
+  multi-realm:
     username: abc
     password: abc
 
