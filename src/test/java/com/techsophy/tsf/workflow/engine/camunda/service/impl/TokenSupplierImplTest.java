@@ -52,7 +52,7 @@ import static org.mockito.Mockito.doReturn;
             mockedStatic.when(() -> AuthzClient.create((Configuration) any()))
                     .thenReturn(mockedAuthzClient);
             methodUtils.when(() -> MethodUtils.invokeMethod(mockedAuthzClient, true, "createPatSupplier")).thenReturn(tokenCallable);
-            keycloakClientConfig.when(() -> KeycloakClientConfig.create(any(), anyString(), anyString())).thenReturn(new KeycloakClientConfig());
+            keycloakClientConfig.when(() -> KeycloakClientConfig.create(any(),any(),anyString(), anyString())).thenReturn(new KeycloakClientConfig());
             ClientDetails clientDetails = new ClientDetails();
             clientDetails.setClientId("1212");
             clientDetails.setSecret("121");

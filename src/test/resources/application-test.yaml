@@ -72,9 +72,7 @@ keycloak:
     auth: http://localhost:8180
     plugin: http://localhost:8180
   auth-server-url: https://keycloak-tsplatform.techsophy.com/auth
-  multi-realm:
-    username: abc
-    password: abc
+
 
 dms:
   hostUrl: http://localhost:7777/service/1.0.0/file

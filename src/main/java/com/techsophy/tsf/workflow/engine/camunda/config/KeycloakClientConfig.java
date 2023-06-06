@@ -12,13 +12,13 @@ public class KeycloakClientConfig extends Configuration
     public KeycloakClientConfig(){
 
     }
-    public KeycloakClientConfig(KeycloakClientConfig config,String clientId, Map<String, Object> clientCredentials) {
-        super(config.getAuthServerUrl(),config.getRealm(),clientId,clientCredentials,config.getHttpClient());
+    public KeycloakClientConfig(KeycloakClientConfig config,String clientId, Map<String, Object> clientCredentials,String tenant) {
+        super(config.getAuthServerUrl(),tenant,clientId,clientCredentials,config.getHttpClient());
     }
-        public static KeycloakClientConfig create(KeycloakClientConfig config, String clientId, String clientSecret){
+        public static KeycloakClientConfig create(KeycloakClientConfig config, String clientId, String clientSecret,String tenant){
         Map<String,Object> clientCredentials = new HashMap<>();
         clientCredentials.put("secret",clientSecret);
         clientCredentials.put("clientId",clientId);
-        return new KeycloakClientConfig(config,clientId,clientCredentials);
+        return new KeycloakClientConfig(config,clientId,clientCredentials,tenant);
     }
 }

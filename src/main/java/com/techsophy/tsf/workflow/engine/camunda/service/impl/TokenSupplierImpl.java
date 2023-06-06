@@ -55,7 +55,7 @@ public class TokenSupplierImpl implements TokenSupplier
     TokenCallable getTokenCallable(KeycloakClientConfig tenantConfig,String tenant , boolean value)
     {
         ClientDetails details = keycloakClientCredentials.fetchClientDetails(tenant,value);
-        tenantConfig = KeycloakClientConfig.create(tenantConfig,details.getClientId(),details.getSecret());
+        tenantConfig = KeycloakClientConfig.create(tenantConfig,details.getClientId(),details.getSecret(),tenant);
         tokenCallable = (TokenCallable) MethodUtils.invokeMethod(AuthzClient.create(tenantConfig), true, CREATE_PATH_SUPPLIER);
         tenantTokenMap.put(tenant,tokenCallable);
         return tokenCallable;
