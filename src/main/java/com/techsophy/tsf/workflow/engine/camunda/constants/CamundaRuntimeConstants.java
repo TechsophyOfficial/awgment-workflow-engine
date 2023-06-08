@@ -38,6 +38,8 @@ public class CamundaRuntimeConstants
     public static final String DATE_TIME = "datetime";
     public static final String BEARER = "Bearer";
     public static final String USERNAME = "X-USERID";
+    public static final String  DEPLOYMENT_URI="/camunda/engine-rest/deployment/create";
+    public static final String CURRENT_PROJECT="com.techsophy.tsf.workflow.engine.camunda.*";
 
     //    cors config
     public static final String ALL_PATHS = "/**";
@@ -151,6 +153,7 @@ public class CamundaRuntimeConstants
     public static final String DOCUMENT_NAME_PROP = "documentName";
     public static final String DOCUMENT_DESCRIPTION_PROP = "documentDescription";
     public static final String DOCUMENT_PATH_PROP = "documentPath";
+    public static final String CREATE_PATH_SUPPLIER = "createPatSupplier";
 
     // task assignment
     public static final String LOAD_BALANCE_ALGORITHM = "load-balance";

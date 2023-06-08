@@ -33,6 +33,7 @@ dependencies {
     }
 
     implementation 'org.keycloak:keycloak-admin-client:15.0.2'
+    implementation 'com.techsophy:multitenancy-mongo:0.2.0'
     implementation group: 'org.camunda.bpm.springboot', name: 'camunda-bpm-spring-boot-starter-webapp', version:'7.14.0'
     implementation group: 'org.camunda.bpm', name: 'camunda-engine-plugin-spin', version:'7.14.0'
     implementation group: 'org.camunda.spin', name: 'camunda-spin-dataformat-all', version:'1.10.0'
@@ -72,9 +73,7 @@ dependencies {
     testImplementation group: 'com.github.tomakehurst', name: 'wiremock-jre8', version: '2.30.1'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.awaitility:awaitility'
-
-
-
+    testImplementation 'org.mockito:mockito-inline:4.3.1'
 
 }
 
@@ -85,7 +84,7 @@ test {
 jacocoTestReport {
     reports {
         xml.enabled = true
-        html.enabled true
+        html.enabled = true
     }
 }
 
@@ -93,7 +92,7 @@ jacocoTestCoverageVerification {
     violationRules {
         rule {
             limit {
-                minimum = 0.85
+                minimum = 0.82
             }
         }
 

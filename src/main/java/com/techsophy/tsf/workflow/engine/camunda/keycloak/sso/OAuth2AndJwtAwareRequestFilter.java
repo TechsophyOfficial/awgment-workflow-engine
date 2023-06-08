@@ -5,6 +5,7 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.jwt.Jwt;
 
@@ -15,7 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
+import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.URL_SEPERATOR;
 
 /*
  *   SecurityContextHolderAwareRequestFilter doesn't seem to be able to extract
@@ -64,6 +67,29 @@ public class OAuth2AndJwtAwareRequestFilter extends HttpFilter
                 {
                     Jwt jwt = (Jwt) principal;
                     return Optional.of(jwt.getClaim("preferred_username"));
+                }
+            }
+        }
+        return Optional.empty();
+    }
+    public static Optional<String> getTenantName()
+    {
+        SecurityContext context = SecurityContextHolder.getContext();
+        if (context != null)
+        {
+            Authentication authentication = context.getAuthentication();
+            if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken))
+            {
+                Object principal = authentication.getPrincipal();
+                if (principal instanceof Jwt)
+                {
+                    Jwt jwt = (Jwt) principal;
+                    List<String> iss = List.of(jwt.getClaim("iss").toString().split(URL_SEPERATOR));
+                    return Optional.of(iss.get(iss.size()-1));
+                }
+                if(principal instanceof OAuth2User)
+                {
+                    return Optional.of(((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId());
                 }
             }
         }

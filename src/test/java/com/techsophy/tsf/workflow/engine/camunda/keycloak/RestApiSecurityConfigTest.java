@@ -5,12 +5,17 @@ import com.techsophy.tsf.workflow.engine.camunda.keycloak.rest.KeycloakAuthentic
 import com.techsophy.tsf.workflow.engine.camunda.keycloak.rest.RestApiSecurityConfig;
 import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.core.Ordered;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,11 +24,16 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 
 @ActiveProfiles("test")
-@AutoConfigureMockMvc(addFilters = false)
-@AllArgsConstructor(onConstructor_ = {@Autowired})
-@SpringBootTest(classes = TestSecurityConfig.class, webEnvironment = RANDOM_PORT)
+//@AutoConfigureMockMvc(addFilters = false)
+@ExtendWith(MockitoExtension.class)
+//@AllArgsConstructor(onConstructor_ = {@Autowired})
+//@SpringBootTest(classes = TestSecurityConfig.class, webEnvironment = RANDOM_PORT)
 class RestApiSecurityConfigTest {
-    private final RestApiSecurityConfig restApiSecurityConfig;
+    @InjectMocks
+    RestApiSecurityConfig restApiSecurityConfig;
+
+    @Mock
+    CorsConfigurationSource CorsConfigurationSource;
 
     @Test
     void testKeycloakAuthenticationFilter() {

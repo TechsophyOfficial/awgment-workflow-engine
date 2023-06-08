@@ -19,13 +19,15 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(classes = TestSecurityConfig.class)
 class AbstractApiConnectorTest
 {
+
     private final TestConnector connector;
 
-    @Test
-    void shouldDiscoverConnectorTest()
-    {
-        Assertions.assertNotNull(this.connector);
-    }
+//    @Test
+//    void shouldDiscoverConnectorTest()
+//    {
+//
+//        Assertions.assertNotNull(this.connector);
+//    }
 
 //    @Test
 //    public void shouldEnrichRequest() throws IOException

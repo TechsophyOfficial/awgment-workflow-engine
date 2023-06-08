@@ -1,5 +1,6 @@
 package com.techsophy.tsf.workflow.engine.camunda.listeners;
 
+import com.techsophy.multitenancy.mongo.config.TenantContext;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
@@ -15,6 +16,7 @@ public class RetryCycle implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution ctx) throws Exception {
+        TenantContext.setTenantId(ctx.getTenantId());
         JobExecutorContext jobExecutorContext = Context.getJobExecutorContext();
         if (jobExecutorContext!=null && jobExecutorContext.getCurrentJob()!=null && jobExecutorContext.getCurrentJob().getRetries()<=1) {
             // this is called from a Job and the job will run out of retries when it fails again

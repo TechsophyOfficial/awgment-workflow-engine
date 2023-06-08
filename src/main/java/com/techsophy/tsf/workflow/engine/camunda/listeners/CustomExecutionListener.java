@@ -1,5 +1,6 @@
 package com.techsophy.tsf.workflow.engine.camunda.listeners;
 
+import com.techsophy.multitenancy.mongo.config.TenantContext;
 import com.techsophy.tsf.workflow.engine.camunda.model.ChecklistInstanceResponseModel;
 import com.techsophy.tsf.workflow.engine.camunda.model.InvokeChecklistInstanceResponseModel;
 import com.techsophy.tsf.workflow.engine.camunda.service.ChecklistService;
@@ -27,6 +28,7 @@ public class CustomExecutionListener
     @EventListener(condition = EXECUTION_END_EVENT_LISTENER_CONDITION)
     public void endEvent(DelegateExecution delegateExecution)
     {
+        TenantContext.setTenantId(delegateExecution.getTenantId());
         String checklistInstanceForProcessInstanceVariable = CHECKLIST_INSTANCE_ID_FOR_PROCESS_INSTANCE + delegateExecution.getProcessInstanceId();
         if((delegateExecution.getBpmnModelElementInstance()!=null && delegateExecution.getBpmnModelElementInstance().getElementType() !=null && delegateExecution.getBpmnModelElementInstance().getElementType().getTypeName() !=null && !delegateExecution.getBpmnModelElementInstance().getElementType().getTypeName().equals(END_EVENT_ACTIVITY)) && delegateExecution.hasVariable(checklistInstanceForProcessInstanceVariable))
         {
@@ -41,6 +43,7 @@ public class CustomExecutionListener
     @EventListener(condition = EXECUTION_START_EVENT_LISTENER_CONDITION)
     public void startEvent(DelegateExecution delegateExecution)
     {
+        TenantContext.setTenantId(delegateExecution.getTenantId());
         String checklistInstanceForProcessInstanceVariable = CHECKLIST_INSTANCE_ID_FOR_PROCESS_INSTANCE + delegateExecution.getProcessInstanceId();
         if(delegateExecution.getBpmnModelElementInstance() == null || (delegateExecution.getBpmnModelElementInstance()!=null && delegateExecution.getBpmnModelElementInstance().getElementType() !=null && delegateExecution.getBpmnModelElementInstance().getElementType().getTypeName() !=null && !delegateExecution.getBpmnModelElementInstance().getElementType().getTypeName().equals(START_EVENT_ACTIVITY)) || delegateExecution.hasVariable(checklistInstanceForProcessInstanceVariable))
         {
