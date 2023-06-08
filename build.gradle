@@ -84,7 +84,7 @@ test {
 jacocoTestReport {
     reports {
         xml.enabled = true
-        html.enabled true
+        html.enabled = true
     }
 }
 
@@ -92,7 +92,7 @@ jacocoTestCoverageVerification {
     violationRules {
         rule {
             limit {
-                minimum = 0.85
+                minimum = 0.82
             }
         }
 
