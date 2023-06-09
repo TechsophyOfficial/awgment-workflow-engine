@@ -59,7 +59,7 @@ public class RestApiSecurityConfig extends WebSecurityConfigurerAdapter
         FilterRegistrationBean<KeycloakAuthenticationFilter> filterRegistration = new FilterRegistrationBean<>();
         filterRegistration.setFilter(new KeycloakAuthenticationFilter(identityService));
         filterRegistration.setOrder(102); // make sure the filter is registered after the Spring Security Filter Chain
-        filterRegistration.addUrlPatterns("/app/*","/api/**", "/lib/**","/engine-rest/*", "/service/*");
+        filterRegistration.addUrlPatterns("/app/*", "/api/*", "/lib/*", "/engine-rest/*", "/service/*");
         return filterRegistration;
     }
 
