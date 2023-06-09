@@ -1,5 +1,7 @@
 package com.techsophy.tsf.workflow.engine.camunda.keycloak.sso;
 
+import com.techsophy.multitenancy.mongo.config.TenantContext;
+import lombok.extern.slf4j.Slf4j;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.rest.security.auth.AuthenticationResult;
 import org.camunda.bpm.engine.rest.security.auth.impl.ContainerBasedAuthenticationProvider;
@@ -15,6 +17,8 @@ import java.util.List;
 /**
  * OAuth2 Authentication Provider for usage with Keycloak and KeycloakIdentityProviderPlugin. 
  */
+
+@Slf4j
 public class KeycloakAuthenticationProvider extends ContainerBasedAuthenticationProvider
 {
     @Override
@@ -34,6 +38,17 @@ public class KeycloakAuthenticationProvider extends ContainerBasedAuthentication
         // Authentication successful
         AuthenticationResult authenticationResult = new AuthenticationResult(userId, true);
         authenticationResult.setGroups(getUserGroups(userId, engine));
+
+
+
+
+        try {
+            authenticationResult.setTenants(
+                    List.of(OAuth2AndJwtAwareRequestFilter.getTenantName().orElse(null))
+            );
+        }catch (Exception e){
+            log.info("Unable to find tenant",e);
+        }
         return authenticationResult;
     }
 
