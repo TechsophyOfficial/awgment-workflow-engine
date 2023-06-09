@@ -59,7 +59,7 @@ public class RestApiSecurityConfig extends WebSecurityConfigurerAdapter
         FilterRegistrationBean<KeycloakAuthenticationFilter> filterRegistration = new FilterRegistrationBean<>();
         filterRegistration.setFilter(new KeycloakAuthenticationFilter(identityService));
         filterRegistration.setOrder(102); // make sure the filter is registered after the Spring Security Filter Chain
-        filterRegistration.addUrlPatterns("/engine-rest/*", "/service/*");
+        filterRegistration.addUrlPatterns("/app/*","/api/**", "/lib/**","/engine-rest/*", "/service/*");
         return filterRegistration;
     }
 
@@ -69,7 +69,7 @@ public class RestApiSecurityConfig extends WebSecurityConfigurerAdapter
         FilterRegistrationBean<CorsFilter> filterRegistration = new FilterRegistrationBean<>();
         filterRegistration.setFilter(new CorsFilter(corsConfigurationSource));
         filterRegistration.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        filterRegistration.addUrlPatterns("/engine-rest/*", "/service/*");
+        filterRegistration.addUrlPatterns("/api/engine/*","/engine-rest/*", "/service/*");
         return filterRegistration;
     }
 }
