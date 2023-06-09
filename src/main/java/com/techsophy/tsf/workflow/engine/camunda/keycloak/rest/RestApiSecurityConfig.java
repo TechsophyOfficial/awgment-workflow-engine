@@ -69,7 +69,7 @@ public class RestApiSecurityConfig extends WebSecurityConfigurerAdapter
         FilterRegistrationBean<CorsFilter> filterRegistration = new FilterRegistrationBean<>();
         filterRegistration.setFilter(new CorsFilter(corsConfigurationSource));
         filterRegistration.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        filterRegistration.addUrlPatterns("/api/engine/*","/engine-rest/*", "/service/*");
+        filterRegistration.addUrlPatterns("/engine-rest/*", "/service/*");
         return filterRegistration;
     }
 }
