@@ -16,8 +16,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.URL_SEPERATOR;
 
 /*
@@ -94,5 +97,39 @@ public class OAuth2AndJwtAwareRequestFilter extends HttpFilter
             }
         }
         return Optional.empty();
+    }
+
+    public static List<String> getUserGroups()
+    {
+        SecurityContext context = SecurityContextHolder.getContext();
+        if (context != null)
+        {
+            Authentication authentication = context.getAuthentication();
+            if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken))
+            {
+                Object principal = authentication.getPrincipal();
+                if (principal instanceof Jwt)
+                {
+                    Jwt jwt = (Jwt) principal;
+                    List<String> groups = getGroups(jwt.getClaim("groups"));
+                    return groups;
+                }
+                if(principal instanceof OAuth2User)
+                {
+//                    return List.of(((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId());
+                    return getGroups((
+                            (OAuth2User)SecurityContextHolder.getContext().getAuthentication()
+                                    .getPrincipal()).getAttribute("groups"));
+                }
+            }
+        }
+        return Collections.emptyList();
+    }
+
+    private static List<String> getGroups(List<String> groupPath){
+        if(groupPath==null) return Collections.EMPTY_LIST;
+        return groupPath.stream().map(s -> {
+            return s.substring(s.lastIndexOf('/')+1);
+        }).collect(Collectors.toList());
     }
 }
