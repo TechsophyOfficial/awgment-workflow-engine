@@ -37,10 +37,11 @@ public class KeycloakAuthenticationFilter implements Filter
     {
         String userId = OAuth2AndJwtAwareRequestFilter.getUserName().orElseThrow(UNKNOWN_USER_EXCEPTION);
         String tenantName = OAuth2AndJwtAwareRequestFilter.getTenantName().orElseThrow();
+        List<String> groups = OAuth2AndJwtAwareRequestFilter.getUserGroups();
         log.debug("Extracted userId from bearer token: {}", userId);
 
         try {
-            identityService.setAuthentication(userId, this.getUserGroups(userId), List.of(tenantName));
+            identityService.setAuthentication(userId, groups, List.of(tenantName));
             TenantContext.setTenantId(tenantName);
             chain.doFilter(request, response);
         }
