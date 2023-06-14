@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
 class KeycloakAuthenticationFilterTest
 {
     private final String userId = "user@test.com";
-    private final String groupId = "sampleGroupId";
+    private final String groupId = "awgment-admin";
 
     private final IdentityService identityService = mock(IdentityService.class);
     private final HttpServletRequest mockRequest = mock(HttpServletRequest.class);
@@ -59,7 +59,7 @@ class KeycloakAuthenticationFilterTest
     @Test
     void testFilterWithJwtAuthenticationToken() {
 
-            Jwt jwt = OAuth2AndJwtAwareRequestFilterTest.getJwt(Map.of("preferred_username", this.userId,"iss","http://techsophy-platform"));
+            Jwt jwt = OAuth2AndJwtAwareRequestFilterTest.getJwt(Map.of("preferred_username", this.userId,"iss","http://techsophy-platform","groups",List.of("awgment-admin")));
             SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt));
 
             keycloakAuthenticationFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
@@ -78,14 +78,14 @@ class KeycloakAuthenticationFilterTest
     {
         OidcUser oidcUser = mock(OidcUser.class);
         when(authentication.getPrincipal()).thenReturn(oidcUser);
-        Jwt jwt = OAuth2AndJwtAwareRequestFilterTest.getJwt(Map.of("preferred_username", this.userId,"iss","http://techsophy-platform"));
+        Jwt jwt = OAuth2AndJwtAwareRequestFilterTest.getJwt(Map.of("preferred_username", this.userId,"iss","http://techsophy-platform","groups",List.of("awgment-admin")));
         when(oidcUser.getName()).thenReturn(this.userId);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt));
         keycloakAuthenticationFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
         List<String> groupsIds = new ArrayList<>();
         groupsIds.add(this.groupId);
-        verify(identityService).setAuthentication(this.userId, groupsIds,List.of("techsophy-platform"));
+        verify(identityService).setAuthentication(this.userId,groupsIds,List.of("techsophy-platform"));
         verify(mockFilterChain).doFilter(mockRequest, mockResponse);
         verify(identityService).clearAuthentication();
     }
