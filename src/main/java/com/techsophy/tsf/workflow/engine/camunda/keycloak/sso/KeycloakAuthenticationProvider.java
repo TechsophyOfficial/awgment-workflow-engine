@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.UNABLE_TO_FIND_TENANT;
+
 /**
  * OAuth2 Authentication Provider for usage with Keycloak and KeycloakIdentityProviderPlugin. 
  */
@@ -47,7 +49,7 @@ public class KeycloakAuthenticationProvider extends ContainerBasedAuthentication
                     List.of(OAuth2AndJwtAwareRequestFilter.getTenantName().orElse(null))
             );
         }catch (Exception e){
-            log.info("Unable to find tenant",e);
+            log.info(UNABLE_TO_FIND_TENANT,e);
         }
         return authenticationResult;
     }
