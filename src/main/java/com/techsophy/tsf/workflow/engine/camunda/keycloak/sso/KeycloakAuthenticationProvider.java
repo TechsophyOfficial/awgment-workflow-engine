@@ -37,7 +37,9 @@ public class KeycloakAuthenticationProvider extends ContainerBasedAuthentication
         }
         // Authentication successful
         AuthenticationResult authenticationResult = new AuthenticationResult(userId, true);
+
         authenticationResult.setGroups(OAuth2AndJwtAwareRequestFilter.getUserGroups());
+
 
 
 
