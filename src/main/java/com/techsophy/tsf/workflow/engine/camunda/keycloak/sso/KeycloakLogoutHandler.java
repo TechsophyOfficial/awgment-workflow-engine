@@ -1,5 +1,6 @@
 package com.techsophy.tsf.workflow.engine.camunda.keycloak.sso;
 
+import com.techsophy.multitenancy.mongo.config.TenantContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,6 +39,10 @@ public class KeycloakLogoutHandler implements LogoutSuccessHandler
 	 */
 	private String oauth2UserLogoutUri;
 
+
+	@Value("${keycloak.realm.name:techsophy-platform}")
+	private String defaultRealm;
+
 	/**
 	 * Default constructor.
 	 *
@@ -65,7 +70,13 @@ public class KeycloakLogoutHandler implements LogoutSuccessHandler
 			String requestUrl = request.getRequestURL().toString();
 			String redirectUri = requestUrl.substring(0, requestUrl.indexOf("/app"));
 			// Complete logout URL
+			String tenant = TenantContext.getTenantId();
 			String logoutUrl = oauth2UserLogoutUri + "?redirect_uri=" + redirectUri;
+
+			if(tenant!=null){
+				logoutUrl = logoutUrl.replace("realms/" + defaultRealm,"realms/"+tenant) + "?redirect_uri=" + redirectUri;
+
+			}
 
 			// Do logout by redirecting to Keycloak logout
 			LOG.debug("Redirecting to logout URL {}", logoutUrl);
