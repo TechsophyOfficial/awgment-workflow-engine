@@ -85,7 +85,7 @@ class KeycloakAuthenticationFilterTest
         keycloakAuthenticationFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
         List<String> groupsIds = new ArrayList<>();
         groupsIds.add(this.groupId);
-        verify(identityService).setAuthentication(this.userId, groupsIds,List.of("techsophy-platform"));
+        verify(identityService).setAuthentication(this.userId,groupsIds,List.of("techsophy-platform"));
         verify(mockFilterChain).doFilter(mockRequest, mockResponse);
         verify(identityService).clearAuthentication();
     }

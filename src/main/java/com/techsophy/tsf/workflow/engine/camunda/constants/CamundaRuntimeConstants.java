@@ -124,6 +124,8 @@ public class CamundaRuntimeConstants
     public static final String DMS_UPLOAD_FILE = "/dms/v1/documents/file";
     public static final String TASK_ID = "taskId";
     public static final String FORM_VERSION = "formVersion";
+    public static final String PREFERRED_USER_NAME = "preferred_username";
+    public static final String GROUPS = "groups";
 
     //LoggingHandler
     public static final String CONTROLLER_CLASS_PATH = "execution(* com.techsophy.tsf.workflow.engine.camunda.controller.runtime..*(..))";
@@ -169,4 +171,5 @@ public class CamundaRuntimeConstants
     public static final String DUE = "due";
     public static final String FOLLOW_UP = "followUp";
     public static final String ASSIGNEEE="assignee";
+    public static final String UNABLE_TO_FIND_TENANT="Unable to find tenant";
 }

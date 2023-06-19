@@ -77,7 +77,6 @@ public class KeycloakLogoutHandler implements LogoutSuccessHandler
 				logoutUrl = logoutUrl.replace("realms/" + defaultRealm,"realms/"+tenant) + "?redirect_uri=" + redirectUri;
 
 			}
-
 			// Do logout by redirecting to Keycloak logout
 			LOG.debug("Redirecting to logout URL {}", logoutUrl);
 			redirectStrategy.sendRedirect(request, response, logoutUrl);
