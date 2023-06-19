@@ -90,6 +90,10 @@ public class CamundaRuntimeConstants
     public static final String QUESTION = "question";
     public static final String CHECKLIST_INSTANCE_ID_VAR = ":checklistInstanceId";
     public static final String RESULT = "result";
+    public static final String TENANT_ID = "tenant-id";
+    public static final String DEPLOYMENT = "deployment";
+    public static final String INVALID_TENANT = "Invalid tenant";
+    public static final String NO_TENANT = "No tenant id found for the request";
 
     //    oauth2 and jwt aware request filter
     public static final String ERROR_MESSAGE = "errorMessage";

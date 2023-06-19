@@ -18,6 +18,8 @@ import java.io.*;
 import java.util.List;
 import java.util.Map;
 
+import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.*;
+
 
 @NoArgsConstructor
 public class DeploymentFilter implements Filter {
@@ -29,8 +31,8 @@ public class DeploymentFilter implements Filter {
 
             HttpServletRequest request = (HttpServletRequest) req;
             HttpServletResponse response = (HttpServletResponse) res;
-
-            if (request.getRequestURI().contains("deployment")) {
+            String tenantName = OAuth2AndJwtAwareRequestFilter.getTenantName().orElseThrow();
+            if (request.getRequestURI().contains(DEPLOYMENT)) {
                 boolean isMultipart = ServletFileUpload.isMultipartContent(request);
                 if (isMultipart) {
                     MultiReadHttpServletRequest multiReadHttpServletRequest = new MultiReadHttpServletRequest(request);
@@ -39,16 +41,16 @@ public class DeploymentFilter implements Filter {
                     ServletFileUpload upload = new ServletFileUpload(new DiskFileItemFactory(1024 * 1024, null));
 
                     Map<String, List<FileItem>> fileItemMap = upload.parseParameterMap(multiReadHttpServletRequest);
-                    if (fileItemMap.containsKey("tenant-id")) {
-                        List<FileItem> items = fileItemMap.get("tenant-id");
+                    if (fileItemMap.containsKey(TENANT_ID)) {
+                        List<FileItem> items = fileItemMap.get(TENANT_ID);
                         String tenant = items.get(0).getString();
-                        if (!tenant.equals("techsophy-platform")) {
-                            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Invalid tenant");
+                        if (!tenant.equals(tenantName)) {
+                            response.sendError(HttpServletResponse.SC_FORBIDDEN, INVALID_TENANT);
                             return;
                         }
 
                     } else {
-                        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No tenant id found for the request");
+                        response.sendError(HttpServletResponse.SC_BAD_REQUEST, NO_TENANT);
                         return;
                     }
                 }
@@ -116,8 +118,6 @@ public class DeploymentFilter implements Filter {
             public void setReadListener(ReadListener listener) {
 
             }
-
-
         }
     }
 }
