@@ -55,13 +55,4 @@ public class KeycloakAuthenticationProvider extends ContainerBasedAuthentication
         }
         return authenticationResult;
     }
-
-    private List<String> getUserGroups(String userId, ProcessEngine engine)
-    {
-        List<String> groupIds = new ArrayList<>();
-        // query groups using KeycloakIdentityProvider plugin
-        engine.getIdentityService().createGroupQuery().groupMember(userId).list()
-        	.forEach( g -> groupIds.add(g.getId()));
-        return groupIds;
-    }
 }

@@ -57,10 +57,5 @@ public class KeycloakAuthenticationFilter implements Filter
      * @param userId the user's ID
      * @return list of groups the user belongs to
      */
-    private List<String> getUserGroups(String userId)
-    {
-        // query groups using KeycloakIdentityProvider plugin
-        return identityService.createGroupQuery().groupMember(userId)
-                .list().stream().map(Group::getId).collect(Collectors.toList());
-    }
+
 }
