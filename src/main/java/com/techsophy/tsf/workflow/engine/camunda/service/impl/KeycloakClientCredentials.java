@@ -6,6 +6,9 @@ import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.representations.idm.ClientRepresentation;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -14,7 +17,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @Component
-public class KeycloakClientCredentials implements FetchClientCredentials {
+@RefreshScope
+public class KeycloakClientCredentials implements FetchClientCredentials, ApplicationListener<RefreshScopeRefreshedEvent> {
 
     @Value("${keycloak.multi-realm.username}")
     String userName;
@@ -78,5 +82,10 @@ public class KeycloakClientCredentials implements FetchClientCredentials {
         clientDetails.setClientId(clientId);
         clientDetails.setSecret(secret);
         return clientDetails;
+    }
+
+    @Override
+    public void onApplicationEvent(RefreshScopeRefreshedEvent event) {
+        tenantSecretCache.clear();
     }
 }

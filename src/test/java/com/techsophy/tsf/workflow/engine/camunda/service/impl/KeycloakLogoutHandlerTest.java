@@ -23,7 +23,7 @@ import java.security.cert.Extension;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class KeycloakLogoutHandlerTest {
+ class KeycloakLogoutHandlerTest {
     @InjectMocks
     KeycloakLogoutHandler keycloakLogoutHandler;
     @Mock
@@ -44,7 +44,7 @@ public class KeycloakLogoutHandlerTest {
         ReflectionTestUtils.setField(keycloakLogoutHandler,"oauth2UserLogoutUri","http://example.com/logout");
     }
     @Test
-    public void  onLogoutSuccess () throws ServletException, IOException {
+    void  onLogoutSuccess () throws ServletException, IOException {
         String requestUrl = "http://example.com/app/somepath";
         String redirectUri = "http://example.com";
         String logoutUrl = oauth2UserLogoutUri + "?redirect_uri=" + redirectUri;
