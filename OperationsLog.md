@@ -11,3 +11,9 @@ multi-realm:
     username: ${MULTI_REALM_USERNAME}
     password: ${MULTI_REALM_PASSWORD}
 ````
+- Support for multiple tenants are added, configure the tenants under tenant-registration in cloud config application yaml, techsophy-platform needs to be added as default
+````
+tenants:
+  registrations:
+    - techsophy-platform
+````
