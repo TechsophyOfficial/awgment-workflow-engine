@@ -2,6 +2,7 @@ package com.techsophy.tsf.workflow.engine.camunda.connectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.techsophy.tsf.workflow.engine.camunda.service.TokenSupplier;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -27,6 +28,7 @@ import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntime
  * this class  uses http resquest and response of camunda and create
  * custom request and response body
  */
+@Slf4j
 public abstract class AbstractApiConnector extends AbstractHttpConnector<HttpRequest, HttpResponse>
 {
     private final TokenSupplier tokenSupplier;
@@ -66,6 +68,7 @@ public abstract class AbstractApiConnector extends AbstractHttpConnector<HttpReq
                         String errorMessage = httpBodyResponse;
                         ObjectMapper objectMapper = new ObjectMapper();
                         apiErrorResponse = objectMapper.readValue(errorMessage, Map.class);
+                        log.error(""+apiErrorResponse);
                     }
 
 
