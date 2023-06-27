@@ -25,7 +25,6 @@ import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntime
 public class TokenSupplierImpl implements TokenSupplier
 {
 
-    private  TokenCallable tokenCallable;
     @Autowired
     private  KeycloakClientCredentials keycloakClientCredentials;
 
@@ -40,23 +39,24 @@ public class TokenSupplierImpl implements TokenSupplier
         try
         {
         if (tenantCallable == null) {
-            tokenCallable = getTokenCallable(config,tenant,false);
+            tenantCallable = getTokenCallable(config,tenant,false);
         }
         // will cache token and automatically refresh when expired
-        return this.tokenCallable.call();
+        return tenantCallable.call();
         }
         catch (Exception e)
         {
-            tokenCallable = getTokenCallable(config,tenant,true);
-            return this.tokenCallable.call();
+            tenantCallable = getTokenCallable(config,tenant,true);
+            return tenantCallable.call();
         }
     }
     @SneakyThrows
     TokenCallable getTokenCallable(KeycloakClientConfig tenantConfig,String tenant , boolean value)
     {
+
         ClientDetails details = keycloakClientCredentials.fetchClientDetails(tenant,value);
         tenantConfig = KeycloakClientConfig.create(tenantConfig,details.getClientId(),details.getSecret(),tenant);
-        tokenCallable = (TokenCallable) MethodUtils.invokeMethod(AuthzClient.create(tenantConfig), true, CREATE_PATH_SUPPLIER);
+        TokenCallable tokenCallable = (TokenCallable) MethodUtils.invokeMethod(AuthzClient.create(tenantConfig), true, CREATE_PATH_SUPPLIER);
         tenantTokenMap.put(tenant,tokenCallable);
         return tokenCallable;
     }
