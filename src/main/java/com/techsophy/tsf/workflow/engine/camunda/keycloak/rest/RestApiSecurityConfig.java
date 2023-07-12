@@ -11,15 +11,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AuthenticationManagerResolver;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
-import org.springframework.security.oauth2.core.OAuth2TokenValidator;
-import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Optional Security Configuration for Camunda REST Api.
@@ -35,13 +34,12 @@ public class RestApiSecurityConfig extends WebSecurityConfigurerAdapter
     private final ApplicationContext applicationContext;
     private final RestApiSecurityConfigurationProperties configProps;
     private final CorsConfigurationSource corsConfigurationSource;
+    private final AuthenticationManagerResolver<HttpServletRequest> authenticationManagerResolver;
+
 
     @Override
     public void configure(final HttpSecurity http) throws Exception
     {
-        String jwkSetUri = applicationContext.getEnvironment().getRequiredProperty(
-                "spring.security.oauth2.client.provider." + configProps.getProvider() + ".jwk-set-uri");
-
         http
                 .csrf().ignoringAntMatchers("/api/**", "/engine-rest/**", "/service/**", "/wrapper/**")
                 .and()
@@ -51,33 +49,8 @@ public class RestApiSecurityConfig extends WebSecurityConfigurerAdapter
                 .authorizeRequests()
                 .anyRequest().authenticated()
                 .and()
-                .oauth2ResourceServer()
-                .jwt().jwkSetUri(jwkSetUri);
-
+                .oauth2ResourceServer(oauth2 -> oauth2.authenticationManagerResolver(this.authenticationManagerResolver));
         http.addFilterAfter(new OAuth2AndJwtAwareRequestFilter(), SecurityContextHolderAwareRequestFilter.class);
-    }
-
-    /**
-     * Create a JWT decoder with issuer and audience claim validation.
-     *
-     * @return the JWT decoder
-     */
-    @Bean
-    public JwtDecoder jwtDecoder()
-    {
-        String issuerUri = applicationContext.getEnvironment().getRequiredProperty(
-                "spring.security.oauth2.client.provider." + configProps.getProvider() + ".issuer-uri");
-
-        NimbusJwtDecoder jwtDecoder = (NimbusJwtDecoder)
-                JwtDecoders.fromOidcIssuerLocation(issuerUri);
-
-        OAuth2TokenValidator<Jwt> audienceValidator = new AudienceValidator(configProps.getRequiredAudience());
-        OAuth2TokenValidator<Jwt> withIssuer = JwtValidators.createDefaultWithIssuer(issuerUri);
-        OAuth2TokenValidator<Jwt> withAudience = new DelegatingOAuth2TokenValidator<>(withIssuer, audienceValidator);
-
-        jwtDecoder.setJwtValidator(withAudience);
-
-        return jwtDecoder;
     }
 
     @Bean
@@ -86,7 +59,17 @@ public class RestApiSecurityConfig extends WebSecurityConfigurerAdapter
         FilterRegistrationBean<KeycloakAuthenticationFilter> filterRegistration = new FilterRegistrationBean<>();
         filterRegistration.setFilter(new KeycloakAuthenticationFilter(identityService));
         filterRegistration.setOrder(102); // make sure the filter is registered after the Spring Security Filter Chain
-        filterRegistration.addUrlPatterns("/engine-rest/*", "/service/*");
+        filterRegistration.addUrlPatterns("/app/*", "/api/*", "/lib/*", "/engine-rest/*", "/service/*");
+        return filterRegistration;
+    }
+
+    @Bean
+    public FilterRegistrationBean<DeploymentFilter> deploymentFilter()
+    {
+        FilterRegistrationBean<DeploymentFilter> filterRegistration = new FilterRegistrationBean<>();
+        filterRegistration.setFilter(new DeploymentFilter());
+        filterRegistration.setOrder(103); // make sure the filter is registered after the Spring Security Filter Chain
+        filterRegistration.addUrlPatterns("/engine-rest/deployment/*");
         return filterRegistration;
     }
 

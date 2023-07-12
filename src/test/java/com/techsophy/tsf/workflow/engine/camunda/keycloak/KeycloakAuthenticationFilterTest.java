@@ -1,6 +1,7 @@
 package com.techsophy.tsf.workflow.engine.camunda.keycloak;
 
 import com.techsophy.tsf.workflow.engine.camunda.keycloak.rest.KeycloakAuthenticationFilter;
+import com.techsophy.tsf.workflow.engine.camunda.keycloak.sso.OAuth2AndJwtAwareRequestFilter;
 import com.techsophy.tsf.workflow.engine.camunda.keycloak.sso.OAuth2AndJwtAwareRequestFilterTest;
 import lombok.SneakyThrows;
 import org.camunda.bpm.engine.IdentityService;
@@ -10,6 +11,8 @@ import org.camunda.bpm.engine.impl.persistence.entity.GroupEntity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -30,7 +33,7 @@ import static org.mockito.Mockito.*;
 class KeycloakAuthenticationFilterTest
 {
     private final String userId = "user@test.com";
-    private final String groupId = "sampleGroupId";
+    private final String groupId = "awgment-admin";
 
     private final IdentityService identityService = mock(IdentityService.class);
     private final HttpServletRequest mockRequest = mock(HttpServletRequest.class);
@@ -54,20 +57,19 @@ class KeycloakAuthenticationFilterTest
 
     @SneakyThrows
     @Test
-    void testFilterWithJwtAuthenticationToken()
-    {
-        Jwt jwt = OAuth2AndJwtAwareRequestFilterTest.getJwt(Map.of("preferred_username", this.userId));
+    void testFilterWithJwtAuthenticationToken() {
 
-        SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt));
+            Jwt jwt = OAuth2AndJwtAwareRequestFilterTest.getJwt(Map.of("preferred_username", this.userId,"iss","http://techsophy-platform","groups",List.of("awgment-admin")));
+            SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt));
 
-        keycloakAuthenticationFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
+            keycloakAuthenticationFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
 
-        List<String> groupsIds = new ArrayList<>();
-        groupsIds.add(this.groupId);
+            List<String> groupsIds = new ArrayList<>();
+            groupsIds.add(this.groupId);
 
-        verify(identityService).setAuthentication(this.userId, groupsIds);
-        verify(mockFilterChain).doFilter(mockRequest, mockResponse);
-        verify(identityService).clearAuthentication();
+            verify(identityService).setAuthentication(this.userId, groupsIds,List.of("techsophy-platform"));
+            verify(mockFilterChain).doFilter(mockRequest, mockResponse);
+            verify(identityService).clearAuthentication();
     }
 
     @SneakyThrows
@@ -76,14 +78,14 @@ class KeycloakAuthenticationFilterTest
     {
         OidcUser oidcUser = mock(OidcUser.class);
         when(authentication.getPrincipal()).thenReturn(oidcUser);
+        Jwt jwt = OAuth2AndJwtAwareRequestFilterTest.getJwt(Map.of("preferred_username", this.userId,"iss","http://techsophy-platform","groups",List.of("awgment-admin")));
         when(oidcUser.getName()).thenReturn(this.userId);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
+        SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt));
         keycloakAuthenticationFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
-
         List<String> groupsIds = new ArrayList<>();
         groupsIds.add(this.groupId);
-        verify(identityService).setAuthentication(this.userId, groupsIds);
+        verify(identityService).setAuthentication(this.userId,groupsIds,List.of("techsophy-platform"));
         verify(mockFilterChain).doFilter(mockRequest, mockResponse);
         verify(identityService).clearAuthentication();
     }

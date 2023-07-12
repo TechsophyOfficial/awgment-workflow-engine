@@ -17,5 +17,4 @@ public class TechsophyPlatformWorkflowEngineApplication
 	{
 		SpringApplication.run(TechsophyPlatformWorkflowEngineApplication.class, args);
 	}
-
 }

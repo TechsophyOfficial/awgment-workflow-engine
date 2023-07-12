@@ -1,5 +1,6 @@
 package com.techsophy.tsf.workflow.engine.camunda.service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.function.Supplier;
 
 public interface TokenSupplier extends Supplier<String>
@@ -10,5 +11,5 @@ public interface TokenSupplier extends Supplier<String>
         return this.getToken();
     }
 
-    String getToken();
+    String getToken() ;
 }
