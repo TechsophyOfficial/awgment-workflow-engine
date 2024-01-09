@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.*;
-import static com.techsophy.tsf.workflow.engine.camunda.constants.CheckListConstants.CHECKLIST_ID;
-import static com.techsophy.tsf.workflow.engine.camunda.constants.CheckListConstants.INVOKE_CHECKLIST;
 
 @Slf4j
 @RefreshScope

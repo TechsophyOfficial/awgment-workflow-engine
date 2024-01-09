@@ -16,14 +16,16 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
+
 import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.*;
-import static com.techsophy.tsf.workflow.engine.camunda.constants.ErrorMessageConstants.*;
+import static com.techsophy.tsf.workflow.engine.camunda.constants.ErrorMessageConstants.TOKEN_VERIFICATION_FAILED;
 
 @Slf4j
 @Component

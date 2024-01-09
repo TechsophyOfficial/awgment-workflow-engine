@@ -2,7 +2,6 @@ package com.techsophy.tsf.workflow.engine.camunda.service.impl;
 
 import com.techsophy.multitenancy.mongo.config.TenantContext;
 import com.techsophy.tsf.workflow.engine.camunda.keycloak.sso.KeycloakLogoutHandler;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,9 +17,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.security.cert.Extension;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
  class KeycloakLogoutHandlerTest {

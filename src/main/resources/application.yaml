@@ -1,0 +1,124 @@
+spring.datasource:
+  url: jdbc:postgresql://localhost:5432/camunda
+  username: bhavya
+  password: bhavya
+  driver-class-name: org.postgresql.Driver
+
+gateway:
+  uri: https://api-dev.techsophy.com/api
+
+camunda.bpm:
+  authorization:
+    enabled: true
+  filter:
+    create: All tasks
+  generic-properties:
+    properties:
+      generalResourceWhitelistPattern: "[a-zA-Z0-9+]+|camunda-admin"
+      failedJobRetryTimeCycle: "R5/PT1M"
+  webapp.application-path:
+
+server:
+  port: 8081
+  servlet.context-path: /camunda
+
+spring:
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+tenants:
+  registrations:
+    - ${MULTI_REALMS:techsophy-platform}
+#    - ${MULTI_REALM_TECHSOPHY_PLATFORM:techsophy-platform}
+#    - ${MULTI_REALM_ECART:ECart}
+#    - ${MULTI_REALM_PROJECTFLOW:ProjectFlow}
+#    - ${MULTI_REALM_TECHSOPHY:techsophy}
+#    - ${MULTI_REALM_TROVITY:trovity}
+
+keycloak:
+  multi-realm:
+    username: ${MULTI_REALM_USERNAME:admin}
+    password: ${MULTI_REALM_PASSWORD:test}
+  issuer-uri: ${KEYCLOAK_URL_AUTH:https://auth-dev.techsophy.com}/auth/realms/
+  # SSO Authentication requests. Send by application as redirect to the browser
+  url.auth: https://auth-dev.techsophy.com
+  url.token: https://auth-dev.techsophy.com
+  url.plugin: https://auth-dev.techsophy.com
+  client.id: camunda-identity-service
+  client.secret: eda8ebf8-caad-4966-807a-899c2c5f5372
+  realm.name:  techsophy-platform
+  auth-server-url: https://auth-dev.techsophy.com/auth
+  realm: techsophy-platform
+  resource: camunda-identity-service
+  credentials:
+    secret: eda8ebf8-caad-4966-807a-899c2c5f5372
+
+# Spring Boot Security OAuth2 SSO
+spring.security:
+  oauth2:
+    client:
+      registration:
+        keycloak:
+          provider: keycloak
+          client-id: ${keycloak.client.id:camunda-identity-service}
+          client-secret: ${keycloak.client.secret:eda8ebf8-caad-4966-807a-899c2c5f5372}
+          authorization-grant-type: authorization_code
+          redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
+          scope: openid, profile, email
+      provider:
+        keycloak:
+          issuer-uri: https://auth-dev.techsophy.com/auth/realms/techsophy-platform
+          authorization-uri: https://auth-dev.techsophy.com/auth/realms/techsophy-platform/protocol/openid-connect/auth
+          user-info-uri: https://auth-dev.techsophy.com/auth/realms/techsophy-platform/protocol/openid-connect/userinfo
+          token-uri: https://auth-dev.techsophy.com/auth/realms/techsophy-platform/protocol/openid-connect/token
+          jwk-set-uri: https://auth-dev.techsophy.com/auth/realms/techsophy-platform/protocol/openid-connect/certs
+          # set user-name-attribute one of:
+          # - sub                -> default; using keycloak ID as camunda user ID
+          # - email              -> useEmailAsCamundaUserId=true
+          # - preferred_username -> useUsernameAsCamundaUserId=true
+          user-name-attribute: preferred_username
+
+# Camunda Rest API
+rest.security:
+  enabled: true
+  provider: keycloak
+  required-audience: camunda-rest-api
+
+# Camunda Keycloak Identity Provider Plugin
+plugin.identity.keycloak:
+  keycloakIssuerUrl: https://auth-dev.techsophy.com/auth/realms/techsophy-platform
+  keycloakAdminUrl: https://auth-dev.techsophy.com/auth/admin/realms/techsophy-platform
+  clientId: camunda-identity-service
+  clientSecret: eda8ebf8-caad-4966-807a-899c2c5f5372
+  useEmailAsCamundaUserId: false
+  useUsernameAsCamundaUserId: true
+  useGroupPathAsCamundaGroupId: true
+  administratorGroupName: camunda-admin
+  disableSSLCertificateValidation: true
+
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      userService:
+        registerHealthIndicator: true
+        evenrConsumerBufferSize: 10
+        failureRateThreshold: 50
+        minimumNumberOfCalls: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowSize: 10
+        slidingWindowType: COUNT_BASED

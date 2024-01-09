@@ -1,6 +1,5 @@
 package com.techsophy.tsf.workflow.engine.camunda.keycloak.sso;
 
-import com.techsophy.multitenancy.mongo.config.TenantContext;
 import lombok.extern.slf4j.Slf4j;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.rest.security.auth.AuthenticationResult;
@@ -10,14 +9,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.util.StringUtils;
+
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.UNABLE_TO_FIND_TENANT;
 
 /**
- * OAuth2 Authentication Provider for usage with Keycloak and KeycloakIdentityProviderPlugin. 
+ * OAuth2 Authentication Provider for usage with Keycloak and KeycloakIdentityProviderPlugin.
  */
 
 @Slf4j
