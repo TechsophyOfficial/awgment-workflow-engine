@@ -1,7 +1,6 @@
 package com.techsophy.tsf.workflow.engine.camunda.keycloak;
 
 import com.techsophy.tsf.workflow.engine.camunda.keycloak.rest.KeycloakAuthenticationFilter;
-import com.techsophy.tsf.workflow.engine.camunda.keycloak.sso.OAuth2AndJwtAwareRequestFilter;
 import com.techsophy.tsf.workflow.engine.camunda.keycloak.sso.OAuth2AndJwtAwareRequestFilterTest;
 import lombok.SneakyThrows;
 import org.camunda.bpm.engine.IdentityService;
@@ -11,8 +10,6 @@ import org.camunda.bpm.engine.impl.persistence.entity.GroupEntity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;

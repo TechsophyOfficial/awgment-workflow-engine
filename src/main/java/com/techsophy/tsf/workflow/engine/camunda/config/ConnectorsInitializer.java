@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.camunda.connect.Connectors;
 import org.camunda.connect.spi.Connector;
 import org.springframework.stereotype.Component;
+
 import javax.annotation.PostConstruct;
 import java.util.List;
 

@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import org.apache.http.Header;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;

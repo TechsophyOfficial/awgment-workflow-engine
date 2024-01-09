@@ -1,6 +1,5 @@
 package com.techsophy.tsf.workflow.engine.camunda.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.techsophy.tsf.workflow.engine.camunda.dto.ClientDetails;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +20,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @ExtendWith(MockitoExtension.class)
  class KeycloakClientCredentialsTest {

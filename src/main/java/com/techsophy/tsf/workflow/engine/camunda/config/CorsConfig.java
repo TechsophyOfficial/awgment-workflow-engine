@@ -8,6 +8,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+
 import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.ALL_PATHS;
 
 @Configuration

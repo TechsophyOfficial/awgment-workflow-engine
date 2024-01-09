@@ -5,12 +5,11 @@ import com.techsophy.tsf.workflow.engine.camunda.keycloak.sso.OAuth2AndJwtAwareR
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.camunda.bpm.engine.IdentityService;
-import org.camunda.bpm.engine.identity.Group;
+
 import javax.servlet.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 /**
  * Keycloak Authentication Filter - used for REST API Security.

@@ -1,55 +1,55 @@
 package com.techsophy.tsf.workflow.engine.camunda.service.impl;
 
-import com.techsophy.tsf.workflow.engine.camunda.config.TestSecurityConfig;
 import com.techsophy.tsf.workflow.engine.camunda.keycloak.rest.DeploymentFilter;
 import com.techsophy.tsf.workflow.engine.camunda.keycloak.rest.KeycloakAuthenticationFilter;
 import com.techsophy.tsf.workflow.engine.camunda.keycloak.rest.RestApiSecurityConfig;
-import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.core.Ordered;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.filter.CorsFilter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-
-@ActiveProfiles("test")
-@AutoConfigureMockMvc(addFilters = false)
-@AllArgsConstructor(onConstructor_ = {@Autowired})
-@SpringBootTest(classes = TestSecurityConfig.class, webEnvironment = RANDOM_PORT)
+@ExtendWith(MockitoExtension.class)
 class RestApiSecurityConfigTest {
-    private final RestApiSecurityConfig restApiSecurityConfig;
 
-    @Test
-    void testKeycloakAuthenticationFilter() {
+  @InjectMocks
+  RestApiSecurityConfig restApiSecurityConfig;
 
-        FilterRegistrationBean<KeycloakAuthenticationFilter> filterRegistrationBean = restApiSecurityConfig.keycloakAuthenticationFilter();
+  @Mock
+  org.springframework.web.cors.CorsConfigurationSource CorsConfigurationSource;
 
-        assertNotNull(filterRegistrationBean);
 
-        // Order is important while registering filter beans
-        assertThat(filterRegistrationBean.getOrder()).isEqualTo(102);
-    }
+  @Test
+  void testKeycloakAuthenticationFilter() {
 
-    @Test
-    void testCorsFilter() {
-        FilterRegistrationBean<CorsFilter> filterRegistrationBean = restApiSecurityConfig.corsFilter();
+    FilterRegistrationBean<KeycloakAuthenticationFilter> filterRegistrationBean = restApiSecurityConfig.keycloakAuthenticationFilter();
 
-        assertNotNull(filterRegistrationBean);
+    assertNotNull(filterRegistrationBean);
 
-        // Order is important while registering filter beans
-        assertThat(filterRegistrationBean.getOrder()).isEqualTo(Ordered.HIGHEST_PRECEDENCE);
-    }
-    @Test
-    void deploymentFilter() {
-        FilterRegistrationBean<DeploymentFilter> deploymentFilter = restApiSecurityConfig.deploymentFilter();
-        assertNotNull(deploymentFilter);
-        assertThat(deploymentFilter.getOrder()).isEqualTo(103);
-    }
+    // Order is important while registering filter beans
+    assertThat(filterRegistrationBean.getOrder()).isEqualTo(102);
+  }
+
+  @Test
+  void testCorsFilter() {
+    FilterRegistrationBean<CorsFilter> filterRegistrationBean = restApiSecurityConfig.corsFilter();
+
+    assertNotNull(filterRegistrationBean);
+
+    // Order is important while registering filter beans
+    assertThat(filterRegistrationBean.getOrder()).isEqualTo(Ordered.HIGHEST_PRECEDENCE);
+  }
+
+  @Test
+  void deploymentFilter() {
+    FilterRegistrationBean<DeploymentFilter> deploymentFilter = restApiSecurityConfig.deploymentFilter();
+    assertNotNull(deploymentFilter);
+    assertThat(deploymentFilter.getOrder()).isEqualTo(103);
+  }
 }
