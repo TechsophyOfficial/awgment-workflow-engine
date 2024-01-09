@@ -19,7 +19,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 
 @ExtendWith(MockitoExtension.class)

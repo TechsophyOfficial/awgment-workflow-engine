@@ -10,13 +10,13 @@ import org.keycloak.authorization.client.AuthzClient;
 import org.keycloak.authorization.client.ClientAuthenticator;
 import org.keycloak.authorization.client.Configuration;
 import org.keycloak.authorization.client.util.TokenCallable;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.InputStream;
-
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
  class TokenSupplierImplTest {

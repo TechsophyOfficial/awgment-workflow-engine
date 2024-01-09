@@ -25,7 +25,8 @@ import org.mockito.quality.Strictness;
 import java.time.Instant;
 import java.util.*;
 
-import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.*;
+import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.CHECKLIST_INSTANCE_ID_FOR_PROCESS_INSTANCE;
+import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.START_EVENT_ACTIVITY;
 import static com.techsophy.tsf.workflow.engine.camunda.constants.CheckListConstants.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;

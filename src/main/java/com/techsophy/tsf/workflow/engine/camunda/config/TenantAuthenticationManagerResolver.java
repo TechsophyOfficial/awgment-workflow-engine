@@ -10,9 +10,11 @@ import org.springframework.security.authentication.AuthenticationManagerResolver
 import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.stereotype.Component;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+
 import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.AUTHORIZATION;
 
 @RefreshScope

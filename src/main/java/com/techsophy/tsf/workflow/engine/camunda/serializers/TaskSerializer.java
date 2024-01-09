@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import org.camunda.bpm.engine.task.Task;
 
-import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.*;
-
 import java.io.IOException;
+
+import static com.techsophy.tsf.workflow.engine.camunda.constants.CamundaRuntimeConstants.*;
 
 public class TaskSerializer extends StdSerializer<Task> {
 

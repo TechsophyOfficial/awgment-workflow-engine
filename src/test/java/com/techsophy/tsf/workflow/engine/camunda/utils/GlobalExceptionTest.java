@@ -13,9 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-
 import java.nio.charset.Charset;
 import java.text.ParseException;
 
